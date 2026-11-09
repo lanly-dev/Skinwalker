@@ -12,11 +12,16 @@
  * cape wings, fangs, medallion) is layered onto the same class hooks the
  * wiring and CSS already use — the SVG is the anatomy, not a picture of it.
  *
- * Character-as-frame (2026-11-09): the player IS Dracula's silhouette —
- * head, ears, high collar and cape as one SVG shape behind the controls.
- * No rectangular window; the frameless transparent app window shows the
- * desktop everywhere outside the character.
+ * Image frame + separated mechanism (2026-11-09, Lan's direction): the
+ * approved Dracula artwork itself is the frame — a text-free plate
+ * (assets/dracula-frame.webp) clipped to the character outline — and each
+ * element in the picture is a live control overlaid on its anatomy:
+ * eyes = play/pause hotspot (+ glow while playing), blood line = seek,
+ * medallion = volume (drag / wheel / arrows, orbit dot shows the value),
+ * cape interior = live visualizer, fangs = prev/next hotspots, and the
+ * real title + playlist are rendered over the art.
  */
+import draculaFrameUrl from '../assets/dracula-frame.webp'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
@@ -35,6 +40,7 @@ export class DraculaSkin implements Skin {
     document.documentElement.dataset.skin = this.id
 
     this.container = document.createElement('div')
+    this.container.style.setProperty('--dr-frame-url', `url("${draculaFrameUrl}")`)
     this.container.className = 'skin dracula-skin'
     this.container.innerHTML = this.template()
     app.innerHTML = ''
@@ -62,92 +68,42 @@ export class DraculaSkin implements Skin {
     return /* html */ `
       <div class="dr-body" aria-label="Dracula media player">
 
-        <!-- Character silhouette = the frame itself (head, ears, collar, cape) -->
-        <svg class="dr-silhouette" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="dr-cape-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#2b0e20"/>
-              <stop offset=".45" stop-color="#180818"/>
-              <stop offset="1" stop-color="#0a040c"/>
-            </linearGradient>
-            <radialGradient id="dr-face-grad" cx=".5" cy=".42" r=".65">
-              <stop offset="0" stop-color="#3d1628"/>
-              <stop offset="1" stop-color="#1c0a16"/>
-            </radialGradient>
-          </defs>
-          <path class="dr-silhouette-fill" fill="url(#dr-cape-grad)" d="M200 152 C186 138 174 126 166 108 C158 94 155 82 156 64 L134 76 C146 60 150 44 154 30 C162 12 178 6 200 6 C222 6 238 12 246 30 C250 44 254 60 266 76 L244 64 C245 82 242 94 234 108 C226 126 214 138 200 152 C208 160 218 165 228 167 C270 140 314 104 364 64 C350 128 344 176 354 232 C366 300 368 380 356 452 C350 486 360 502 382 516 Q352 488 322 498 Q306 550 272 510 Q252 556 224 514 Q208 558 200 566 Q192 558 176 514 Q148 556 128 510 Q94 550 78 498 Q48 488 18 516 C40 502 50 486 44 452 C32 380 34 300 46 232 C56 176 50 128 36 64 C86 104 130 140 172 167 C182 165 192 160 200 152 Z"/>
-          <ellipse class="dr-face-glow" cx="200" cy="86" rx="46" ry="58" fill="url(#dr-face-grad)"/>
-          <path class="dr-silhouette-trim" d="M200 152 C186 138 174 126 166 108 C158 94 155 82 156 64 L134 76 C146 60 150 44 154 30 C162 12 178 6 200 6 C222 6 238 12 246 30 C250 44 254 60 266 76 L244 64 C245 82 242 94 234 108 C226 126 214 138 200 152 C208 160 218 165 228 167 C270 140 314 104 364 64 C350 128 344 176 354 232 C366 300 368 380 356 452 C350 486 360 502 382 516 Q352 488 322 498 Q306 550 272 510 Q252 556 224 514 Q208 558 200 566 Q192 558 176 514 Q148 556 128 510 Q94 550 78 498 Q48 488 18 516 C40 502 50 486 44 452 C32 380 34 300 46 232 C56 176 50 128 36 64 C86 104 130 140 172 167 C182 165 192 160 200 152 Z"/>
-          <path class="dr-collar-line" d="M200 170 C168 192 128 202 84 198 M200 170 C232 192 272 202 316 198"/>
-        </svg>
-
-        <!-- Head: hairline + eyes live in the silhouette's face -->
-        <div class="dr-head">
-          <!-- Widow's-peak hairline (SVG brow over the eyes) -->
-          <svg class="dr-hairline" viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M4 42 V14 Q70 0 118 10 Q140 14 150 31 Q160 14 182 10 Q230 0 296 14 V42 Q150 30 4 42 Z"/>
-          </svg>
-
-          <!-- Eyes = play/pause -->
-          <button class="dr-eyes" aria-label="Play / Pause" title="Play / Pause">
-            <span class="dr-eye left" aria-hidden="true">
-              <svg viewBox="0 0 36 36">
-                <path class="dr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
-                <circle class="dr-iris" cx="18" cy="17" r="6.5"/>
-                <circle class="dr-pupil" cx="18" cy="17" r="2.8"/>
-              </svg>
-            </span>
-            <span class="dr-eye right" aria-hidden="true">
-              <svg viewBox="0 0 36 36">
-                <path class="dr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
-                <circle class="dr-iris" cx="18" cy="17" r="6.5"/>
-                <circle class="dr-pupil" cx="18" cy="17" r="2.8"/>
-              </svg>
-            </span>
-          </button>
-        </div>
-
-        <!-- Track info -->
+        <!-- Track info (rendered over the chest) -->
         <div class="dr-track-info">
           <span class="dr-title">—</span>
           <span class="dr-artist">—</span>
         </div>
 
-        <!-- Cape = visualizer -->
+        <!-- Eyes = play/pause (hotspot over the painted eyes + playing glow) -->
+        <button class="dr-eyes" aria-label="Play / Pause" title="Play / Pause"></button>
+        <div class="dr-eye-glow" aria-hidden="true"></div>
+
+        <!-- Cape interior = live visualizer -->
         <div class="dr-cape" aria-hidden="true">
-          <canvas class="dr-viz" width="256" height="80"></canvas>
-          <svg class="dr-cape-wings" viewBox="0 0 300 18" preserveAspectRatio="none">
-            <path d="M0 0 H300 V3 Q263 17 226 6 Q188 17 150 6 Q112 17 74 6 Q37 17 0 3 Z"/>
-          </svg>
+          <canvas class="dr-viz" width="330" height="220"></canvas>
         </div>
 
-        <!-- Blood drip = seek bar -->
+        <!-- Blood line = seek bar -->
         <div class="dr-seek-region" role="group" aria-label="Seek">
           <input class="dr-seek" type="range" min="0" max="1000" value="0"
                  aria-label="Seek" step="1" />
           <span class="dr-time">0:00 / 0:00</span>
         </div>
 
-        <!-- Medallion = volume -->
-        <div class="dr-volume-region" role="group" aria-label="Volume">
-          <span class="dr-medallion" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <circle class="dr-medallion-ring" cx="12" cy="12" r="10"/>
-              <circle class="dr-medallion-gem" cx="12" cy="12" r="5.5"/>
-              <path class="dr-medallion-spark" d="M12 8.5 L13.2 11 L15.8 12 L13.2 13 L12 15.5 L10.8 13 L8.2 12 L10.8 11 Z"/>
-            </svg>
-          </span>
-          <input class="dr-volume" type="range" min="0" max="100" value="80"
-                 aria-label="Volume" step="1" />
+        <!-- Medallion = volume (drag horizontally, wheel, or arrow keys) -->
+        <div class="dr-medallion" role="slider" tabindex="0"
+             aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80"
+             title="Volume — drag, scroll, or arrow keys">
+          <svg class="dr-medallion-orbit" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="3.2" r="2.3"/></svg>
         </div>
 
-        <!-- Fangs = prev / next -->
+        <!-- Fangs = prev / next (hotspots over the painted fangs) -->
         <div class="dr-controls">
-          <button class="dr-prev" aria-label="Previous track"><svg class="dr-fang" viewBox="0 0 16 18" aria-hidden="true"><path d="M2 0 H14 L9.5 16.5 Q8 18.4 6.5 16.5 Z"/></svg>◀</button>
-          <button class="dr-next" aria-label="Next track">▶<svg class="dr-fang" viewBox="0 0 16 18" aria-hidden="true"><path d="M2 0 H14 L9.5 16.5 Q8 18.4 6.5 16.5 Z"/></svg></button>
+          <button class="dr-prev" aria-label="Previous track"></button>
+          <button class="dr-next" aria-label="Next track"></button>
         </div>
 
-        <!-- Playlist -->
+        <!-- Playlist (rendered over the lower cape) -->
         <ol class="dr-playlist" aria-label="Playlist"></ol>
 
       </div>
@@ -172,16 +128,37 @@ export class DraculaSkin implements Skin {
       p.seek(Number(seekEl.value) / 1000)
     })
 
-    // Volume (medallion)
-    const volEl = c.querySelector<HTMLInputElement>('.dr-volume')!
-    volEl.addEventListener('input', () => {
-      p.setVolume(Number(volEl.value) / 100)
-      this.rotateMedallion(Number(volEl.value))
+    // Volume (medallion): drag horizontally, wheel, or arrow keys
+    const medallion = c.querySelector<HTMLElement>('.dr-medallion')!
+    const applyVolume = (v: number): void => {
+      const clamped = Math.min(1, Math.max(0, v))
+      p.setVolume(clamped)
+      this.rotateMedallion(clamped * 100)
+      medallion.setAttribute('aria-valuenow', String(Math.round(clamped * 100)))
+    }
+    let dragX: number | null = null
+    let dragVol = 0
+    medallion.addEventListener('pointerdown', (e) => {
+      dragX = e.clientX
+      dragVol = p.currentVolume
+      medallion.setPointerCapture(e.pointerId)
+    })
+    medallion.addEventListener('pointermove', (e) => {
+      if (dragX === null) return
+      applyVolume(dragVol + (e.clientX - dragX) / 140)
+    })
+    medallion.addEventListener('pointerup', () => { dragX = null })
+    medallion.addEventListener('pointercancel', () => { dragX = null })
+    medallion.addEventListener('wheel', (e) => {
+      e.preventDefault()
+      applyVolume(p.currentVolume + (e.deltaY < 0 ? 0.05 : -0.05))
+    }, { passive: false })
+    medallion.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') applyVolume(p.currentVolume + 0.05)
+      if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') applyVolume(p.currentVolume - 0.05)
     })
     // Init from the player's current volume so a skin swap keeps it
-    volEl.value = String(Math.round(p.currentVolume * 100))
-    p.setVolume(Number(volEl.value) / 100)
-    this.rotateMedallion(Number(volEl.value))
+    applyVolume(p.currentVolume)
 
     // Fangs → prev / next
     c.querySelector('.dr-prev')!.addEventListener('click', () => p.prev())
@@ -234,7 +211,7 @@ export class DraculaSkin implements Skin {
   }
 
   private rotateMedallion(vol: number): void {
-    const m = this.container?.querySelector<HTMLElement>('.dr-medallion')
+    const m = this.container?.querySelector<HTMLElement>('.dr-medallion-orbit')
     if (!m) return
     m.style.transform = `rotate(${vol * 2.7}deg)`
   }

@@ -609,3 +609,149 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-cape { background: rgba(8, 2, 6, 0.55); border-color: rgba(61, 10, 10, 0.7); }
 .dracula-skin .dr-playlist { background: rgba(0, 0, 0, 0.22); }
 .dracula-skin .dr-controls button { background: rgba(40, 2, 8, 0.5); }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   DRACULA — IMAGE FRAME (2026-11-09)
+   The approved artwork is the frame (text-free plate, clipped to the
+   character outline); every painted element is a live overlaid control.
+   Positions are % of the plate, whose aspect is 2:3 like the window.
+   ════════════════════════════════════════════════════════════════════════════ */
+.dracula-skin {
+  filter:
+    drop-shadow(0 24px 44px rgba(0,0,0,0.65))
+    drop-shadow(0 0 34px rgba(150,0,0,0.22));
+}
+.dracula-skin .dr-body {
+  width: min(430px, calc((100vh - 84px) * 0.6667), 96vw);
+  aspect-ratio: 2 / 3;
+  padding: 0;
+  gap: 0;
+  background-image: var(--dr-frame-url);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  clip-path: polygon(50% 0.8%, 57.5% 4.5%, 61% 12.5%, 75.5% 17.5%, 71% 27%, 88% 38%, 97.5% 55%, 97.8% 71%, 98% 73.5%, 88.5% 82.5%, 85% 88%, 76% 85.5%, 72.5% 90%, 63% 87%, 50% 96.5%, 37% 87%, 27.5% 90%, 24% 85.5%, 15% 88%, 11.5% 82.5%, 2% 73.5%, 2.2% 71%, 2.5% 55%, 12% 38%, 29% 27%, 24.5% 17.5%, 39% 12.5%, 42.5% 4.5%);
+  filter: none;
+}
+.dracula-skin .dr-body > *:not(.dr-silhouette):not(.dr-head) { position: absolute; }
+
+/* Title over the chest */
+.dracula-skin .dr-track-info {
+  left: 16%; right: 16%; top: 33.6%;
+  border-bottom: none;
+  padding-bottom: 0;
+  z-index: 3;
+}
+.dracula-skin .dr-title { font-size: 17px; text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 18px rgba(192,57,43,0.5); }
+.dracula-skin .dr-artist { color: #c98a8a; text-shadow: 0 1px 6px rgba(0,0,0,0.9); }
+
+/* Eyes hotspot + playing glow */
+.dracula-skin .dr-eyes {
+  left: 37.5%; top: 12.2%;
+  width: 25%; height: 9.5%;
+  padding: 0;
+  background: transparent;
+  border-radius: 50%;
+  z-index: 4;
+}
+.dracula-skin .dr-eyes:hover { background: rgba(255,60,40,0.06); }
+.dr-eye-glow {
+  left: 37.5%; top: 12.2%;
+  width: 25%; height: 9.5%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 22% 42% at 32% 50%, rgba(255,60,40,0.85), transparent 70%),
+    radial-gradient(ellipse 22% 42% at 68% 50%, rgba(255,60,40,0.85), transparent 70%);
+  mix-blend-mode: screen;
+  opacity: 0.25;
+  transition: opacity 0.3s;
+  z-index: 2;
+}
+.dracula-skin .dr-eyes.playing ~ .dr-eye-glow { opacity: 1; animation: dr-glow-pulse 1.8s ease-in-out infinite alternate; }
+@keyframes dr-glow-pulse { from { opacity: 0.7; } to { opacity: 1; } }
+
+/* Cape interior = live visualizer (panel settles the painted bars) */
+.dracula-skin .dr-cape {
+  left: 11%; top: 44.5%;
+  width: 78%; height: 34.5%;
+  border: none;
+  border-radius: 16px;
+  background: rgba(8, 2, 6, 0.55);
+  box-shadow: none;
+  z-index: 1;
+}
+.dracula-skin .dr-viz { width: 100%; height: 100%; }
+
+/* Blood line = seek (transparent track over the painted line) */
+.dracula-skin .dr-seek-region {
+  left: 23.5%; top: 40.4%;
+  width: 53%;
+  z-index: 3;
+  gap: 2px;
+}
+.dracula-skin .dr-seek { background: transparent; height: 18px; }
+.dracula-skin .dr-seek::-webkit-slider-thumb {
+  width: 13px; height: 13px;
+  background: #e02318;
+  border: 2px solid rgba(255,180,160,0.65);
+  box-shadow: 0 0 10px rgba(255,40,25,0.9);
+}
+.dracula-skin .dr-seek::-moz-range-thumb {
+  width: 13px; height: 13px;
+  background: #e02318;
+  border: 2px solid rgba(255,180,160,0.65);
+  box-shadow: 0 0 10px rgba(255,40,25,0.9);
+}
+.dracula-skin .dr-time { font-size: 10px; color: rgba(236,227,209,0.8); text-shadow: 0 1px 5px rgba(0,0,0,0.95); }
+
+/* Medallion = volume (orbit dot circles the painted medallion) */
+.dracula-skin .dr-medallion {
+  left: 46.3%; top: 39.55%;
+  width: 7.4%; aspect-ratio: 1;
+  border-radius: 50%;
+  cursor: ew-resize;
+  touch-action: none;
+  z-index: 4;
+  display: block;
+}
+.dracula-skin .dr-medallion:focus-visible { outline: 2px solid rgba(233,196,106,0.8); outline-offset: 2px; }
+.dr-medallion-orbit { width: 100%; height: 100%; display: block; transition: transform 0.2s; }
+.dr-medallion-orbit circle { fill: #ffd977; stroke: rgba(0,0,0,0.45); stroke-width: 0.7; filter: drop-shadow(0 0 3px rgba(255,200,90,0.9)); }
+
+/* Fangs = prev/next hotspots */
+.dracula-skin .dr-controls {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  z-index: 3;
+}
+.dracula-skin .dr-controls button {
+  position: absolute;
+  top: 72.3%;
+  width: 13%; height: 10.5%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  pointer-events: auto;
+  color: transparent;
+  font-size: 0;
+}
+.dracula-skin .dr-controls .dr-prev { left: 6.6%; }
+.dracula-skin .dr-controls .dr-next { right: 6.6%; }
+.dracula-skin .dr-controls button:hover { background: rgba(255,240,200,0.08); box-shadow: 0 0 18px rgba(255,220,160,0.35); }
+
+/* Playlist over the lower cape */
+.dracula-skin .dr-playlist {
+  left: 21%; top: 79.6%;
+  width: 58%;
+  max-height: 7%;
+  margin: 0;
+  padding: 4px 6px;
+  background: rgba(5, 0, 4, 0.38);
+  border: none;
+  border-radius: 10px;
+  font-size: 11px;
+  z-index: 2;
+}
+.dracula-skin .dr-playlist li { padding: 2px 8px; text-shadow: 0 1px 4px rgba(0,0,0,0.9); }
