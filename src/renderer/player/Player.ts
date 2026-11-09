@@ -94,6 +94,8 @@ export class Player {
     this.activeSkin?.unmount()
     this.activeSkin = skin
     skin.mount(this)
+    // The skin owns the window shape (Trio is landscape, the rest portrait)
+    window.skinwalker?.setWindowSize(skin.windowSize ?? { width: 480, height: 720 })
     // Re-notify the fresh skin of the current track so its title, artist
     // and playlist highlight survive a mid-playback swap (the callback is
     // assigned by the skin during mount).

@@ -3,6 +3,7 @@
 /** Shape of the API exposed by src/preload/index.ts */
 interface SkinwalkerAPI {
   dragWindow: (delta: { mouseX: number; mouseY: number }) => void
+  setWindowSize: (size: { width: number; height: number }) => void
   minimize: () => void
   close: () => void
   maximize: () => void

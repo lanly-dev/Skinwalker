@@ -52,6 +52,14 @@ ipcMain.on('window:drag', (_e, { mouseX, mouseY }) => {
   win.setPosition(x + mouseX, y + mouseY)
 })
 
+/** Skins own the window shape: portrait skins are 480×720, the Trio is landscape */
+ipcMain.on('window:set-size', (_e, { width, height }) => {
+  if (!win) return
+  if (win.isMaximized()) win.unmaximize()
+  win.setSize(Math.round(width), Math.round(height))
+  win.center()
+})
+
 ipcMain.on('window:minimize', () => win?.minimize())
 ipcMain.on('window:close',    () => win?.close())
 ipcMain.on('window:maximize', () => {

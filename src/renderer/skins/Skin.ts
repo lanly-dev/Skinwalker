@@ -11,6 +11,9 @@ import type { Player } from '../player/Player'
 export interface Skin {
   readonly id: string        // e.g. 'dracula'
   readonly label: string     // e.g. 'Werewolf'
+  /** Window shape this skin wants; the window reshapes on swap.
+   *  Omit for the default portrait 480×720. */
+  readonly windowSize?: { width: number; height: number }
   mount(player: Player): void
   unmount(): void
   /** Called when tracks are added mid-session so the skin can refresh its playlist UI */

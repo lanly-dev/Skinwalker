@@ -13,6 +13,9 @@ contextBridge.exposeInMainWorld('skinwalker', {
   dragWindow: (delta: { mouseX: number; mouseY: number }) =>
     ipcRenderer.send('window:drag', delta),
 
+  setWindowSize: (size: { width: number; height: number }) =>
+    ipcRenderer.send('window:set-size', size),
+
   minimize: () => ipcRenderer.send('window:minimize'),
   close:    () => ipcRenderer.send('window:close'),
   maximize: () => ipcRenderer.send('window:maximize'),
