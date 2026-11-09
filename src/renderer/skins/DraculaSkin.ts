@@ -63,7 +63,7 @@ export class DraculaSkin implements Skin {
       <div class="dr-body" aria-label="Dracula media player">
 
         <!-- Character silhouette = the frame itself (head, ears, collar, cape) -->
-        <svg class="dr-silhouette" viewBox="0 0 400 560" preserveAspectRatio="none" aria-hidden="true">
+        <svg class="dr-silhouette" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">
           <defs>
             <linearGradient id="dr-cape-grad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="#2b0e20"/>
@@ -75,17 +75,17 @@ export class DraculaSkin implements Skin {
               <stop offset="1" stop-color="#1c0a16"/>
             </radialGradient>
           </defs>
-          <path class="dr-silhouette-fill" fill="url(#dr-cape-grad)" d="M200 6 C240 6 260 28 263 52 L278 42 C273 62 270 84 264 100 C256 118 240 130 226 136 C252 128 268 118 284 92 L318 80 C308 126 320 152 338 172 C344 250 352 330 350 420 C349 462 350 484 344 502 Q322 540 296 508 Q270 546 244 512 Q222 548 200 516 Q178 548 156 512 Q130 546 104 508 Q78 540 56 502 C50 484 51 462 50 420 C48 330 56 250 62 172 C80 152 92 126 82 80 L116 92 C132 118 148 128 174 136 C160 130 144 118 136 100 C130 84 127 62 122 42 L137 52 C140 28 160 6 200 6 Z"/>
-          <ellipse class="dr-face-glow" cx="200" cy="76" rx="64" ry="60" fill="url(#dr-face-grad)"/>
-          <path class="dr-silhouette-trim" d="M200 6 C240 6 260 28 263 52 L278 42 C273 62 270 84 264 100 C256 118 240 130 226 136 C252 128 268 118 284 92 L318 80 C308 126 320 152 338 172 C344 250 352 330 350 420 C349 462 350 484 344 502 Q322 540 296 508 Q270 546 244 512 Q222 548 200 516 Q178 548 156 512 Q130 546 104 508 Q78 540 56 502 C50 484 51 462 50 420 C48 330 56 250 62 172 C80 152 92 126 82 80 L116 92 C132 118 148 128 174 136 C160 130 144 118 136 100 C130 84 127 62 122 42 L137 52 C140 28 160 6 200 6 Z"/>
-          <path class="dr-collar-line" d="M200 152 C168 182 138 196 100 200 M200 152 C232 182 262 196 300 200"/>
+          <path class="dr-silhouette-fill" fill="url(#dr-cape-grad)" d="M200 152 C186 138 174 126 166 108 C158 94 155 82 156 64 L134 76 C146 60 150 44 154 30 C162 12 178 6 200 6 C222 6 238 12 246 30 C250 44 254 60 266 76 L244 64 C245 82 242 94 234 108 C226 126 214 138 200 152 C208 160 218 165 228 167 C270 140 314 104 364 64 C350 128 344 176 354 232 C366 300 368 380 356 452 C350 486 360 502 382 516 Q352 488 322 498 Q306 550 272 510 Q252 556 224 514 Q208 558 200 566 Q192 558 176 514 Q148 556 128 510 Q94 550 78 498 Q48 488 18 516 C40 502 50 486 44 452 C32 380 34 300 46 232 C56 176 50 128 36 64 C86 104 130 140 172 167 C182 165 192 160 200 152 Z"/>
+          <ellipse class="dr-face-glow" cx="200" cy="86" rx="46" ry="58" fill="url(#dr-face-grad)"/>
+          <path class="dr-silhouette-trim" d="M200 152 C186 138 174 126 166 108 C158 94 155 82 156 64 L134 76 C146 60 150 44 154 30 C162 12 178 6 200 6 C222 6 238 12 246 30 C250 44 254 60 266 76 L244 64 C245 82 242 94 234 108 C226 126 214 138 200 152 C208 160 218 165 228 167 C270 140 314 104 364 64 C350 128 344 176 354 232 C366 300 368 380 356 452 C350 486 360 502 382 516 Q352 488 322 498 Q306 550 272 510 Q252 556 224 514 Q208 558 200 566 Q192 558 176 514 Q148 556 128 510 Q94 550 78 498 Q48 488 18 516 C40 502 50 486 44 452 C32 380 34 300 46 232 C56 176 50 128 36 64 C86 104 130 140 172 167 C182 165 192 160 200 152 Z"/>
+          <path class="dr-collar-line" d="M200 170 C168 192 128 202 84 198 M200 170 C232 192 272 202 316 198"/>
         </svg>
 
         <!-- Head: hairline + eyes live in the silhouette's face -->
         <div class="dr-head">
           <!-- Widow's-peak hairline (SVG brow over the eyes) -->
           <svg class="dr-hairline" viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M4 40 V16 Q74 2 124 12 Q142 16 150 27 Q158 16 176 12 Q226 2 296 16 V40 Q150 28 4 40 Z"/>
+            <path d="M4 42 V14 Q70 0 118 10 Q140 14 150 31 Q160 14 182 10 Q230 0 296 14 V42 Q150 30 4 42 Z"/>
           </svg>
 
           <!-- Eyes = play/pause -->

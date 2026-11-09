@@ -182,10 +182,10 @@ input[type="range"]::-moz-range-thumb {
      controls is the body; padding keeps content inside the cape outline. */
   position: relative;
   width: min(460px, 97vw);
-  padding: 168px 58px 62px;
+  padding: 176px 64px 92px;
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 11px;
   margin: 0 auto;
   filter:
     drop-shadow(0 24px 44px rgba(0,0,0,0.65))
@@ -585,19 +585,25 @@ input[type="range"]::-moz-range-thumb {
 /* Head overlays the silhouette's face zone */
 .dracula-skin .dr-head {
   position: absolute;
-  top: 10px;
+  top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  width: 190px;
+  width: 170px;
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 2;
 }
-.dracula-skin .dr-hairline { width: 176px; height: 25px; margin-bottom: -4px; }
+.dracula-skin .dr-hairline { width: 132px; height: 48px; margin-bottom: -6px; }
 .dracula-skin .dr-hairline path { stroke: rgba(233, 196, 106, 0.35); }
-.dracula-skin .dr-eyes { gap: 34px; padding: 4px 8px; }
-.dracula-skin .dr-eye { width: 36px; height: 36px; }
+.dracula-skin .dr-eyes { gap: 16px; padding: 4px 8px; }
+.dracula-skin .dr-eye { width: 44px; height: 44px; }
+.dracula-skin .dr-eye.left  { transform: rotate(-9deg) scaleY(0.78); }
+.dracula-skin .dr-eye.right { transform: rotate(9deg) scaleY(0.78); }
+.dracula-skin .dr-viz { height: 72px; }
+.dracula-skin .dr-playlist { width: 86%; margin: 0 auto; max-height: 82px; }
+.dracula-skin .dr-playlist li { padding: 4px 9px; }
+.dracula-skin .dr-controls { padding: 0 10px; }
 
 /* Cape interior and playlist sit on the silhouette — soften their boxes */
 .dracula-skin .dr-cape { background: rgba(8, 2, 6, 0.55); border-color: rgba(61, 10, 10, 0.7); }
