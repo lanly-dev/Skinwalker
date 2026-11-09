@@ -1,0 +1,21 @@
+{
+  "name": "skinwalker",
+  "version": "0.1.0",
+  "description": "A media player where the skin is a living Halloween monster — Kiroween 2026 Costume Contest entry.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.0.0"
+  },
+  "license": "MIT",
+  "allowScripts": {
+    "esbuild@0.25.12": true
+  }
+}

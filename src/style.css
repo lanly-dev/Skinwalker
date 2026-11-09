@@ -1,0 +1,202 @@
+/* ── Base reset ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Shared design tokens — overridden per skin via data-skin attribute */
+  --color-bg:      #0a0a0f;
+  --color-surface: #12121a;
+  --color-accent:  #c8a840;
+  --color-text:    #e8e0d0;
+  --color-dim:     #5a5560;
+  --radius:        8px;
+  --font-mono:     'Courier New', Courier, monospace;
+}
+
+html, body {
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+#app {
+  width: min(480px, 96vw);
+}
+
+/* ── Skin switcher nav ───────────────────────────────────────────────────── */
+#skin-switcher {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+}
+
+#skin-switcher button {
+  background: var(--color-surface);
+  border: 1px solid var(--color-dim);
+  color: var(--color-text);
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+#skin-switcher button:hover,
+#skin-switcher button.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ── Werewolf skin ───────────────────────────────────────────────────────── */
+[data-skin="werewolf"] {
+  --color-accent: #d44f00;
+}
+
+.werewolf-skin .ww-body {
+  background: var(--color-surface);
+  border: 1px solid #3a2010;
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 0 40px #d44f0033;
+}
+
+/* Track info */
+.ww-track-info { display: flex; flex-direction: column; gap: 2px; }
+.ww-title      { font-size: 15px; font-weight: bold; color: var(--color-accent); }
+.ww-artist     { font-size: 12px; color: var(--color-dim); }
+
+/* Eyes = play/pause */
+.ww-eyes {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius);
+  transition: background 0.15s;
+}
+.ww-eyes:hover { background: #ffffff08; }
+
+.ww-eye {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2a1a08;
+  border: 2px solid #5a3010;
+  display: block;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.ww-eyes.playing .ww-eye {
+  background: #d44f00;
+  box-shadow: 0 0 12px #d44f00aa;
+}
+
+/* Mouth = visualizer */
+.ww-mouth {
+  border: 1px solid #3a2010;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #070508;
+}
+.ww-viz { display: block; width: 100%; height: 64px; }
+
+/* Seek (claws) */
+.ww-seek-region { display: flex; flex-direction: column; gap: 4px; }
+.ww-time        { font-size: 11px; color: var(--color-dim); text-align: right; }
+
+/* Volume (chest) */
+.ww-volume-region { display: flex; align-items: center; gap: 10px; }
+.ww-volume-region::before {
+  content: '♥';
+  color: #d44f00;
+  font-size: 14px;
+}
+
+/* Range inputs — shared */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: #2a1a08;
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 6px var(--color-accent);
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 6px var(--color-accent);
+  cursor: pointer;
+  border: none;
+}
+
+/* Prev / Next (ears) */
+.ww-controls {
+  display: flex;
+  justify-content: space-between;
+}
+.ww-controls button {
+  background: none;
+  border: 1px solid var(--color-dim);
+  color: var(--color-text);
+  padding: 6px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.ww-controls button:hover { border-color: var(--color-accent); }
+
+/* Playlist */
+.ww-playlist {
+  list-style: none;
+  max-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ww-playlist li {
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-dim);
+  transition: background 0.1s, color 0.1s;
+}
+.ww-playlist li:hover { background: #ffffff0a; color: var(--color-text); }
+.ww-playlist li.active { color: var(--color-accent); }
+
+/* ── Scrollbar (optional, WebKit) ────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-dim); border-radius: 2px; }
