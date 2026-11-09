@@ -87,4 +87,14 @@ export class Player {
     this.activeSkin = skin
     skin.mount(this)
   }
+
+  /** Append tracks from the native file picker and notify the active skin */
+  addTracks(newTracks: Track[]): void {
+    this.tracks = [...this.tracks, ...newTracks]
+    this.activeSkin?.onPlaylistUpdate?.()
+  }
+
+  get playlist(): readonly Track[] {
+    return this.tracks
+  }
 }

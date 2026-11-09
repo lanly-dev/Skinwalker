@@ -13,4 +13,6 @@ export interface Skin {
   readonly label: string     // e.g. 'Werewolf'
   mount(player: Player): void
   unmount(): void
+  /** Called when tracks are added mid-session so the skin can refresh its playlist UI */
+  onPlaylistUpdate?(): void
 }

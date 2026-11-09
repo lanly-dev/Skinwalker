@@ -2,7 +2,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Shared design tokens — overridden per skin via data-skin attribute */
   --color-bg:      #0a0a0f;
   --color-surface: #12121a;
   --color-accent:  #c8a840;
@@ -10,29 +9,64 @@
   --color-dim:     #5a5560;
   --radius:        8px;
   --font-mono:     'Courier New', Courier, monospace;
+  --titlebar-h:    32px;
 }
 
 html, body {
   height: 100%;
-  background: var(--color-bg);
+  background: transparent;   /* transparent = frameless window breathes */
   color: var(--color-text);
   font-family: var(--font-mono);
   font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  overflow: hidden;
+  user-select: none;
 }
 
 #app {
-  width: min(480px, 96vw);
+  width: 100%;
+  padding-top: var(--titlebar-h);
+  display: flex;
+  justify-content: center;
 }
+
+/* ── Titlebar (frameless drag region) ───────────────────────────────────── */
+#titlebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--titlebar-h);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 0 8px;
+  -webkit-app-region: drag;   /* Electron drag region */
+  z-index: 200;
+}
+
+#titlebar button {
+  -webkit-app-region: no-drag;
+  background: none;
+  border: none;
+  color: var(--color-dim);
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+#titlebar button:hover      { background: #ffffff14; color: var(--color-text); }
+#titlebar button.close:hover { background: #c0392b; color: #fff; }
 
 /* ── Skin switcher nav ───────────────────────────────────────────────────── */
 #skin-switcher {
   position: fixed;
-  top: 12px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -52,9 +86,29 @@ html, body {
   letter-spacing: 0.04em;
   transition: border-color 0.2s, color 0.2s;
 }
-
 #skin-switcher button:hover,
 #skin-switcher button.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ── Open files button ───────────────────────────────────────────────────── */
+#open-files {
+  position: fixed;
+  top: calc(var(--titlebar-h) + 6px);
+  left: 10px;
+  background: none;
+  border: 1px solid var(--color-dim);
+  color: var(--color-dim);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  z-index: 100;
+  transition: border-color 0.15s, color 0.15s;
+}
+#open-files:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
@@ -65,6 +119,7 @@ html, body {
 }
 
 .werewolf-skin .ww-body {
+  width: min(440px, 96vw);
   background: var(--color-surface);
   border: 1px solid #3a2010;
   border-radius: var(--radius);
@@ -73,11 +128,12 @@ html, body {
   flex-direction: column;
   gap: 14px;
   box-shadow: 0 0 40px #d44f0033;
+  margin: 0 auto;
 }
 
 /* Track info */
 .ww-track-info { display: flex; flex-direction: column; gap: 2px; }
-.ww-title      { font-size: 15px; font-weight: bold; color: var(--color-accent); }
+.ww-title      { font-size: 15px; font-weight: bold; color: var(--color-accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ww-artist     { font-size: 12px; color: var(--color-dim); }
 
 /* Eyes = play/pause */
@@ -103,7 +159,6 @@ html, body {
   display: block;
   transition: background 0.2s, box-shadow 0.2s;
 }
-
 .ww-eyes.playing .ww-eye {
   background: #d44f00;
   box-shadow: 0 0 12px #d44f00aa;
@@ -124,13 +179,9 @@ html, body {
 
 /* Volume (chest) */
 .ww-volume-region { display: flex; align-items: center; gap: 10px; }
-.ww-volume-region::before {
-  content: '♥';
-  color: #d44f00;
-  font-size: 14px;
-}
+.ww-volume-region::before { content: '♥'; color: #d44f00; font-size: 14px; }
 
-/* Range inputs — shared */
+/* Range inputs */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -151,8 +202,7 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
 }
 input[type="range"]::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: 14px; height: 14px;
   border-radius: 50%;
   background: var(--color-accent);
   box-shadow: 0 0 6px var(--color-accent);
@@ -161,10 +211,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Prev / Next (ears) */
-.ww-controls {
-  display: flex;
-  justify-content: space-between;
-}
+.ww-controls { display: flex; justify-content: space-between; }
 .ww-controls button {
   background: none;
   border: 1px solid var(--color-dim);
@@ -193,10 +240,10 @@ input[type="range"]::-moz-range-thumb {
   color: var(--color-dim);
   transition: background 0.1s, color 0.1s;
 }
-.ww-playlist li:hover { background: #ffffff0a; color: var(--color-text); }
+.ww-playlist li:hover  { background: #ffffff0a; color: var(--color-text); }
 .ww-playlist li.active { color: var(--color-accent); }
 
-/* ── Scrollbar (optional, WebKit) ────────────────────────────────────────── */
+/* Scrollbar */
 ::-webkit-scrollbar       { width: 4px; }
-::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-dim); border-radius: 2px; }

@@ -46,6 +46,10 @@ export class WerewolfSkin implements Skin {
     this.player = null
   }
 
+  onPlaylistUpdate(): void {
+    this.buildPlaylist()
+  }
+
   // ── DOM ─────────────────────────────────────────────────────────────────────
 
   private template(): string {
@@ -142,20 +146,19 @@ export class WerewolfSkin implements Skin {
     const p = this.player!
     const ol = this.container!.querySelector<HTMLOListElement>('.ww-playlist')!
     ol.innerHTML = ''
-    for (let i = 0; i < p.trackCount; i++) {
-      // We need the track info — reach into the player's playlist via playIndex side-effect
+    p.playlist.forEach((track, i) => {
       const li = document.createElement('li')
       li.dataset.index = String(i)
-      li.textContent = `Track ${i + 1}`
+      li.textContent = track.title
       li.setAttribute('role', 'button')
       li.setAttribute('tabindex', '0')
-      li.setAttribute('aria-label', `Play track ${i + 1}`)
+      li.setAttribute('aria-label', `Play ${track.title}`)
       li.addEventListener('click', () => void p.playIndex(i))
       li.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') void p.playIndex(i)
       })
       ol.appendChild(li)
-    }
+    })
   }
 
   private highlightPlaylistItem(idx: number): void {
