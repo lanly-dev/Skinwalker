@@ -11,6 +11,11 @@
  * All controls are wired to the player. Inline SVG art (hairline, eyes,
  * cape wings, fangs, medallion) is layered onto the same class hooks the
  * wiring and CSS already use — the SVG is the anatomy, not a picture of it.
+ *
+ * Character-as-frame (2026-11-09): the player IS Dracula's silhouette —
+ * head, ears, high collar and cape as one SVG shape behind the controls.
+ * No rectangular window; the frameless transparent app window shows the
+ * desktop everywhere outside the character.
  */
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
@@ -57,34 +62,56 @@ export class DraculaSkin implements Skin {
     return /* html */ `
       <div class="dr-body" aria-label="Dracula media player">
 
+        <!-- Character silhouette = the frame itself (head, ears, collar, cape) -->
+        <svg class="dr-silhouette" viewBox="0 0 400 560" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="dr-cape-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2b0e20"/>
+              <stop offset=".45" stop-color="#180818"/>
+              <stop offset="1" stop-color="#0a040c"/>
+            </linearGradient>
+            <radialGradient id="dr-face-grad" cx=".5" cy=".42" r=".65">
+              <stop offset="0" stop-color="#3d1628"/>
+              <stop offset="1" stop-color="#1c0a16"/>
+            </radialGradient>
+          </defs>
+          <path class="dr-silhouette-fill" fill="url(#dr-cape-grad)" d="M200 6 C240 6 260 28 263 52 L278 42 C273 62 270 84 264 100 C256 118 240 130 226 136 C252 128 268 118 284 92 L318 80 C308 126 320 152 338 172 C344 250 352 330 350 420 C349 462 350 484 344 502 Q322 540 296 508 Q270 546 244 512 Q222 548 200 516 Q178 548 156 512 Q130 546 104 508 Q78 540 56 502 C50 484 51 462 50 420 C48 330 56 250 62 172 C80 152 92 126 82 80 L116 92 C132 118 148 128 174 136 C160 130 144 118 136 100 C130 84 127 62 122 42 L137 52 C140 28 160 6 200 6 Z"/>
+          <ellipse class="dr-face-glow" cx="200" cy="76" rx="64" ry="60" fill="url(#dr-face-grad)"/>
+          <path class="dr-silhouette-trim" d="M200 6 C240 6 260 28 263 52 L278 42 C273 62 270 84 264 100 C256 118 240 130 226 136 C252 128 268 118 284 92 L318 80 C308 126 320 152 338 172 C344 250 352 330 350 420 C349 462 350 484 344 502 Q322 540 296 508 Q270 546 244 512 Q222 548 200 516 Q178 548 156 512 Q130 546 104 508 Q78 540 56 502 C50 484 51 462 50 420 C48 330 56 250 62 172 C80 152 92 126 82 80 L116 92 C132 118 148 128 174 136 C160 130 144 118 136 100 C130 84 127 62 122 42 L137 52 C140 28 160 6 200 6 Z"/>
+          <path class="dr-collar-line" d="M200 152 C168 182 138 196 100 200 M200 152 C232 182 262 196 300 200"/>
+        </svg>
+
+        <!-- Head: hairline + eyes live in the silhouette's face -->
+        <div class="dr-head">
+          <!-- Widow's-peak hairline (SVG brow over the eyes) -->
+          <svg class="dr-hairline" viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M4 40 V16 Q74 2 124 12 Q142 16 150 27 Q158 16 176 12 Q226 2 296 16 V40 Q150 28 4 40 Z"/>
+          </svg>
+
+          <!-- Eyes = play/pause -->
+          <button class="dr-eyes" aria-label="Play / Pause" title="Play / Pause">
+            <span class="dr-eye left" aria-hidden="true">
+              <svg viewBox="0 0 36 36">
+                <path class="dr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
+                <circle class="dr-iris" cx="18" cy="17" r="6.5"/>
+                <circle class="dr-pupil" cx="18" cy="17" r="2.8"/>
+              </svg>
+            </span>
+            <span class="dr-eye right" aria-hidden="true">
+              <svg viewBox="0 0 36 36">
+                <path class="dr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
+                <circle class="dr-iris" cx="18" cy="17" r="6.5"/>
+                <circle class="dr-pupil" cx="18" cy="17" r="2.8"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+
         <!-- Track info -->
         <div class="dr-track-info">
           <span class="dr-title">—</span>
           <span class="dr-artist">—</span>
         </div>
-
-        <!-- Widow's-peak hairline (SVG brow over the eyes) -->
-        <svg class="dr-hairline" viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M4 40 V16 Q74 2 124 12 Q142 16 150 27 Q158 16 176 12 Q226 2 296 16 V40 Q150 28 4 40 Z"/>
-        </svg>
-
-        <!-- Eyes = play/pause -->
-        <button class="dr-eyes" aria-label="Play / Pause" title="Play / Pause">
-          <span class="dr-eye left" aria-hidden="true">
-            <svg viewBox="0 0 36 36">
-              <path class="dr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
-              <circle class="dr-iris" cx="18" cy="17" r="6.5"/>
-              <circle class="dr-pupil" cx="18" cy="17" r="2.8"/>
-            </svg>
-          </span>
-          <span class="dr-eye right" aria-hidden="true">
-            <svg viewBox="0 0 36 36">
-              <path class="dr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
-              <circle class="dr-iris" cx="18" cy="17" r="6.5"/>
-              <circle class="dr-pupil" cx="18" cy="17" r="2.8"/>
-            </svg>
-          </span>
-        </button>
 
         <!-- Cape = visualizer -->
         <div class="dr-cape" aria-hidden="true">

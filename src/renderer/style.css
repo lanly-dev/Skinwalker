@@ -178,24 +178,21 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .dracula-skin .dr-body {
-  width: min(440px, 96vw);
-  background:
-    radial-gradient(110% 50% at 50% 0%, rgba(120,0,0,0.18), transparent 60%),
-    linear-gradient(170deg, #1a0a14 0%, #0f0810 50%, #0a060e 100%);
-  border: 1px solid #3d0a0a;
-  border-radius: 20px;
-  padding: 22px 20px 18px;
+  /* Character-as-frame: no card, no border — the SVG silhouette behind the
+     controls is the body; padding keeps content inside the cape outline. */
+  position: relative;
+  width: min(460px, 97vw);
+  padding: 168px 58px 62px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  box-shadow:
-    0 24px 60px rgba(0,0,0,0.7),
-    0 0 44px rgba(150,0,0,0.2),
-    inset 0 1px 0 rgba(236,227,209,0.08);
+  gap: 13px;
   margin: 0 auto;
+  filter:
+    drop-shadow(0 24px 44px rgba(0,0,0,0.65))
+    drop-shadow(0 0 34px rgba(150,0,0,0.25));
 }
 
-.dr-track-info  { display: flex; flex-direction: column; gap: 3px; padding-bottom: 12px; border-bottom: 1px solid rgba(180,20,20,0.25); }
+.dr-track-info  { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px; padding-bottom: 12px; border-bottom: 1px solid rgba(180,20,20,0.25); }
 .dr-title       { font-family: var(--font-display); font-size: 20px; font-weight: bold; color: var(--color-text); text-shadow: 0 0 18px rgba(192,57,43,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dr-artist      { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #9c6060; }
 
@@ -273,7 +270,7 @@ input[type="range"]::-moz-range-thumb {
 /* Playlist */
 .dr-playlist {
   list-style: none;
-  max-height: 120px;
+  max-height: 88px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -569,3 +566,40 @@ input[type="range"]::-moz-range-thumb {
 /* Swamp Thing: leaves inside prev/next */
 .st-leaf { width: 13px; height: 13px; vertical-align: -2px; margin: 0 5px; }
 .st-leaf path { fill: #558f2c; stroke: #dfffc9; stroke-width: 0.7; }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   DRACULA — CHARACTER FRAME (2026-11-09)
+   The silhouette SVG is the window shape; controls live inside the anatomy.
+   ════════════════════════════════════════════════════════════════════════════ */
+.dracula-skin .dr-silhouette {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.dracula-skin .dr-body > *:not(.dr-silhouette):not(.dr-head) { position: relative; z-index: 1; }
+.dr-silhouette-trim { fill: none; stroke: rgba(233, 196, 106, 0.55); stroke-width: 1.6; }
+.dr-collar-line { fill: none; stroke: rgba(233, 196, 106, 0.28); stroke-width: 1.2; }
+
+/* Head overlays the silhouette's face zone */
+.dracula-skin .dr-head {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 190px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+.dracula-skin .dr-hairline { width: 176px; height: 25px; margin-bottom: -4px; }
+.dracula-skin .dr-hairline path { stroke: rgba(233, 196, 106, 0.35); }
+.dracula-skin .dr-eyes { gap: 34px; padding: 4px 8px; }
+.dracula-skin .dr-eye { width: 36px; height: 36px; }
+
+/* Cape interior and playlist sit on the silhouette — soften their boxes */
+.dracula-skin .dr-cape { background: rgba(8, 2, 6, 0.55); border-color: rgba(61, 10, 10, 0.7); }
+.dracula-skin .dr-playlist { background: rgba(0, 0, 0, 0.22); }
+.dracula-skin .dr-controls button { background: rgba(40, 2, 8, 0.5); }
