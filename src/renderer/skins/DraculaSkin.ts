@@ -22,6 +22,11 @@
  * real title + playlist are rendered over the art.
  */
 import draculaFrameUrl from '../assets/dracula-frame.webp'
+import eyeLeftUrl from '../assets/dracula-eye-left.png'
+import eyeRightUrl from '../assets/dracula-eye-right.png'
+import medallionUrl from '../assets/dracula-medallion.png'
+import fangLeftUrl from '../assets/dracula-fang-left.png'
+import fangRightUrl from '../assets/dracula-fang-right.png'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
@@ -93,9 +98,7 @@ export class DraculaSkin implements Skin {
         <!-- Medallion = volume (drag horizontally, wheel, or arrow keys) -->
         <div class="dr-medallion" role="slider" tabindex="0"
              aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80"
-             title="Volume — drag, scroll, or arrow keys">
-          <svg class="dr-medallion-orbit" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="3.2" r="2.3"/></svg>
-        </div>
+             title="Volume — drag, scroll, or arrow keys"></div>
 
         <!-- Fangs = prev / next (hotspots over the painted fangs) -->
         <div class="dr-controls">
@@ -105,6 +108,13 @@ export class DraculaSkin implements Skin {
 
         <!-- Playlist (rendered over the lower cape) -->
         <ol class="dr-playlist" aria-label="Playlist"></ol>
+
+        <!-- Separated element layers (extracted from the plate art) -->
+        <img class="dr-layer dr-layer-eye-l" src="${eyeLeftUrl}" alt="" aria-hidden="true" draggable="false">
+        <img class="dr-layer dr-layer-eye-r" src="${eyeRightUrl}" alt="" aria-hidden="true" draggable="false">
+        <img class="dr-layer dr-layer-medallion" src="${medallionUrl}" alt="" aria-hidden="true" draggable="false">
+        <img class="dr-layer dr-layer-fang-l" src="${fangLeftUrl}" alt="" aria-hidden="true" draggable="false">
+        <img class="dr-layer dr-layer-fang-r" src="${fangRightUrl}" alt="" aria-hidden="true" draggable="false">
 
       </div>
     `
@@ -211,7 +221,7 @@ export class DraculaSkin implements Skin {
   }
 
   private rotateMedallion(vol: number): void {
-    const m = this.container?.querySelector<HTMLElement>('.dr-medallion-orbit')
+    const m = this.container?.querySelector<HTMLElement>('.dr-layer-medallion')
     if (!m) return
     m.style.transform = `rotate(${vol * 2.7}deg)`
   }
