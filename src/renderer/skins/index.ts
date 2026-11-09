@@ -6,10 +6,10 @@
 import type { Skin } from './Skin'
 import { DraculaSkin }      from './DraculaSkin'
 import { FrankensteinSkin } from './FrankensteinSkin'
-import { SwampThingSkin }   from './SwampThingSkin'
+import { SkeletonSkin }     from './SkeletonSkin'
 
 export const SKINS: readonly Skin[] = [
   new DraculaSkin(),       // flagship — polish this hardest
   new FrankensteinSkin(),
-  new SwampThingSkin(),
+  new SkeletonSkin(),
 ]

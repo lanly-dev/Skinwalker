@@ -1,22 +1,21 @@
 /**
- * SwampThingSkin — skin #3.
+ * SkeletonSkin — skin #3.
  *
  * Anatomy → controls mapping:
- *   Eyes (glowing yellow) ────── play/pause toggle
- *   Vine tendrils spread ─────── live visualizer (tendrils pulse with bass)
- *   Root arm (left/right) ────── prev / next track
- *   Mud waterline ────────────── seek bar (waterline rises with progress)
- *   Moss patch on chest ──────── volume control
+ *   Skull jaw (gap) ────────── live visualizer bars (AnalyserNode)
+ *   Eye sockets (glow) ─────── play/pause toggle
+ *   Ribcage bars ───────────── seek bar (ribs fill left-to-right with progress)
+ *   Spine vertebrae ────────── volume control
+ *   Arm bones (left/right) ─── prev / next track
  *
- * All controls wired. Inline SVG art (vine tendrils, eyes, leaves)
- * rides the same class hooks as the wiring and CSS.
+ * Functional stub — all controls wired. Replace HTML with full SVG art later.
  */
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
-export class SwampThingSkin implements Skin {
-  readonly id = 'swampthing'
-  readonly label = 'Swamp Thing'
+export class SkeletonSkin implements Skin {
+  readonly id = 'skeleton'
+  readonly label = 'Skeleton'
 
   private container: HTMLElement | null = null
   private rafId = 0
@@ -29,7 +28,7 @@ export class SwampThingSkin implements Skin {
     document.documentElement.dataset.skin = this.id
 
     this.container = document.createElement('div')
-    this.container.className = 'skin swampthing-skin'
+    this.container.className = 'skin skeleton-skin'
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
@@ -54,63 +53,47 @@ export class SwampThingSkin implements Skin {
 
   private template(): string {
     return /* html */ `
-      <div class="st-body" aria-label="Swamp Thing media player">
+      <div class="sk-body" aria-label="Skeleton media player">
 
         <!-- Track info -->
-        <div class="st-track-info">
-          <span class="st-title">—</span>
-          <span class="st-artist">—</span>
+        <div class="sk-track-info">
+          <span class="sk-title">—</span>
+          <span class="sk-artist">—</span>
         </div>
 
-        <!-- Vines = visualizer -->
-        <div class="st-vines" aria-hidden="true">
-          <canvas class="st-viz" width="256" height="72"></canvas>
-          <svg class="st-tendrils" viewBox="0 0 300 72" preserveAspectRatio="none">
-            <path class="st-tendril" d="M6 70 C 30 44, 12 30, 34 12 C 44 4, 54 10, 50 18 C 47 24, 40 22, 41 16"/>
-            <path class="st-tendril" d="M294 70 C 270 44, 288 30, 266 12 C 256 4, 246 10, 250 18 C 253 24, 260 22, 259 16"/>
-          </svg>
-        </div>
-
-        <!-- Eyes = play/pause -->
-        <button class="st-eyes" aria-label="Play / Pause" title="Play / Pause">
-          <span class="st-eye left" aria-hidden="true">
-            <svg viewBox="0 0 36 36">
-              <path class="st-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
-              <circle class="st-iris" cx="18" cy="17" r="6.5"/>
-              <circle class="st-pupil" cx="18" cy="17" r="2.8"/>
-            </svg>
-          </span>
-          <span class="st-eye right" aria-hidden="true">
-            <svg viewBox="0 0 36 36">
-              <path class="st-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
-              <circle class="st-iris" cx="18" cy="17" r="6.5"/>
-              <circle class="st-pupil" cx="18" cy="17" r="2.8"/>
-            </svg>
-          </span>
+        <!-- Eye sockets = play/pause -->
+        <button class="sk-eyes" aria-label="Play / Pause" title="Play / Pause">
+          <span class="sk-eye left"  aria-hidden="true"></span>
+          <span class="sk-eye right" aria-hidden="true"></span>
         </button>
 
-        <!-- Root arms = prev / next -->
-        <div class="st-controls">
-          <button class="st-prev" aria-label="Previous track"><svg class="st-leaf" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4 C10 4 4 10 4 20 C14 20 20 14 20 4 Z M4 20 C7 14 11 10 17 7"/></svg>◀</button>
-          <button class="st-next" aria-label="Next track">▶<svg class="st-leaf" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4 C10 4 4 10 4 20 C14 20 20 14 20 4 Z M4 20 C7 14 11 10 17 7"/></svg></button>
+        <!-- Skull jaw = visualizer -->
+        <div class="sk-jaw" aria-hidden="true">
+          <canvas class="sk-viz" width="256" height="64"></canvas>
         </div>
 
-        <!-- Mud waterline = seek -->
-        <div class="st-seek-region" role="group" aria-label="Seek">
-          <input class="st-seek" type="range" min="0" max="1000" value="0"
+        <!-- Arm bones = prev / next -->
+        <div class="sk-controls">
+          <button class="sk-prev" aria-label="Previous track">🦴◀</button>
+          <button class="sk-next" aria-label="Next track">▶🦴</button>
+        </div>
+
+        <!-- Ribcage = seek bar -->
+        <div class="sk-seek-region" role="group" aria-label="Seek">
+          <input class="sk-seek" type="range" min="0" max="1000" value="0"
                  aria-label="Seek" step="1" />
-          <span class="st-time">0:00 / 0:00</span>
+          <span class="sk-time">0:00 / 0:00</span>
         </div>
 
-        <!-- Moss = volume -->
-        <div class="st-volume-region" role="group" aria-label="Volume">
-          <span class="st-moss" aria-hidden="true">🍃</span>
-          <input class="st-volume" type="range" min="0" max="100" value="80"
+        <!-- Spine = volume -->
+        <div class="sk-volume-region" role="group" aria-label="Volume">
+          <span class="sk-spine" aria-hidden="true">◈</span>
+          <input class="sk-volume" type="range" min="0" max="100" value="80"
                  aria-label="Volume" step="1" />
         </div>
 
         <!-- Playlist -->
-        <ol class="st-playlist" aria-label="Playlist"></ol>
+        <ol class="sk-playlist" aria-label="Playlist"></ol>
 
       </div>
     `
@@ -122,26 +105,24 @@ export class SwampThingSkin implements Skin {
     const c = this.container!
     const p = this.player!
 
-    c.querySelector('.st-eyes')!.addEventListener('click', () => {
+    c.querySelector('.sk-eyes')!.addEventListener('click', () => {
       p.togglePlayPause()
       this.updatePlayState()
     })
 
-    const seekEl = c.querySelector<HTMLInputElement>('.st-seek')!
+    const seekEl = c.querySelector<HTMLInputElement>('.sk-seek')!
     seekEl.addEventListener('input', () => p.seek(Number(seekEl.value) / 1000))
 
-    const volEl = c.querySelector<HTMLInputElement>('.st-volume')!
+    const volEl = c.querySelector<HTMLInputElement>('.sk-volume')!
     volEl.addEventListener('input', () => p.setVolume(Number(volEl.value) / 100))
-    // Init from the player's current volume so a skin swap keeps it
-    volEl.value = String(Math.round(p.currentVolume * 100))
     p.setVolume(Number(volEl.value) / 100)
 
-    c.querySelector('.st-prev')!.addEventListener('click', () => p.prev())
-    c.querySelector('.st-next')!.addEventListener('click', () => p.next())
+    c.querySelector('.sk-prev')!.addEventListener('click', () => p.prev())
+    c.querySelector('.sk-next')!.addEventListener('click', () => p.next())
 
     p.onTrackChange = (track, idx) => {
-      const titleEl = c.querySelector<HTMLElement>('.st-title')
-      const artistEl = c.querySelector<HTMLElement>('.st-artist')
+      const titleEl = c.querySelector<HTMLElement>('.sk-title')
+      const artistEl = c.querySelector<HTMLElement>('.sk-artist')
       if (titleEl) titleEl.textContent = track.title
       if (artistEl) artistEl.textContent = track.artist
       this.highlightPlaylistItem(idx)
@@ -152,7 +133,7 @@ export class SwampThingSkin implements Skin {
 
   private buildPlaylist(): void {
     const p = this.player!
-    const ol = this.container!.querySelector<HTMLOListElement>('.st-playlist')!
+    const ol = this.container!.querySelector<HTMLOListElement>('.sk-playlist')!
     ol.innerHTML = ''
     p.playlist.forEach((track, i) => {
       const li = document.createElement('li')
@@ -170,7 +151,7 @@ export class SwampThingSkin implements Skin {
   }
 
   private highlightPlaylistItem(idx: number): void {
-    const ol = this.container?.querySelector('.st-playlist')
+    const ol = this.container?.querySelector('.sk-playlist')
     if (!ol) return
     ol.querySelectorAll('li').forEach((li, i) => {
       li.classList.toggle('active', i === idx)
@@ -179,7 +160,7 @@ export class SwampThingSkin implements Skin {
   }
 
   private updatePlayState(): void {
-    const eyes = this.container?.querySelector('.st-eyes')
+    const eyes = this.container?.querySelector('.sk-eyes')
     if (!eyes) return
     eyes.classList.toggle('playing', this.player?.audio.isPlaying ?? false)
   }
@@ -195,7 +176,7 @@ export class SwampThingSkin implements Skin {
 
   private drawVisualizer(): void {
     if (!this.freqData || !this.player) return
-    const canvas = this.container?.querySelector<HTMLCanvasElement>('.st-viz')
+    const canvas = this.container?.querySelector<HTMLCanvasElement>('.sk-viz')
     if (!canvas) return
     const ctx = canvas.getContext('2d')!
     this.player.audio.getFrequencyData(this.freqData)
@@ -204,16 +185,16 @@ export class SwampThingSkin implements Skin {
     const barW = canvas.width / this.freqData.length
     for (let i = 0; i < this.freqData.length; i++) {
       const h = (this.freqData[i] / 255) * canvas.height
-      // Murky swamp green → brown
-      ctx.fillStyle = `hsl(${80 - i * 0.4}, 60%, ${25 + h / 6}%)`
+      // Bone white → pale blue-grey, like moonlit calcium
+      ctx.fillStyle = `hsl(${200 + i * 0.3}, ${15 + h / 8}%, ${55 + h / 7}%)`
       ctx.fillRect(i * barW, canvas.height - h, barW - 1, h)
     }
   }
 
   private updateSeek(): void {
     if (!this.player || !this.container) return
-    const seek   = this.container.querySelector<HTMLInputElement>('.st-seek')
-    const timeEl = this.container.querySelector<HTMLElement>('.st-time')
+    const seek   = this.container.querySelector<HTMLInputElement>('.sk-seek')
+    const timeEl = this.container.querySelector<HTMLElement>('.sk-time')
     const dur = this.player.audio.duration
     const cur = this.player.audio.currentTime
     if (seek && dur > 0) seek.value = String(Math.round((cur / dur) * 1000))
