@@ -1,18 +1,25 @@
 /**
- * FrankensteinSkin — skin #2.
+ * FrankensteinSkin — skin #2, IMAGE-FRAME pass.
+ *
+ * The approved character artwork IS the frame: the transparent plate
+ * (assets/frankenstein-frame.webp) fills the frameless window and the
+ * painted elements are the controls. Separated layers (extracted from
+ * the plate by color segmentation, full-canvas so they stack
+ * pixel-exact): the glowing eyes and the brass dial the hand holds.
  *
  * Anatomy → controls mapping:
- *   Bolts on neck (left/right) ── prev / next track
- *   Flat-top head ──────────────── live visualizer (voltage arcs across skull)
- *   Eyes (wide, stitched) ──────── play/pause toggle
- *   Stitched chest scar ────────── seek bar (scar length = progress)
- *   Hand (green, outstretched) ─── volume control
- *
- * All controls wired. Inline SVG art (stitched scar line, eyes, neck
- * bolts) rides the same class hooks as the wiring and CSS.
+ *   Forehead EQ blocks ─────── live visualizer (AnalyserNode)
+ *   Eyes (glow layers) ─────── play/pause toggle (layers pulse while playing)
+ *   Neck bolts (L/R) ───────── prev / next track
+ *   Chest scar line ────────── seek bar (transparent track over the scar)
+ *   Brass dial in hand ─────── volume (drag / wheel / arrows; layer rotates)
  */
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
+import framePlate from '../assets/frankenstein-frame.webp'
+import eyeLeftLayer from '../assets/frankenstein-eye-left.png'
+import eyeRightLayer from '../assets/frankenstein-eye-right.png'
+import dialLayer from '../assets/frankenstein-dial.png'
 
 export class FrankensteinSkin implements Skin {
   readonly id = 'frankenstein'
@@ -30,6 +37,10 @@ export class FrankensteinSkin implements Skin {
 
     this.container = document.createElement('div')
     this.container.className = 'skin frankenstein-skin'
+    this.container.style.setProperty('--fr-frame-url', `url(${framePlate})`)
+    this.container.style.setProperty('--fr-eye-left-url', `url(${eyeLeftLayer})`)
+    this.container.style.setProperty('--fr-eye-right-url', `url(${eyeRightLayer})`)
+    this.container.style.setProperty('--fr-dial-url', `url(${dialLayer})`)
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
@@ -54,64 +65,43 @@ export class FrankensteinSkin implements Skin {
 
   private template(): string {
     return /* html */ `
-      <div class="fr-body" aria-label="Frankenstein media player">
+      <div class="fr-body" role="img" aria-label="Frankenstein media player">
+        <img class="fr-layer fr-eye-layer left" alt="" draggable="false" />
+        <img class="fr-layer fr-eye-layer right" alt="" draggable="false" />
+        <img class="fr-layer fr-dial-layer" alt="" draggable="false" />
 
-        <!-- Track info -->
+        <!-- Eyes = play/pause -->
+        <button class="fr-eyes" aria-label="Play / Pause" title="Play / Pause"></button>
+        <div class="fr-eye-glow" aria-hidden="true"></div>
+
+        <!-- Track info over the upper chest -->
         <div class="fr-track-info">
           <span class="fr-title">—</span>
           <span class="fr-artist">—</span>
         </div>
 
-        <!-- Skull top = visualizer (voltage arcs) -->
-        <div class="fr-skull" aria-hidden="true">
-          <canvas class="fr-viz" width="256" height="72"></canvas>
-          <svg class="fr-stitches" viewBox="0 0 300 12" preserveAspectRatio="none">
-            <path class="fr-stitch-line" d="M4 6 H296"/>
-            <path class="fr-stitch-ticks" d="M24 1 V11 M60 1 V11 M96 1 V11 M132 1 V11 M168 1 V11 M204 1 V11 M240 1 V11 M276 1 V11"/>
-          </svg>
+        <!-- Forehead = visualizer -->
+        <div class="fr-viz-panel" aria-hidden="true">
+          <canvas class="fr-viz" width="352" height="176"></canvas>
         </div>
 
-        <!-- Eyes = play/pause -->
-        <button class="fr-eyes" aria-label="Play / Pause" title="Play / Pause">
-          <span class="fr-eye left" aria-hidden="true">
-            <svg viewBox="0 0 36 36">
-              <path class="fr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
-              <circle class="fr-iris" cx="18" cy="17" r="6.5"/>
-              <circle class="fr-pupil" cx="18" cy="17" r="2.8"/>
-            </svg>
-          </span>
-          <span class="fr-eye right" aria-hidden="true">
-            <svg viewBox="0 0 36 36">
-              <path class="fr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
-              <circle class="fr-iris" cx="18" cy="17" r="6.5"/>
-              <circle class="fr-pupil" cx="18" cy="17" r="2.8"/>
-            </svg>
-          </span>
-        </button>
+        <!-- Bolts = prev / next -->
+        <button class="fr-prev" aria-label="Previous track" title="Previous track"></button>
+        <button class="fr-next" aria-label="Next track" title="Next track"></button>
 
-        <!-- Neck bolts = prev / next -->
-        <div class="fr-controls">
-          <button class="fr-prev" aria-label="Previous track"><svg class="fr-bolt" viewBox="0 0 20 24" aria-hidden="true"><polygon points="13,0 3,14 10.5,14 8.5,24 19,9 11.5,9"/></svg>◀</button>
-          <button class="fr-next" aria-label="Next track">▶<svg class="fr-bolt" viewBox="0 0 20 24" aria-hidden="true"><polygon points="13,0 3,14 10.5,14 8.5,24 19,9 11.5,9"/></svg></button>
-        </div>
-
-        <!-- Chest scar = seek bar -->
+        <!-- Chest scar = seek -->
         <div class="fr-seek-region" role="group" aria-label="Seek">
           <input class="fr-seek" type="range" min="0" max="1000" value="0"
                  aria-label="Seek" step="1" />
           <span class="fr-time">0:00 / 0:00</span>
         </div>
 
-        <!-- Hand = volume -->
-        <div class="fr-volume-region" role="group" aria-label="Volume">
-          <span class="fr-hand" aria-hidden="true">🖐</span>
-          <input class="fr-volume" type="range" min="0" max="100" value="80"
-                 aria-label="Volume" step="1" />
-        </div>
+        <!-- Brass dial = volume (drag rotates the dial layer) -->
+        <div class="fr-dial" role="slider" tabindex="0"
+             aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80"></div>
 
         <!-- Playlist -->
         <ol class="fr-playlist" aria-label="Playlist"></ol>
-
       </div>
     `
   }
@@ -122,30 +112,51 @@ export class FrankensteinSkin implements Skin {
     const c = this.container!
     const p = this.player!
 
-    // Eyes → play/pause
     c.querySelector('.fr-eyes')!.addEventListener('click', () => {
       p.togglePlayPause()
       this.updatePlayState()
     })
 
-    // Seek (chest scar)
     const seekEl = c.querySelector<HTMLInputElement>('.fr-seek')!
-    seekEl.addEventListener('input', () => {
-      p.seek(Number(seekEl.value) / 1000)
+    seekEl.addEventListener('input', () => p.seek(Number(seekEl.value) / 1000))
+
+    // Volume: the brass dial. Drag horizontally, wheel, or arrow keys.
+    const dialEl = c.querySelector<HTMLElement>('.fr-dial')!
+    const dialLayerEl = c.querySelector<HTMLElement>('.fr-dial-layer')!
+    let vol = p.currentVolume
+    const applyVolume = (v: number): void => {
+      vol = Math.min(1, Math.max(0, v))
+      p.setVolume(vol)
+      dialLayerEl.style.transform = `rotate(${-135 + vol * 270}deg)`
+      dialEl.setAttribute('aria-valuenow', String(Math.round(vol * 100)))
+    }
+    applyVolume(vol)
+
+    let dragging = false
+    let startX = 0
+    let startVol = 0
+    dialEl.addEventListener('pointerdown', (e) => {
+      dragging = true
+      startX = e.clientX
+      startVol = vol
+      dialEl.setPointerCapture(e.pointerId)
+    })
+    dialEl.addEventListener('pointermove', (e) => {
+      if (dragging) applyVolume(startVol + (e.clientX - startX) / 140)
+    })
+    dialEl.addEventListener('pointerup', () => { dragging = false })
+    dialEl.addEventListener('wheel', (e) => {
+      e.preventDefault()
+      applyVolume(vol + (e.deltaY < 0 ? 0.05 : -0.05))
+    }, { passive: false })
+    dialEl.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { applyVolume(vol + 0.05); e.preventDefault() }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { applyVolume(vol - 0.05); e.preventDefault() }
     })
 
-    // Volume (hand)
-    const volEl = c.querySelector<HTMLInputElement>('.fr-volume')!
-    volEl.addEventListener('input', () => p.setVolume(Number(volEl.value) / 100))
-    // Init from the player's current volume so a skin swap keeps it
-    volEl.value = String(Math.round(p.currentVolume * 100))
-    p.setVolume(Number(volEl.value) / 100)
-
-    // Bolts → prev / next
     c.querySelector('.fr-prev')!.addEventListener('click', () => p.prev())
     c.querySelector('.fr-next')!.addEventListener('click', () => p.next())
 
-    // Track change
     p.onTrackChange = (track, idx) => {
       const titleEl = c.querySelector<HTMLElement>('.fr-title')
       const artistEl = c.querySelector<HTMLElement>('.fr-artist')
@@ -208,18 +219,19 @@ export class FrankensteinSkin implements Skin {
     this.player.audio.getFrequencyData(this.freqData)
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    const barW = canvas.width / this.freqData.length
-    for (let i = 0; i < this.freqData.length; i++) {
-      const h = (this.freqData[i] / 255) * canvas.height
-      // Electric green → yellow voltage arcs
-      ctx.fillStyle = `hsl(${100 + i * 0.5}, 90%, ${45 + h / 5}%)`
-      ctx.fillRect(i * barW, canvas.height - h, barW - 1, h)
+    const bars = 24
+    const barW = canvas.width / bars
+    for (let i = 0; i < bars; i++) {
+      const v = this.freqData[Math.floor((i / bars) * this.freqData.length)] / 255
+      const h = Math.max(4, v * canvas.height)
+      ctx.fillStyle = `hsl(130, 90%, ${38 + v * 30}%)`
+      ctx.fillRect(i * barW + 1.5, canvas.height - h, barW - 3, h)
     }
   }
 
   private updateSeek(): void {
     if (!this.player || !this.container) return
-    const seek   = this.container.querySelector<HTMLInputElement>('.fr-seek')
+    const seek = this.container.querySelector<HTMLInputElement>('.fr-seek')
     const timeEl = this.container.querySelector<HTMLElement>('.fr-time')
     const dur = this.player.audio.duration
     const cur = this.player.audio.currentTime
