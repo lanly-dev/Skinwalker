@@ -627,7 +627,8 @@ input[type="range"]::-moz-range-thumb {
   background-image: var(--dr-frame-url);
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  clip-path: polygon(50% 0.8%, 57.5% 4.5%, 61% 12.5%, 75.5% 17.5%, 71% 27%, 88% 38%, 97.5% 55%, 97.8% 71%, 98% 73.5%, 88.5% 82.5%, 85% 88%, 76% 85.5%, 72.5% 90%, 63% 87%, 50% 96.5%, 37% 87%, 27.5% 90%, 24% 85.5%, 15% 88%, 11.5% 82.5%, 2% 73.5%, 2.2% 71%, 2.5% 55%, 12% 38%, 29% 27%, 24.5% 17.5%, 39% 12.5%, 42.5% 4.5%);
+  /* No clip-path: the plate itself now carries a real alpha channel
+     (backdrop flood-filled out), so the character edge is exact. */
   filter: none;
 }
 .dracula-skin .dr-body > *:not(.dr-silhouette):not(.dr-head) { position: absolute; }
