@@ -4,7 +4,7 @@ Kiroween 2026 entry — **Costume Contest**. Read this file first in every sessi
 
 ## Status
 - Name **Skinwalker** — CONFIRMED 2026-11-08. (Proposed 2026-11-06; collision check run 2026-11-06 — CLEAR: no repo by that name in the `lanly-dev` namespace (66 repos checked) and no media player by that name found. Watch-outs noted and accepted: the word is used elsewhere, including horror games / Skinwalker Ranch, and it is a Navajo figure with a taboo around casual use. Trademark registers and domain availability were not checked.)
-- Repo `lanly-dev/skinwalker` — **not yet created**. Do not create it, register anything, or request credits until given the go in this project's side chat.
+- Repo `lanly-dev/Skinwalker` — **created 2026-11-08** (private for now; Kiroween submission requires public — flip before submitting). Electron app built in Kiro; first commit + Electron migration landed 2026-11-08.
 - Deadline for the whole hackathon: **Fri Dec 4, 2026, 2:00 PM PT**. Credit request (shared 4,000-credit pool, one code per entrant) due **Dec 1, 12:00 PM PT**.
 
 ## What this is
@@ -67,6 +67,7 @@ Costume Contest: a haunting UI that is polished/unforgettable AND where the spoo
 - **Name: Skinwalker — CONFIRMED 2026-11-08** (collision check CLEAR 2026-11-06, watch-outs accepted; see Status).
 - **Stack: Electron 33 + electron-vite + TypeScript, vanilla DOM — DECIDED 2026-11-08.**
 - **Flagship skin: Werewolf — DECIDED 2026-11-08.** Anatomy map: eyes → play/pause, mouth → visualizer, claws → seek, chest → volume, ears → prev/next.
+- **Style revamp — 2026-11-08:** moonlit/ember werewolf theme in `src/renderer/style.css` (presentation-only; no selector, class, or wiring changes — anatomy controls untouched).
 
 ## Open decisions
 1. Which 2 additional monsters ship as skins? (Dracula and Swamp Thing are placeholders in `src/renderer/skins/index.ts` — not confirmed.)
