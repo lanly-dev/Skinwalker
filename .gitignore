@@ -1,41 +1,4 @@
-# Dependencies
-node_modules/
-
-# Build outputs
-dist/
-out/
-
-# electron-builder artifacts
-release/
-
-# Electron cache
-.electron/
-.electron-builder-cache/
-
-# Vite / esbuild caches
-.vite/
-*.local
-
-# OS noise
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Editor
-.vscode/settings.json
-*.suo
-*.user
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Env / secrets (never commit these)
-.env
-.env.*
-!.env.example
-
-# Kiro internal — keep .kiro/specs, .kiro/steering, .kiro/hooks tracked
-# (Kiroween rules require /.kiro committed)
-.kiro/settings/
+.vite
+node_modules
+out
+package-lock.json
