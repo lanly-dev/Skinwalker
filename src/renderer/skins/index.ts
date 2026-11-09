@@ -1,14 +1,15 @@
 /**
- * Skin registry — add new skins here.
- * The switcher UI reads this array to populate the monster selector.
+ * Skin registry — the switcher UI reads this array in order.
+ * First entry is the default skin shown on launch.
+ * Add new skins here.
  */
 import type { Skin } from './Skin'
-import { WerewolfSkin } from './WerewolfSkin'
-// import { DraculaSkin }  from './DraculaSkin'   // TODO
-// import { SwampThingSkin } from './SwampThingSkin' // TODO
+import { DraculaSkin }      from './DraculaSkin'
+import { FrankensteinSkin } from './FrankensteinSkin'
+import { SwampThingSkin }   from './SwampThingSkin'
 
 export const SKINS: readonly Skin[] = [
-  new WerewolfSkin(),
-  // new DraculaSkin(),
-  // new SwampThingSkin(),
+  new DraculaSkin(),       // flagship — polish this hardest
+  new FrankensteinSkin(),
+  new SwampThingSkin(),
 ]

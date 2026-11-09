@@ -39,7 +39,7 @@ Costume Contest: a haunting UI that is polished/unforgettable AND where the spoo
 - Core player: play / pause / seek / volume, playlist, next / prev.
 - **At least 3 monster skins**, swappable mid-playback without stopping the track.
 - Per skin, functional anatomy: e.g. mouth or eyes as the live visualizer (Web Audio AnalyserNode), claw / tongue / vine as the seek bar, skin-themed play/pause and volume organs.
-- One skin is the design flagship (Werewolf) — polish it hardest; the other two can be simpler but must be fully functional skins, not color swaps.
+- One skin is the design flagship (Dracula) — polish it hardest; the other two can be simpler but must be fully functional skins, not color swaps.
 - Frameless, transparent window — the monster body IS the window chrome. No OS titlebar.
 
 ## Non-goals (scope caps — do not cross without explicit approval)
@@ -66,12 +66,12 @@ Costume Contest: a haunting UI that is polished/unforgettable AND where the spoo
 ## Decisions
 - **Name: Skinwalker — CONFIRMED 2026-11-08** (collision check CLEAR 2026-11-06, watch-outs accepted; see Status).
 - **Stack: Electron 33 + electron-vite + TypeScript, vanilla DOM — DECIDED 2026-11-08.**
-- **Flagship skin: Werewolf — DECIDED 2026-11-08.** Anatomy map: eyes → play/pause, mouth → visualizer, claws → seek, chest → volume, ears → prev/next.
+- **Flagship skin: Dracula — DECIDED 2026-11-08.** Anatomy map: eyes → play/pause, cape → visualizer, blood drip → seek, medallion → volume, fangs → prev/next.
+- **All 3 skins confirmed — DECIDED 2026-11-08:** Dracula (flagship), Frankenstein, Swamp Thing. Werewolf removed.
 - **Style revamp — 2026-11-08:** moonlit/ember werewolf theme in `src/renderer/style.css` (presentation-only; no selector, class, or wiring changes — anatomy controls untouched).
 
 ## Open decisions
-1. Which 2 additional monsters ship as skins? (Dracula and Swamp Thing are placeholders in `src/renderer/skins/index.ts` — not confirmed.)
-2. Demo tracks: source and filenames for the 3 bundled royalty-free tracks (drop into `public/tracks/`).
+1. Demo tracks: source and filenames for the 3 bundled royalty-free tracks (drop into `public/tracks/`).
 
 ## How we work
 Plan → Work → Assess → Compound. When a session earns a lesson (a bug's real cause, a workflow that works), write it into this file the moment it is earned. When a decision above is made, update the Open decisions section in the same session — undecided items stay visibly undecided, never silently assumed.

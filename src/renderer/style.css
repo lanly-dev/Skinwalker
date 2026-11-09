@@ -1,46 +1,28 @@
-/* ── Skinwalker — moonlit werewolf theme ───────────────────────────────────
-   Style revamp: deep-night glass + fur browns, ember-orange glow, moon-gold
-   highlights, bone-white teeth. Presentation only — every selector, class
-   and control mapping from the original sheet is preserved:
-   eyes = play/pause, mouth = visualizer, claws = seek, chest = volume,
-   ears = prev/next.                                                              */
-
 /* ── Base reset ──────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Night + bone (shared chrome) */
-  --color-bg:       #08070d;
-  --color-surface:  #14101c;
-  --color-text:     #ece3d1;
-  --color-dim:      #8b8194;
-  --color-moon:     #e9c46a;
-  --glass:          rgba(16, 12, 24, 0.72);
-  --hairline:       rgba(236, 227, 209, 0.14);
+  /* Shared night chrome */
+  --color-bg:      #08070d;
+  --color-surface: #14101c;
+  --color-text:    #ece3d1;
+  --color-dim:     #8b8194;
+  --glass:         rgba(16, 12, 24, 0.72);
+  --hairline:      rgba(236, 227, 209, 0.14);
+  --color-accent:  #e9c46a;   /* overridden per skin */
 
-  /* Werewolf fur + ember */
-  --fur-900:        #17100b;
-  --fur-800:        #211710;
-  --fur-700:        #2e2013;
-  --fur-edge:       #4a2f18;
-  --ember:          #ff6a1a;
-  --ember-deep:     #d44f00;
-  --ember-soft:     rgba(255, 106, 26, 0.16);
-  --bone:           #e8ddc8;
-
-  --color-accent:   var(--color-moon);
-  --radius:         14px;
-  --font-ui:        'Segoe UI', system-ui, -apple-system, sans-serif;
-  --font-display:   'Palatino Linotype', Palatino, Georgia, serif;
-  --font-mono:      'Cascadia Mono', 'Courier New', Courier, monospace;
-  --titlebar-h:     36px;
+  --radius:        14px;
+  --font-ui:       'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-display:  'Palatino Linotype', Palatino, Georgia, serif;
+  --font-mono:     'Cascadia Mono', 'Courier New', Courier, monospace;
+  --titlebar-h:    36px;
 }
 
-::selection { background: var(--ember-deep); color: #fff; }
+::selection { background: #6b0f0f; color: #fff; }
 
 html, body {
   height: 100%;
-  background: transparent;   /* transparent = frameless window breathes */
+  background: transparent;
   color: var(--color-text);
   font-family: var(--font-ui);
   font-size: 14px;
@@ -55,25 +37,22 @@ html, body {
   justify-content: center;
 }
 
-/* Consistent keyboard focus across every control */
 :focus-visible {
-  outline: 2px solid var(--color-moon);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
-/* ── Titlebar (frameless drag region) ───────────────────────────────────── */
+/* ── Titlebar ────────────────────────────────────────────────────────────── */
 #titlebar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: var(--titlebar-h);
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
   padding: 0 8px;
-  -webkit-app-region: drag;   /* Electron drag region */
+  -webkit-app-region: drag;
   z-index: 200;
 }
 
@@ -90,19 +69,12 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
-#titlebar button:hover {
-  background: rgba(255, 255, 255, 0.09);
-  color: var(--color-text);
-}
-#titlebar button.close:hover {
-  background: #b3231b;
-  color: #fff;
-  box-shadow: 0 0 12px rgba(179, 35, 27, 0.55);
-}
+#titlebar button:hover      { background: rgba(255,255,255,0.09); color: var(--color-text); }
+#titlebar button.close:hover { background: #b3231b; color: #fff; }
 
-/* ── Skin switcher nav ───────────────────────────────────────────────────── */
+/* ── Skin switcher ───────────────────────────────────────────────────────── */
 #skin-switcher {
   position: fixed;
   bottom: 12px;
@@ -115,7 +87,6 @@ html, body {
   border: 1px solid var(--hairline);
   border-radius: 999px;
   backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
   z-index: 100;
 }
 
@@ -130,14 +101,13 @@ html, body {
   font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition: color 0.2s, background 0.2s;
 }
 #skin-switcher button:hover { color: var(--color-text); }
 #skin-switcher button.active {
-  background: var(--ember-soft);
-  border-color: rgba(255, 106, 26, 0.45);
-  color: var(--ember);
-  box-shadow: 0 0 14px rgba(255, 106, 26, 0.25);
+  background: rgba(139, 0, 0, 0.22);
+  border-color: rgba(180, 20, 20, 0.5);
+  color: #e05050;
 }
 
 /* ── Open files button ───────────────────────────────────────────────────── */
@@ -153,294 +123,387 @@ html, body {
   backdrop-filter: blur(10px);
   font-family: inherit;
   font-size: 11px;
-  letter-spacing: 0.04em;
   cursor: pointer;
   z-index: 100;
-  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s, color 0.15s;
 }
-#open-files:hover {
-  border-color: rgba(255, 106, 26, 0.55);
-  color: var(--ember);
-  box-shadow: 0 0 14px rgba(255, 106, 26, 0.22);
+#open-files:hover { border-color: rgba(180,20,20,0.5); color: #e05050; }
+
+/* ── Shared range inputs ─────────────────────────────────────────────────── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.08);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid rgba(255,255,255,0.25);
+  box-shadow: 0 0 8px var(--color-accent);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type="range"]::-moz-range-thumb {
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid rgba(255,255,255,0.25);
+  box-shadow: 0 0 8px var(--color-accent);
+  cursor: pointer;
 }
 
-/* ── Werewolf skin ───────────────────────────────────────────────────────── */
-[data-skin="werewolf"] {
-  --color-accent: var(--ember);
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-dim); border-radius: 2px; }
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition-duration: 0.01ms !important; }
 }
 
-.werewolf-skin .ww-body {
-  position: relative;
+/* ════════════════════════════════════════════════════════════════════════════
+   DRACULA SKIN — flagship
+   ════════════════════════════════════════════════════════════════════════════ */
+[data-skin="dracula"] {
+  --color-accent: #c0392b;
+}
+
+.dracula-skin .dr-body {
   width: min(440px, 96vw);
-  /* Layered fur: moon-glow from above, dark pelt falling to black-brown */
   background:
-    radial-gradient(120% 55% at 50% -8%, rgba(233, 196, 106, 0.14), transparent 60%),
-    radial-gradient(90% 40% at 50% 112%, rgba(212, 79, 0, 0.13), transparent 65%),
-    linear-gradient(168deg, var(--fur-700) 0%, var(--fur-800) 42%, var(--fur-900) 100%);
-  border: 1px solid var(--fur-edge);
-  border-radius: 24px;
+    radial-gradient(110% 50% at 50% 0%, rgba(120,0,0,0.18), transparent 60%),
+    linear-gradient(170deg, #1a0a14 0%, #0f0810 50%, #0a060e 100%);
+  border: 1px solid #3d0a0a;
+  border-radius: 20px;
   padding: 22px 20px 18px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.65),
-    0 0 44px rgba(212, 79, 0, 0.22),
-    inset 0 1px 0 rgba(236, 227, 209, 0.12),
-    inset 0 -18px 34px rgba(0, 0, 0, 0.45);
+    0 24px 60px rgba(0,0,0,0.7),
+    0 0 44px rgba(150,0,0,0.2),
+    inset 0 1px 0 rgba(236,227,209,0.08);
   margin: 0 auto;
-  overflow: hidden;
 }
 
-/* Fur grain — fine diagonal streaks laid over the pelt, never interactive */
-.werewolf-skin .ww-body::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    97deg,
-    rgba(255, 235, 200, 0.025) 0 2px,
-    transparent 2px 7px
-  );
-  pointer-events: none;
-}
-
-/* Track info */
-.ww-track-info {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid transparent;
-  border-image: linear-gradient(90deg, transparent, rgba(255, 106, 26, 0.45), transparent) 1;
-}
-.ww-title {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: bold;
-  letter-spacing: 0.02em;
-  color: var(--color-text);
-  text-shadow: 0 0 18px rgba(255, 106, 26, 0.35);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.ww-artist {
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-moon);
-  opacity: 0.85;
-}
+.dr-track-info  { display: flex; flex-direction: column; gap: 3px; padding-bottom: 12px; border-bottom: 1px solid rgba(180,20,20,0.25); }
+.dr-title       { font-family: var(--font-display); font-size: 20px; font-weight: bold; color: var(--color-text); text-shadow: 0 0 18px rgba(192,57,43,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dr-artist      { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #9c6060; }
 
 /* Eyes = play/pause */
-.ww-eyes {
+.dr-eyes {
   display: flex;
   justify-content: center;
   gap: 44px;
-  background: radial-gradient(60% 120% at 50% 50%, rgba(212, 79, 0, 0.10), transparent 70%);
+  background: none;
   border: none;
   cursor: pointer;
   padding: 10px 8px;
   border-radius: var(--radius);
-  transition: background 0.2s, transform 0.1s;
+  transition: background 0.2s;
 }
-.ww-eyes:hover { background: radial-gradient(60% 120% at 50% 50%, rgba(212, 79, 0, 0.18), transparent 70%); }
-.ww-eyes:active { transform: scale(0.98); }
+.dr-eyes:hover { background: rgba(180,0,0,0.07); }
 
-.ww-eye {
-  width: 34px;
-  height: 34px;
+.dr-eye {
+  width: 32px; height: 32px;
   border-radius: 50%;
-  /* Iris + pupil, unlit until playing */
-  background: radial-gradient(circle at 50% 46%, #0d0703 0 26%, #4a2408 30%, #2a1a08 62%, #1a0f05 100%);
-  border: 2px solid #6b3d16;
-  display: block;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.5);
-  transition: background 0.25s, box-shadow 0.25s, border-color 0.25s;
+  background: radial-gradient(circle at 50% 44%, #1a0505, #3a0808 60%, #1a0404);
+  border: 2px solid #5a1010;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+  transition: background 0.25s, box-shadow 0.25s;
 }
-.ww-eyes.playing .ww-eye {
-  background: radial-gradient(circle at 50% 46%, #1a0a00 0 24%, #ff8c2e 34%, var(--ember-deep) 62%, #7a2b00 100%);
-  border-color: #ffb066;
-  box-shadow:
-    0 0 18px rgba(255, 106, 26, 0.75),
-    0 0 42px rgba(212, 79, 0, 0.4),
-    inset 0 0 8px rgba(255, 190, 110, 0.8);
-  animation: ww-eye-pulse 1.7s ease-in-out infinite alternate;
+.dr-eyes.playing .dr-eye {
+  background: radial-gradient(circle at 50% 44%, #300, #c0392b 55%, #6b0000);
+  border-color: #ff6b6b;
+  box-shadow: 0 0 18px rgba(192,57,43,0.8), 0 0 40px rgba(150,0,0,0.45), inset 0 0 8px rgba(255,120,120,0.6);
+  animation: dr-eye-pulse 1.8s ease-in-out infinite alternate;
 }
-@keyframes ww-eye-pulse {
-  from { box-shadow: 0 0 12px rgba(255, 106, 26, 0.55), 0 0 30px rgba(212, 79, 0, 0.3), inset 0 0 8px rgba(255, 190, 110, 0.7); }
-  to   { box-shadow: 0 0 22px rgba(255, 106, 26, 0.9),  0 0 52px rgba(212, 79, 0, 0.5), inset 0 0 10px rgba(255, 200, 130, 0.95); }
+@keyframes dr-eye-pulse {
+  from { box-shadow: 0 0 12px rgba(192,57,43,0.6), 0 0 28px rgba(150,0,0,0.3); }
+  to   { box-shadow: 0 0 24px rgba(192,57,43,1.0), 0 0 52px rgba(150,0,0,0.55); }
 }
 
-/* Mouth = visualizer (bone teeth frame the jaws) */
-.ww-mouth {
-  position: relative;
-  border: 1px solid #572c10;
-  border-radius: 12px;
+/* Cape = visualizer */
+.dr-cape {
+  border: 1px solid #3d0a0a;
+  border-radius: 10px;
   overflow: hidden;
-  background: radial-gradient(120% 160% at 50% 0%, #1c0505 0%, #0a0303 62%, #050202 100%);
-  box-shadow:
-    inset 0 10px 22px rgba(0, 0, 0, 0.85),
-    inset 0 -10px 22px rgba(0, 0, 0, 0.85),
-    0 0 20px rgba(212, 79, 0, 0.14);
+  background: #080206;
+  box-shadow: inset 0 8px 20px rgba(0,0,0,0.85);
 }
-/* Top fangs */
-.ww-mouth::before,
-.ww-mouth::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 10px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='10' viewBox='0 0 16 10'%3E%3Cpath d='M0 0h16L8 10z' fill='%23e8ddc8'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-size: 16px 10px;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.92;
-}
-.ww-mouth::before { top: 0; }
-/* Bottom fangs point up */
-.ww-mouth::after { bottom: 0; transform: scaleY(-1); }
-.ww-viz { display: block; width: 100%; height: 72px; }
+.dr-viz { display: block; width: 100%; height: 80px; }
 
-/* Seek (claws) */
-.ww-seek-region { display: flex; flex-direction: column; gap: 5px; }
-.ww-time {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.05em;
-  color: var(--color-dim);
-  text-align: right;
+/* Blood drip = seek */
+.dr-seek-region { display: flex; flex-direction: column; gap: 5px; }
+.dr-time        { font-family: var(--font-mono); font-size: 11px; color: var(--color-dim); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Medallion = volume */
+.dr-volume-region { display: flex; align-items: center; gap: 10px; }
+.dr-medallion {
+  font-size: 16px;
+  color: #c0a050;
+  display: inline-block;
+  transition: transform 0.3s;
+  text-shadow: 0 0 10px rgba(192,160,80,0.5);
 }
 
-/* Volume (chest) */
-.ww-volume-region { display: flex; align-items: center; gap: 10px; }
-.ww-volume-region::before {
-  content: '♥';
-  color: var(--ember);
-  font-size: 15px;
-  text-shadow: 0 0 10px rgba(255, 106, 26, 0.65);
-  animation: ww-heartbeat 2.2s ease-in-out infinite;
-}
-@keyframes ww-heartbeat {
-  0%, 42%, 100% { transform: scale(1); }
-  10%           { transform: scale(1.22); }
-  20%           { transform: scale(1.05); }
-  30%           { transform: scale(1.18); }
-}
-
-/* Range inputs — shared rail */
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, rgba(212, 79, 0, 0.55), #2a1a08 72%);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.75);
-  outline: none;
-  cursor: pointer;
-}
-/* Volume rail runs cooler — moonlit, not ember */
-.ww-volume {
-  height: 4px;
-  background: linear-gradient(90deg, rgba(233, 196, 106, 0.5), #241c10 75%);
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid #ffb066;
-  background: radial-gradient(circle at 36% 32%, #ffd9a8, var(--ember) 58%, var(--ember-deep));
-  box-shadow: 0 0 10px rgba(255, 106, 26, 0.65), 0 2px 6px rgba(0, 0, 0, 0.6);
-  cursor: pointer;
-  transition: box-shadow 0.15s, transform 0.15s;
-}
-input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); box-shadow: 0 0 16px rgba(255, 106, 26, 0.9), 0 2px 6px rgba(0, 0, 0, 0.6); }
-input[type="range"]::-moz-range-thumb {
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  border: 2px solid #ffb066;
-  background: radial-gradient(circle at 36% 32%, #ffd9a8, var(--ember) 58%, var(--ember-deep));
-  box-shadow: 0 0 10px rgba(255, 106, 26, 0.65), 0 2px 6px rgba(0, 0, 0, 0.6);
-  cursor: pointer;
-}
-.ww-volume::-webkit-slider-thumb {
-  border-color: #f4dd9a;
-  background: radial-gradient(circle at 36% 32%, #fff3cf, var(--color-moon) 58%, #a97e22);
-  box-shadow: 0 0 10px rgba(233, 196, 106, 0.55), 0 2px 6px rgba(0, 0, 0, 0.6);
-}
-.ww-volume::-moz-range-thumb {
-  border-color: #f4dd9a;
-  background: radial-gradient(circle at 36% 32%, #fff3cf, var(--color-moon) 58%, #a97e22);
-  box-shadow: 0 0 10px rgba(233, 196, 106, 0.55), 0 2px 6px rgba(0, 0, 0, 0.6);
-}
-
-/* Prev / Next (ears) */
-.ww-controls { display: flex; justify-content: space-between; }
-.ww-controls button {
-  background: linear-gradient(180deg, rgba(255, 235, 200, 0.07), rgba(0, 0, 0, 0.25));
-  border: 1px solid var(--fur-edge);
+/* Fangs = prev/next */
+.dr-controls { display: flex; justify-content: space-between; }
+.dr-controls button {
+  background: rgba(80,0,0,0.25);
+  border: 1px solid #4a1010;
   color: var(--color-text);
-  padding: 7px 20px;
+  padding: 7px 18px;
   border-radius: 999px;
   cursor: pointer;
   font-family: inherit;
-  letter-spacing: 0.08em;
-  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s, transform 0.15s;
+  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
 }
-.ww-controls button:hover {
-  border-color: var(--ember);
-  color: var(--ember);
-  box-shadow: 0 0 14px rgba(255, 106, 26, 0.3);
-  transform: translateY(-1px);
-}
-.ww-controls button:active { transform: translateY(0) scale(0.97); }
+.dr-controls button:hover { border-color: #c0392b; color: #ff8080; box-shadow: 0 0 12px rgba(192,57,43,0.3); }
 
 /* Playlist */
-.ww-playlist {
+.dr-playlist {
   list-style: none;
-  max-height: 128px;
+  max-height: 120px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 8px;
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid rgba(236, 227, 209, 0.07);
+  gap: 2px;
+  padding: 6px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(180,20,20,0.12);
   border-radius: var(--radius);
-  box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.4);
 }
-.ww-playlist li {
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  color: var(--color-dim);
-  white-space: nowrap;
+.dr-playlist li { padding: 5px 9px; border-radius: 7px; cursor: pointer; color: var(--color-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.1s, color 0.1s; }
+.dr-playlist li:hover  { background: rgba(255,255,255,0.05); color: var(--color-text); }
+.dr-playlist li.active { color: #e05050; background: rgba(120,0,0,0.2); box-shadow: inset 3px 0 0 #c0392b; }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   FRANKENSTEIN SKIN
+   ════════════════════════════════════════════════════════════════════════════ */
+[data-skin="frankenstein"] {
+  --color-accent: #5ecf5e;
+}
+
+.frankenstein-skin .fr-body {
+  width: min(440px, 96vw);
+  background: linear-gradient(170deg, #0c150c 0%, #080f08 55%, #060a06 100%);
+  border: 1px solid #1e3a1e;
+  border-radius: 4px;   /* flat-top, angular — Frankenstein's slab aesthetic */
+  padding: 22px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.7),
+    0 0 40px rgba(60,200,60,0.08),
+    inset 0 1px 0 rgba(200,255,200,0.06);
+  margin: 0 auto;
+}
+
+.fr-track-info { display: flex; flex-direction: column; gap: 3px; padding-bottom: 12px; border-bottom: 1px solid rgba(60,180,60,0.2); }
+.fr-title      { font-family: var(--font-display); font-size: 20px; font-weight: bold; color: var(--color-text); text-shadow: 0 0 14px rgba(80,220,80,0.35); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fr-artist     { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #5a8a5a; }
+
+/* Skull/flat-top = visualizer */
+.fr-skull {
+  border: 2px solid #2a4a2a;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  transition: background 0.12s, color 0.12s, box-shadow 0.12s;
+  background: #030803;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 0 14px rgba(60,220,60,0.1);
 }
-.ww-playlist li:hover { background: rgba(255, 255, 255, 0.06); color: var(--color-text); }
-.ww-playlist li.active {
-  color: var(--ember);
-  background: var(--ember-soft);
-  box-shadow: inset 3px 0 0 var(--ember);
+.fr-viz { display: block; width: 100%; height: 72px; }
+
+/* Eyes = play/pause */
+.fr-eyes {
+  display: flex;
+  justify-content: center;
+  gap: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.fr-eyes:hover { background: rgba(60,180,60,0.06); }
+
+.fr-eye {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 44%, #040d04, #1a301a 60%, #0a180a);
+  border: 2px solid #2a4a2a;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.85);
+  transition: background 0.25s, box-shadow 0.25s;
+}
+.fr-eyes.playing .fr-eye {
+  background: radial-gradient(circle at 50% 44%, #0a200a, #5ecf5e 55%, #1a5a1a);
+  border-color: #9eff9e;
+  box-shadow: 0 0 16px rgba(80,220,80,0.8), 0 0 38px rgba(60,180,60,0.4), inset 0 0 8px rgba(160,255,160,0.5);
+  animation: fr-eye-pulse 2s ease-in-out infinite alternate;
+}
+@keyframes fr-eye-pulse {
+  from { box-shadow: 0 0 10px rgba(80,220,80,0.6), 0 0 26px rgba(60,180,60,0.3); }
+  to   { box-shadow: 0 0 22px rgba(80,220,80,1.0), 0 0 48px rgba(60,180,60,0.5); }
 }
 
-/* Scrollbar */
-::-webkit-scrollbar       { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #55432a; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--ember-deep); }
-
-/* Calm the glow for reduced-motion users */
-@media (prefers-reduced-motion: reduce) {
-  .ww-eyes.playing .ww-eye,
-  .ww-volume-region::before { animation: none; }
-  * { transition-duration: 0.01ms !important; }
+/* Bolts = prev/next */
+.fr-controls { display: flex; justify-content: space-between; }
+.fr-controls button {
+  background: rgba(0,40,0,0.3);
+  border: 1px solid #2a4a2a;
+  color: var(--color-text);
+  padding: 7px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
 }
+.fr-controls button:hover { border-color: #5ecf5e; color: #9eff9e; box-shadow: 0 0 12px rgba(80,220,80,0.25); }
+
+/* Chest scar = seek */
+.fr-seek-region { display: flex; flex-direction: column; gap: 5px; }
+.fr-time        { font-family: var(--font-mono); font-size: 11px; color: var(--color-dim); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Hand = volume */
+.fr-volume-region { display: flex; align-items: center; gap: 10px; }
+.fr-hand          { font-size: 16px; filter: hue-rotate(100deg) saturate(0.7); }
+
+/* Playlist */
+.fr-playlist {
+  list-style: none;
+  max-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(60,180,60,0.1);
+  border-radius: 4px;
+}
+.fr-playlist li { padding: 5px 9px; border-radius: 3px; cursor: pointer; color: var(--color-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.1s, color 0.1s; }
+.fr-playlist li:hover  { background: rgba(255,255,255,0.04); color: var(--color-text); }
+.fr-playlist li.active { color: #5ecf5e; background: rgba(60,180,60,0.12); box-shadow: inset 3px 0 0 #5ecf5e; }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SWAMP THING SKIN
+   ════════════════════════════════════════════════════════════════════════════ */
+[data-skin="swampthing"] {
+  --color-accent: #7ab648;
+}
+
+.swampthing-skin .st-body {
+  width: min(440px, 96vw);
+  background:
+    radial-gradient(100% 55% at 50% 100%, rgba(20,50,10,0.5), transparent 70%),
+    linear-gradient(170deg, #0b1208 0%, #070e05 55%, #050a04 100%);
+  border: 1px solid #1e3a10;
+  border-radius: 18px 6px 18px 6px;   /* asymmetric organic shape */
+  padding: 22px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.7),
+    0 0 44px rgba(40,120,20,0.1),
+    inset 0 1px 0 rgba(180,255,140,0.05);
+  margin: 0 auto;
+}
+
+.st-track-info { display: flex; flex-direction: column; gap: 3px; padding-bottom: 12px; border-bottom: 1px solid rgba(80,160,30,0.2); }
+.st-title      { font-family: var(--font-display); font-size: 20px; font-weight: bold; color: var(--color-text); text-shadow: 0 0 14px rgba(100,180,40,0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-artist     { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #5a7a40; }
+
+/* Vines = visualizer */
+.st-vines {
+  border: 1px solid #1e3a10;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #040703;
+  box-shadow: inset 0 8px 20px rgba(0,0,0,0.85);
+}
+.st-viz { display: block; width: 100%; height: 72px; }
+
+/* Eyes = play/pause */
+.st-eyes {
+  display: flex;
+  justify-content: center;
+  gap: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 8px;
+  border-radius: var(--radius);
+  transition: background 0.2s;
+}
+.st-eyes:hover { background: rgba(60,140,20,0.06); }
+
+.st-eye {
+  width: 30px; height: 30px;
+  border-radius: 40% 60% 50% 50%;   /* slightly irregular — organic */
+  background: radial-gradient(circle at 50% 44%, #050d02, #1a2e0a 60%, #0a1505);
+  border: 2px solid #2a4a10;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.85);
+  transition: background 0.25s, box-shadow 0.25s;
+}
+.st-eyes.playing .st-eye {
+  background: radial-gradient(circle at 50% 44%, #0a1c04, #7ab648 55%, #2a5010);
+  border-color: #c0ff80;
+  box-shadow: 0 0 16px rgba(120,180,60,0.75), 0 0 36px rgba(80,140,30,0.4), inset 0 0 8px rgba(180,255,100,0.4);
+  animation: st-eye-pulse 2.4s ease-in-out infinite alternate;
+}
+@keyframes st-eye-pulse {
+  from { box-shadow: 0 0 10px rgba(120,180,60,0.55), 0 0 24px rgba(80,140,30,0.3); }
+  to   { box-shadow: 0 0 20px rgba(120,180,60,0.9),  0 0 46px rgba(80,140,30,0.5); }
+}
+
+/* Root arms = prev/next */
+.st-controls { display: flex; justify-content: space-between; }
+.st-controls button {
+  background: rgba(10,30,5,0.3);
+  border: 1px solid #2a4a10;
+  color: var(--color-text);
+  padding: 7px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.st-controls button:hover { border-color: #7ab648; color: #c0ff80; box-shadow: 0 0 12px rgba(100,180,40,0.25); }
+
+/* Mud waterline = seek */
+.st-seek-region { display: flex; flex-direction: column; gap: 5px; }
+.st-time        { font-family: var(--font-mono); font-size: 11px; color: var(--color-dim); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Moss = volume */
+.st-volume-region { display: flex; align-items: center; gap: 10px; }
+.st-moss          { font-size: 16px; }
+
+/* Playlist */
+.st-playlist {
+  list-style: none;
+  max-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(80,140,30,0.1);
+  border-radius: var(--radius);
+}
+.st-playlist li { padding: 5px 9px; border-radius: 7px; cursor: pointer; color: var(--color-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.1s, color 0.1s; }
+.st-playlist li:hover  { background: rgba(255,255,255,0.04); color: var(--color-text); }
+.st-playlist li.active { color: #7ab648; background: rgba(80,140,30,0.15); box-shadow: inset 3px 0 0 #7ab648; }

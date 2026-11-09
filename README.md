@@ -12,9 +12,9 @@ Swap monster skins mid-playback and every body part does real work: the mouth is
 
 | Monster | Status | Anatomy |
 |---------|--------|---------|
-| 🐺 Werewolf | flagship | eyes → play/pause · mouth → visualizer · claws → seek · chest → volume · ears → prev/next |
-| 🧛 Dracula | planned | — |
-| 🌿 Swamp Thing | planned | — |
+| 🧛 Dracula | flagship | eyes → play/pause · cape → visualizer · blood drip → seek · medallion → volume · fangs → prev/next |
+| ⚡ Frankenstein | planned | skull flat-top → visualizer · eyes → play/pause · neck bolts → prev/next · chest scar → seek · hand → volume |
+| 🌿 Swamp Thing | planned | vines → visualizer · eyes → play/pause · root arms → prev/next · mud waterline → seek · moss → volume |
 
 ---
 
