@@ -16,6 +16,9 @@ export class Player {
   private tracks: Track[] = []
   private currentIndex = 0
   private activeSkin: Skin | null = null
+  /** Last volume set (0–1). Skins initialise their slider from this so a
+   *  mid-playback skin swap never resets the volume. */
+  private volumeLevel = 0.8
 
   onTrackChange: ((track: Track, index: number) => void) | null = null
 
@@ -79,13 +82,25 @@ export class Player {
   }
 
   setVolume(fraction: number): void {
+    this.volumeLevel = fraction
     this.audio.volume = fraction
+  }
+
+  get currentVolume(): number {
+    return this.volumeLevel
   }
 
   mountSkin(skin: Skin): void {
     this.activeSkin?.unmount()
     this.activeSkin = skin
     skin.mount(this)
+    // Re-notify the fresh skin of the current track so its title, artist
+    // and playlist highlight survive a mid-playback swap (the callback is
+    // assigned by the skin during mount).
+    const track = this.currentTrack
+    if (track && this.onTrackChange) {
+      this.onTrackChange(track, this.currentIndex)
+    }
   }
 
   /** Append tracks from the native file picker and notify the active skin */

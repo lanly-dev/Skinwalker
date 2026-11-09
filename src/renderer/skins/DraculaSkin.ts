@@ -8,8 +8,9 @@
  *   Blood drip on collar ────── seek bar (drip position = playback position)
  *   Medallion on chest ──────── volume control (rotates with value)
  *
- * This is a functional stub — all controls are wired to the player.
- * Replace inner HTML with full SVG art in a later task.
+ * All controls are wired to the player. Inline SVG art (hairline, eyes,
+ * cape wings, fangs, medallion) is layered onto the same class hooks the
+ * wiring and CSS already use — the SVG is the anatomy, not a picture of it.
  */
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
@@ -62,15 +63,35 @@ export class DraculaSkin implements Skin {
           <span class="dr-artist">—</span>
         </div>
 
+        <!-- Widow's-peak hairline (SVG brow over the eyes) -->
+        <svg class="dr-hairline" viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M4 40 V16 Q74 2 124 12 Q142 16 150 27 Q158 16 176 12 Q226 2 296 16 V40 Q150 28 4 40 Z"/>
+        </svg>
+
         <!-- Eyes = play/pause -->
         <button class="dr-eyes" aria-label="Play / Pause" title="Play / Pause">
-          <span class="dr-eye left"  aria-hidden="true"></span>
-          <span class="dr-eye right" aria-hidden="true"></span>
+          <span class="dr-eye left" aria-hidden="true">
+            <svg viewBox="0 0 36 36">
+              <path class="dr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
+              <circle class="dr-iris" cx="18" cy="17" r="6.5"/>
+              <circle class="dr-pupil" cx="18" cy="17" r="2.8"/>
+            </svg>
+          </span>
+          <span class="dr-eye right" aria-hidden="true">
+            <svg viewBox="0 0 36 36">
+              <path class="dr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
+              <circle class="dr-iris" cx="18" cy="17" r="6.5"/>
+              <circle class="dr-pupil" cx="18" cy="17" r="2.8"/>
+            </svg>
+          </span>
         </button>
 
         <!-- Cape = visualizer -->
         <div class="dr-cape" aria-hidden="true">
           <canvas class="dr-viz" width="256" height="80"></canvas>
+          <svg class="dr-cape-wings" viewBox="0 0 300 18" preserveAspectRatio="none">
+            <path d="M0 0 H300 V3 Q263 17 226 6 Q188 17 150 6 Q112 17 74 6 Q37 17 0 3 Z"/>
+          </svg>
         </div>
 
         <!-- Blood drip = seek bar -->
@@ -82,15 +103,21 @@ export class DraculaSkin implements Skin {
 
         <!-- Medallion = volume -->
         <div class="dr-volume-region" role="group" aria-label="Volume">
-          <span class="dr-medallion" aria-hidden="true">✦</span>
+          <span class="dr-medallion" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle class="dr-medallion-ring" cx="12" cy="12" r="10"/>
+              <circle class="dr-medallion-gem" cx="12" cy="12" r="5.5"/>
+              <path class="dr-medallion-spark" d="M12 8.5 L13.2 11 L15.8 12 L13.2 13 L12 15.5 L10.8 13 L8.2 12 L10.8 11 Z"/>
+            </svg>
+          </span>
           <input class="dr-volume" type="range" min="0" max="100" value="80"
                  aria-label="Volume" step="1" />
         </div>
 
         <!-- Fangs = prev / next -->
         <div class="dr-controls">
-          <button class="dr-prev" aria-label="Previous track">🦷◀</button>
-          <button class="dr-next" aria-label="Next track">▶🦷</button>
+          <button class="dr-prev" aria-label="Previous track"><svg class="dr-fang" viewBox="0 0 16 18" aria-hidden="true"><path d="M2 0 H14 L9.5 16.5 Q8 18.4 6.5 16.5 Z"/></svg>◀</button>
+          <button class="dr-next" aria-label="Next track">▶<svg class="dr-fang" viewBox="0 0 16 18" aria-hidden="true"><path d="M2 0 H14 L9.5 16.5 Q8 18.4 6.5 16.5 Z"/></svg></button>
         </div>
 
         <!-- Playlist -->
@@ -124,7 +151,10 @@ export class DraculaSkin implements Skin {
       p.setVolume(Number(volEl.value) / 100)
       this.rotateMedallion(Number(volEl.value))
     })
+    // Init from the player's current volume so a skin swap keeps it
+    volEl.value = String(Math.round(p.currentVolume * 100))
     p.setVolume(Number(volEl.value) / 100)
+    this.rotateMedallion(Number(volEl.value))
 
     // Fangs → prev / next
     c.querySelector('.dr-prev')!.addEventListener('click', () => p.prev())

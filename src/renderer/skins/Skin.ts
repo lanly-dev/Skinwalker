@@ -9,7 +9,7 @@
 import type { Player } from '../player/Player'
 
 export interface Skin {
-  readonly id: string        // e.g. 'werewolf'
+  readonly id: string        // e.g. 'dracula'
   readonly label: string     // e.g. 'Werewolf'
   mount(player: Player): void
   unmount(): void

@@ -8,7 +8,8 @@
  *   Stitched chest scar ────────── seek bar (scar length = progress)
  *   Hand (green, outstretched) ─── volume control
  *
- * Functional stub — all controls wired. Replace HTML with full SVG art later.
+ * All controls wired. Inline SVG art (stitched scar line, eyes, neck
+ * bolts) rides the same class hooks as the wiring and CSS.
  */
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
@@ -64,18 +65,34 @@ export class FrankensteinSkin implements Skin {
         <!-- Skull top = visualizer (voltage arcs) -->
         <div class="fr-skull" aria-hidden="true">
           <canvas class="fr-viz" width="256" height="72"></canvas>
+          <svg class="fr-stitches" viewBox="0 0 300 12" preserveAspectRatio="none">
+            <path class="fr-stitch-line" d="M4 6 H296"/>
+            <path class="fr-stitch-ticks" d="M24 1 V11 M60 1 V11 M96 1 V11 M132 1 V11 M168 1 V11 M204 1 V11 M240 1 V11 M276 1 V11"/>
+          </svg>
         </div>
 
         <!-- Eyes = play/pause -->
         <button class="fr-eyes" aria-label="Play / Pause" title="Play / Pause">
-          <span class="fr-eye left"  aria-hidden="true"></span>
-          <span class="fr-eye right" aria-hidden="true"></span>
+          <span class="fr-eye left" aria-hidden="true">
+            <svg viewBox="0 0 36 36">
+              <path class="fr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
+              <circle class="fr-iris" cx="18" cy="17" r="6.5"/>
+              <circle class="fr-pupil" cx="18" cy="17" r="2.8"/>
+            </svg>
+          </span>
+          <span class="fr-eye right" aria-hidden="true">
+            <svg viewBox="0 0 36 36">
+              <path class="fr-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
+              <circle class="fr-iris" cx="18" cy="17" r="6.5"/>
+              <circle class="fr-pupil" cx="18" cy="17" r="2.8"/>
+            </svg>
+          </span>
         </button>
 
         <!-- Neck bolts = prev / next -->
         <div class="fr-controls">
-          <button class="fr-prev" aria-label="Previous track">⚡◀</button>
-          <button class="fr-next" aria-label="Next track">▶⚡</button>
+          <button class="fr-prev" aria-label="Previous track"><svg class="fr-bolt" viewBox="0 0 20 24" aria-hidden="true"><polygon points="13,0 3,14 10.5,14 8.5,24 19,9 11.5,9"/></svg>◀</button>
+          <button class="fr-next" aria-label="Next track">▶<svg class="fr-bolt" viewBox="0 0 20 24" aria-hidden="true"><polygon points="13,0 3,14 10.5,14 8.5,24 19,9 11.5,9"/></svg></button>
         </div>
 
         <!-- Chest scar = seek bar -->
@@ -120,6 +137,8 @@ export class FrankensteinSkin implements Skin {
     // Volume (hand)
     const volEl = c.querySelector<HTMLInputElement>('.fr-volume')!
     volEl.addEventListener('input', () => p.setVolume(Number(volEl.value) / 100))
+    // Init from the player's current volume so a skin swap keeps it
+    volEl.value = String(Math.round(p.currentVolume * 100))
     p.setVolume(Number(volEl.value) / 100)
 
     // Bolts → prev / next

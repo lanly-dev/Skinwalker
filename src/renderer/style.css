@@ -507,3 +507,65 @@ input[type="range"]::-moz-range-thumb {
 .st-playlist li { padding: 5px 9px; border-radius: 7px; cursor: pointer; color: var(--color-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.1s, color 0.1s; }
 .st-playlist li:hover  { background: rgba(255,255,255,0.04); color: var(--color-text); }
 .st-playlist li.active { color: #7ab648; background: rgba(80,140,30,0.15); box-shadow: inset 3px 0 0 #7ab648; }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   INLINE SVG ART — added 2026-11-09
+   The SVG rides the existing class hooks: eyes stay the play/pause button,
+   the medallion still rotates with volume, fangs/bolts/leaves sit inside
+   the prev/next buttons. Fills are CSS-driven so the playing state lights
+   the irises exactly like the old CSS radial eyes did.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Eyes: center the SVG inside the socket span */
+.dr-eye, .fr-eye, .st-eye {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dr-eye svg, .fr-eye svg, .st-eye svg { width: 27px; height: 27px; display: block; }
+.dr-sclera, .fr-sclera, .st-sclera { fill: #cfc4ae; opacity: 0.28; }
+.dr-pupil, .fr-pupil, .st-pupil { fill: #0a0202; }
+.dr-iris { fill: #570d0d; transition: fill 0.25s; }
+.fr-iris { fill: #123d12; transition: fill 0.25s; }
+.st-iris { fill: #3d5410; transition: fill 0.25s; }
+.dr-eyes.playing .dr-iris { fill: #ff2418; filter: drop-shadow(0 0 4px rgba(255, 60, 40, 0.95)); }
+.fr-eyes.playing .fr-iris { fill: #6dff6d; filter: drop-shadow(0 0 4px rgba(110, 255, 110, 0.95)); }
+.st-eyes.playing .st-iris { fill: #d8f542; filter: drop-shadow(0 0 4px rgba(200, 240, 80, 0.95)); }
+
+/* Dracula: widow's-peak hairline */
+.dr-hairline { display: block; width: 100%; height: 34px; margin-bottom: -10px; }
+.dr-hairline path { fill: #08030a; stroke: rgba(192, 57, 43, 0.4); stroke-width: 1.2; }
+
+/* Dracula: cape scalloped wings under the visualizer */
+.dr-cape { position: relative; }
+.dr-cape-wings { display: block; width: 100%; height: 14px; }
+.dr-cape-wings path { fill: #3d0510; stroke: rgba(192, 57, 43, 0.35); stroke-width: 0.8; }
+
+/* Dracula: medallion (the span still rotates via rotateMedallion) */
+.dr-medallion svg { width: 23px; height: 23px; display: block; }
+.dr-medallion-ring { fill: rgba(30, 20, 5, 0.6); stroke: #c0a050; stroke-width: 1.6; }
+.dr-medallion-gem { fill: #8f0f14; stroke: #e8b4b4; stroke-width: 0.6; }
+.dr-medallion-spark { fill: #ffd9d9; opacity: 0.9; }
+
+/* Dracula: fangs inside prev/next */
+.dr-fang { width: 11px; height: 13px; vertical-align: -2px; margin: 0 5px; }
+.dr-fang path { fill: #e8ddc8; stroke: #8a7a5c; stroke-width: 0.6; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)); }
+
+/* Frankenstein: forehead stitches over the skull visualizer */
+.fr-skull { position: relative; }
+.fr-stitches { position: absolute; top: 5px; left: 10px; width: calc(100% - 20px); height: 10px; pointer-events: none; }
+.fr-stitch-line { stroke: #9eff9e; stroke-width: 1.3; opacity: 0.45; }
+.fr-stitch-ticks { stroke: #9eff9e; stroke-width: 1.6; opacity: 0.85; }
+
+/* Frankenstein: neck bolts inside prev/next */
+.fr-bolt { width: 12px; height: 15px; vertical-align: -2px; margin: 0 5px; }
+.fr-bolt polygon { fill: #aef2ae; stroke: #2a4a2a; stroke-width: 0.8; filter: drop-shadow(0 0 4px rgba(94, 207, 94, 0.8)); }
+
+/* Swamp Thing: vine tendrils curling over the visualizer corners */
+.st-vines { position: relative; }
+.st-tendrils { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.st-tendril { fill: none; stroke: #7ab648; stroke-width: 2.4; stroke-linecap: round; opacity: 0.55; filter: drop-shadow(0 0 3px rgba(122, 182, 72, 0.6)); }
+
+/* Swamp Thing: leaves inside prev/next */
+.st-leaf { width: 13px; height: 13px; vertical-align: -2px; margin: 0 5px; }
+.st-leaf path { fill: #558f2c; stroke: #dfffc9; stroke-width: 0.7; }

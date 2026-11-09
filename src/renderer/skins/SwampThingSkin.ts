@@ -8,7 +8,8 @@
  *   Mud waterline ────────────── seek bar (waterline rises with progress)
  *   Moss patch on chest ──────── volume control
  *
- * Functional stub — all controls wired. Replace HTML with full SVG art later.
+ * All controls wired. Inline SVG art (vine tendrils, eyes, leaves)
+ * rides the same class hooks as the wiring and CSS.
  */
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
@@ -64,18 +65,34 @@ export class SwampThingSkin implements Skin {
         <!-- Vines = visualizer -->
         <div class="st-vines" aria-hidden="true">
           <canvas class="st-viz" width="256" height="72"></canvas>
+          <svg class="st-tendrils" viewBox="0 0 300 72" preserveAspectRatio="none">
+            <path class="st-tendril" d="M6 70 C 30 44, 12 30, 34 12 C 44 4, 54 10, 50 18 C 47 24, 40 22, 41 16"/>
+            <path class="st-tendril" d="M294 70 C 270 44, 288 30, 266 12 C 256 4, 246 10, 250 18 C 253 24, 260 22, 259 16"/>
+          </svg>
         </div>
 
         <!-- Eyes = play/pause -->
         <button class="st-eyes" aria-label="Play / Pause" title="Play / Pause">
-          <span class="st-eye left"  aria-hidden="true"></span>
-          <span class="st-eye right" aria-hidden="true"></span>
+          <span class="st-eye left" aria-hidden="true">
+            <svg viewBox="0 0 36 36">
+              <path class="st-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
+              <circle class="st-iris" cx="18" cy="17" r="6.5"/>
+              <circle class="st-pupil" cx="18" cy="17" r="2.8"/>
+            </svg>
+          </span>
+          <span class="st-eye right" aria-hidden="true">
+            <svg viewBox="0 0 36 36">
+              <path class="st-sclera" d="M3 18 Q18 5 33 18 Q18 29 3 18 Z"/>
+              <circle class="st-iris" cx="18" cy="17" r="6.5"/>
+              <circle class="st-pupil" cx="18" cy="17" r="2.8"/>
+            </svg>
+          </span>
         </button>
 
         <!-- Root arms = prev / next -->
         <div class="st-controls">
-          <button class="st-prev" aria-label="Previous track">🌿◀</button>
-          <button class="st-next" aria-label="Next track">▶🌿</button>
+          <button class="st-prev" aria-label="Previous track"><svg class="st-leaf" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4 C10 4 4 10 4 20 C14 20 20 14 20 4 Z M4 20 C7 14 11 10 17 7"/></svg>◀</button>
+          <button class="st-next" aria-label="Next track">▶<svg class="st-leaf" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4 C10 4 4 10 4 20 C14 20 20 14 20 4 Z M4 20 C7 14 11 10 17 7"/></svg></button>
         </div>
 
         <!-- Mud waterline = seek -->
@@ -115,6 +132,8 @@ export class SwampThingSkin implements Skin {
 
     const volEl = c.querySelector<HTMLInputElement>('.st-volume')!
     volEl.addEventListener('input', () => p.setVolume(Number(volEl.value) / 100))
+    // Init from the player's current volume so a skin swap keeps it
+    volEl.value = String(Math.round(p.currentVolume * 100))
     p.setVolume(Number(volEl.value) / 100)
 
     c.querySelector('.st-prev')!.addEventListener('click', () => p.prev())

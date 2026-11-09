@@ -68,7 +68,8 @@ Costume Contest: a haunting UI that is polished/unforgettable AND where the spoo
 - **Stack: Electron 33 + electron-vite + TypeScript, vanilla DOM — DECIDED 2026-11-08.**
 - **Flagship skin: Dracula — DECIDED 2026-11-08.** Anatomy map: eyes → play/pause, cape → visualizer, blood drip → seek, medallion → volume, fangs → prev/next.
 - **All 3 skins confirmed — DECIDED 2026-11-08:** Dracula (flagship), Frankenstein, Swamp Thing. Werewolf removed.
-- **Style revamp — 2026-11-08:** moonlit/ember werewolf theme in `src/renderer/style.css` (presentation-only; no selector, class, or wiring changes — anatomy controls untouched).
+- **Style revamp — 2026-11-08:** per-skin themes in `src/renderer/style.css` (presentation-only; no selector, class, or wiring changes — anatomy controls untouched). Started as a moonlit/ember werewolf theme; reworked the same day for the Dracula/Frankenstein/Swamp Thing lineup.
+- **Inline SVG art + swap-state fix — 2026-11-09:** SVG anatomy on the existing class hooks in all 3 skins (Dracula: hairline, eyes, cape wings, fangs, medallion; Frankenstein: forehead stitches, eyes, bolts; Swamp Thing: tendrils, eyes, leaves). Also fixed two skin-swap bugs found in review: `Player.mountSkin` now re-fires `onTrackChange` after mount (title/highlight survive swaps), and volume is player-owned (`currentVolume`) so swaps no longer reset it to 80%.
 
 ## Open decisions
 1. Demo tracks: source and filenames for the 3 bundled royalty-free tracks (drop into `public/tracks/`).

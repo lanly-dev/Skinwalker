@@ -13,8 +13,8 @@ Swap monster skins mid-playback and every body part does real work: the mouth is
 | Monster | Status | Anatomy |
 |---------|--------|---------|
 | 🧛 Dracula | flagship | eyes → play/pause · cape → visualizer · blood drip → seek · medallion → volume · fangs → prev/next |
-| ⚡ Frankenstein | planned | skull flat-top → visualizer · eyes → play/pause · neck bolts → prev/next · chest scar → seek · hand → volume |
-| 🌿 Swamp Thing | planned | vines → visualizer · eyes → play/pause · root arms → prev/next · mud waterline → seek · moss → volume |
+| ⚡ Frankenstein | functional | skull flat-top → visualizer · eyes → play/pause · neck bolts → prev/next · chest scar → seek · hand → volume |
+| 🌿 Swamp Thing | functional | vines → visualizer · eyes → play/pause · root arms → prev/next · mud waterline → seek · moss → volume |
 
 ---
 
@@ -63,7 +63,7 @@ src/
 public/
 └── tracks/         # Bundled royalty-free demo tracks (add .mp3 files here)
 resources/          # App icon and native assets
-.kiro/              # Kiro specs, steering, hooks (committed — Kiroween rules)
+.kiro/              # Kiro specs, steering, hooks (planned — required for submission)
 ```
 
 ---
