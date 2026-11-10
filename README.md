@@ -68,9 +68,23 @@ resources/          # App icon and native assets
 
 ---
 
-## Adding demo tracks
+## Demo tracks
 
-Drop royalty-free `.mp3` files into `public/tracks/` and update the `DEMO_TRACKS` array in `src/renderer/main.ts`. Only use tracks you own or that are explicitly royalty-free — copyrighted audio in the demo video is a submission rules violation.
+Six demo tracks are included in `public/tracks/`:
+
+**Synthetic (procedurally generated):**
+- **Nocturne In Blood** (54s, WAV) — dark ambient drone from boba.page synthesis
+- **Coffin Dream** (58s, WAV) — eerie atmospheric soundscape
+- **Widow's Kiss** (51s, WAV) — haunting ambient composition
+
+**Royalty-free music (Incompetech, CC BY 4.0):**
+- **Baba Yaga** (MP3) — dark orchestral theme
+- **Darkling** (MP3) — eerie ambient
+- **Thief in the Night** (MP3) — suspenseful atmospheric
+
+Regenerate synthetic tracks: `npm run generate-tracks`
+
+See `public/tracks/README.md` for sources, attribution, and technical details.
 
 ---
 

@@ -9,7 +9,8 @@
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
-    "package": "npm run build && electron-builder"
+    "package": "npm run build && electron-builder",
+    "generate-tracks": "node scripts/generate-demo-tracks.js"
   },
   "devDependencies": {
     "@electron-toolkit/preload": "^3.0.1",
