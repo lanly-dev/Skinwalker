@@ -8,12 +8,15 @@ import { SKINS } from './skins/index'
 import './style.css'
 
 // ── Demo playlist ─────────────────────────────────────────────────────────────
-// Drop royalty-free .mp3s into resources/tracks/ — they ship with the app.
-// At runtime you can also add local files via the native file picker.
+// These ship with the app from public/tracks/. At runtime you can also add
+// local files via the native file picker.
 const DEMO_TRACKS: Track[] = [
-  { title: 'Haunted Hollow', artist: 'Skinwalker Demo', url: './tracks/demo-01.mp3' },
-  { title: 'Midnight Howl',  artist: 'Skinwalker Demo', url: './tracks/demo-02.mp3' },
-  { title: 'Crypt Groove',   artist: 'Skinwalker Demo', url: './tracks/demo-03.mp3' },
+  { title: 'Nocturne In Blood',   artist: 'Bathory • Eternal Night',        url: './tracks/nocturne-in-blood.wav' },
+  { title: 'Coffin Dream',        artist: 'Synthesized Ambient • Demo II',  url: './tracks/coffin-dream.wav' },
+  { title: 'Widow’s Kiss',        artist: 'Synthesized Ambient • Demo III', url: './tracks/widows-kiss.wav' },
+  { title: 'Baba Yaga',           artist: 'Kevin MacLeod',                  url: './tracks/baba-yaga.mp3' },
+  { title: 'Darkling',            artist: 'Kevin MacLeod',                  url: './tracks/darkling.mp3' },
+  { title: 'Thief in the Night',  artist: 'Kevin MacLeod',                  url: './tracks/thief-in-the-night.mp3' },
 ]
 
 // ── Bootstrap ─────────────────────────────────────────────────────────────────

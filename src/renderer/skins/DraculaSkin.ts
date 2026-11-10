@@ -1,25 +1,24 @@
 /**
  * DraculaSkin — design flagship skin.
  *
- * Anatomy → controls mapping:
- *   Eyes (red glow pulse) ──── play/pause toggle
- *   Cape spread / wingspan ──── live visualizer bars (AnalyserNode)
- *   Fangs (left/right) ──────── prev / next track
- *   Blood drip on collar ────── seek bar (drip position = playback position)
- *   Medallion on chest ──────── volume control (rotates with value)
+ * The approved artwork is the frame: a transparent plate
+ * (assets/dracula-frame.webp) fills the frameless window, and every painted
+ * element is a live control or readout:
  *
- * All controls are wired to the player. Inline SVG art (hairline, eyes,
- * cape wings, fangs, medallion) is layered onto the same class hooks the
- * wiring and CSS already use — the SVG is the anatomy, not a picture of it.
+ *   Eyes ───────────── play/pause hotspot; the sockets bloom with the real
+ *                     RMS energy of the track and dim when it stops
+ *   Blood line ─────── seek (red fill to position, animated drip curtain,
+ *                     elapsed / remaining readout)
+ *   Medallion ──────── volume (drag / wheel / arrow keys; a gold orbit dot
+ *                     and the medallion layer turn with the value)
+ *   Cape interior ──── live spectrum (48 bars, crimson → violet, gold caps)
+ *   Fangs ──────────── prev / next hotspots
+ *   Chest panel ────── real title + artist
+ *   Lower cape ─────── playlist with track numbers and durations
  *
- * Image frame + separated mechanism (2026-11-09, Lan's direction): the
- * approved Dracula artwork itself is the frame — a text-free plate
- * (assets/dracula-frame.webp) clipped to the character outline — and each
- * element in the picture is a live control overlaid on its anatomy:
- * eyes = play/pause hotspot (+ glow while playing), blood line = seek,
- * medallion = volume (drag / wheel / arrows, orbit dot shows the value),
- * cape interior = live visualizer, fangs = prev/next hotspots, and the
- * real title + playlist are rendered over the art.
+ * The mechanics follow the web version of the player: energy-driven eye glow,
+ * an irregular curtain of blood drips, attack/release-smoothed spectrum bars
+ * with a gold cap on each, and "01. title • mm:ss" playlist rows.
  */
 import draculaFrameUrl from '../assets/dracula-frame.webp'
 import eyeLeftUrl from '../assets/dracula-eye-left.png'
@@ -30,14 +29,48 @@ import fangRightUrl from '../assets/dracula-fang-right.png'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
+/** Spectrum resolution (same as the web version) */
+const BAR_COUNT = 48
+/** Irregular drip curtain positions along the blood line, % of the seek width */
+const DRIP_X = [4, 8, 12, 17, 21, 25, 30, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 84, 89, 94]
+
+interface DraculaEls {
+  title: HTMLElement
+  artist: HTMLElement
+  eyes: HTMLButtonElement
+  eyeL: HTMLImageElement
+  eyeR: HTMLImageElement
+  canvas: HTMLCanvasElement
+  seek: HTMLInputElement
+  elapsed: HTMLElement
+  remaining: HTMLElement
+  medallion: HTMLElement
+  orbit: SVGElement
+  medallionLayer: HTMLImageElement
+  playlist: HTMLOListElement
+}
+
 export class DraculaSkin implements Skin {
   readonly id = 'dracula'
   readonly label = 'Dracula'
 
   private container: HTMLElement | null = null
-  private rafId = 0
-  private freqData: Uint8Array<ArrayBuffer> | null = null
   private player: Player | null = null
+  private els: DraculaEls | null = null
+  private rafId = 0
+
+  private freqData: Uint8Array<ArrayBuffer> | null = null
+  private waveData: Uint8Array<ArrayBuffer> | null = null
+  private levels = new Float32Array(BAR_COUNT)
+  private lastFrame = 0
+
+  private seeking = false
+  private activeIndex = -1
+  /** Quantized eye level, so the full-canvas layer filters only repaint on change */
+  private eyeLevel = -1
+
+  private durations = new Map<string, number>()
+  private probed = new Set<string>()
 
   mount(player: Player): void {
     this.player = player
@@ -45,21 +78,26 @@ export class DraculaSkin implements Skin {
     document.documentElement.dataset.skin = this.id
 
     this.container = document.createElement('div')
-    this.container.style.setProperty('--dr-frame-url', `url("${draculaFrameUrl}")`)
     this.container.className = 'skin dracula-skin'
+    this.container.style.setProperty('--dr-frame-url', `url("${draculaFrameUrl}")`)
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
 
     this.freqData = new Uint8Array(player.audio.analyser.frequencyBinCount) as Uint8Array<ArrayBuffer>
+    this.waveData = new Uint8Array(128) as Uint8Array<ArrayBuffer>
+
     this.bindEvents()
-    this.loop()
+    this.rafId = requestAnimationFrame(this.loop)
   }
 
   unmount(): void {
     cancelAnimationFrame(this.rafId)
+    const player = this.player
+    if (player) player.onTrackChange = null
     this.container?.remove()
     this.container = null
+    this.els = null
     this.player = null
   }
 
@@ -73,40 +111,49 @@ export class DraculaSkin implements Skin {
     return /* html */ `
       <div class="dr-body" aria-label="Dracula media player">
 
-        <!-- Track info (rendered over the chest) -->
+        <!-- Track info over the chest -->
         <div class="dr-track-info">
           <span class="dr-title">—</span>
           <span class="dr-artist">—</span>
         </div>
 
-        <!-- Eyes = play/pause (hotspot over the painted eyes + playing glow) -->
-        <button class="dr-eyes" aria-label="Play / Pause" title="Play / Pause"></button>
-        <div class="dr-eye-glow" aria-hidden="true"></div>
+        <!-- Eyes = play/pause hotspot (the layers bloom with the audio) -->
+        <button class="dr-eyes" aria-label="Play" aria-pressed="false" title="Play / Pause"></button>
 
-        <!-- Cape interior = live visualizer -->
+        <!-- Cape interior = live spectrum -->
         <div class="dr-cape" aria-hidden="true">
-          <canvas class="dr-viz" width="330" height="220"></canvas>
+          <canvas class="dr-viz"></canvas>
         </div>
 
-        <!-- Blood line = seek bar -->
+        <!-- Blood line = seek: fill, drip curtain, elapsed / remaining -->
         <div class="dr-seek-region" role="group" aria-label="Seek">
-          <input class="dr-seek" type="range" min="0" max="1000" value="0"
-                 aria-label="Seek" step="1" />
-          <span class="dr-time">0:00 / 0:00</span>
+          <div class="dr-seek-top">
+            <div class="dr-blood" aria-hidden="true"></div>
+            <input class="dr-seek" type="range" min="0" max="1000" value="0"
+                   aria-label="Seek through track" step="1" />
+          </div>
+          <div class="dr-times">
+            <span class="dr-elapsed">00:00</span>
+            <span class="dr-remaining">-00:00</span>
+          </div>
         </div>
 
-        <!-- Medallion = volume (drag horizontally, wheel, or arrow keys) -->
+        <!-- Medallion = volume (drag, wheel, or arrow keys) -->
         <div class="dr-medallion" role="slider" tabindex="0"
              aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80"
-             title="Volume — drag, scroll, or arrow keys"></div>
-
-        <!-- Fangs = prev / next (hotspots over the painted fangs) -->
-        <div class="dr-controls">
-          <button class="dr-prev" aria-label="Previous track"></button>
-          <button class="dr-next" aria-label="Next track"></button>
+             title="Volume — drag, scroll, or arrow keys">
+          <svg class="dr-medallion-orbit" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="7" r="6"></circle>
+          </svg>
         </div>
 
-        <!-- Playlist (rendered over the lower cape) -->
+        <!-- Fangs = prev / next hotspots -->
+        <div class="dr-controls">
+          <button class="dr-prev" aria-label="Previous track" title="Previous track"></button>
+          <button class="dr-next" aria-label="Next track" title="Next track"></button>
+        </div>
+
+        <!-- Playlist over the lower cape -->
         <ol class="dr-playlist" aria-label="Playlist"></ol>
 
         <!-- Separated element layers (extracted from the plate art) -->
@@ -126,48 +173,83 @@ export class DraculaSkin implements Skin {
     const c = this.container!
     const p = this.player!
 
+    const els: DraculaEls = {
+      title: c.querySelector('.dr-title')!,
+      artist: c.querySelector('.dr-artist')!,
+      eyes: c.querySelector('.dr-eyes')!,
+      eyeL: c.querySelector('.dr-layer-eye-l')!,
+      eyeR: c.querySelector('.dr-layer-eye-r')!,
+      canvas: c.querySelector('.dr-viz')!,
+      seek: c.querySelector('.dr-seek')!,
+      elapsed: c.querySelector('.dr-elapsed')!,
+      remaining: c.querySelector('.dr-remaining')!,
+      medallion: c.querySelector('.dr-medallion')!,
+      orbit: c.querySelector('.dr-medallion-orbit')!,
+      medallionLayer: c.querySelector('.dr-layer-medallion')!,
+      playlist: c.querySelector('.dr-playlist')!,
+    }
+    this.els = els
+
+    this.buildDrips()
+
     // Eyes → play/pause
-    c.querySelector('.dr-eyes')!.addEventListener('click', () => {
+    els.eyes.addEventListener('click', () => {
       p.togglePlayPause()
       this.updatePlayState()
     })
 
-    // Seek (blood drip)
-    const seekEl = c.querySelector<HTMLInputElement>('.dr-seek')!
-    seekEl.addEventListener('input', () => {
-      p.seek(Number(seekEl.value) / 1000)
+    // Seek: paint while dragging, commit on release (restarting the buffer on
+    // every input event would stutter, as in the web version)
+    els.seek.addEventListener('input', () => {
+      this.seeking = true
+      const dur = p.audio.duration
+      const cur = dur * (Number(els.seek.value) / 1000)
+      els.seek.style.setProperty('--progress', `${Number(els.seek.value) / 10}%`)
+      els.elapsed.textContent = fmt(cur)
+      els.remaining.textContent = `-${fmt(Math.max(0, dur - cur))}`
+    })
+    els.seek.addEventListener('change', () => {
+      p.seek(Number(els.seek.value) / 1000)
+      this.seeking = false
     })
 
-    // Volume (medallion): drag horizontally, wheel, or arrow keys
-    const medallion = c.querySelector<HTMLElement>('.dr-medallion')!
+    // Medallion → volume: drag horizontally, wheel, or arrow keys
     const applyVolume = (v: number): void => {
-      const clamped = Math.min(1, Math.max(0, v))
-      p.setVolume(clamped)
-      this.rotateMedallion(clamped * 100)
-      medallion.setAttribute('aria-valuenow', String(Math.round(clamped * 100)))
+      const vol = Math.min(1, Math.max(0, v))
+      p.setVolume(vol)
+      els.orbit.style.transform = `rotate(${vol * 360 - 90}deg)`
+      els.medallionLayer.style.transform = `rotate(${vol * 1.2}deg)`
+      els.medallion.setAttribute('aria-valuenow', String(Math.round(vol * 100)))
+      els.medallion.setAttribute('aria-valuetext', `${Math.round(vol * 100)}%`)
     }
     let dragX: number | null = null
     let dragVol = 0
-    medallion.addEventListener('pointerdown', (e) => {
+    els.medallion.addEventListener('pointerdown', (e) => {
       dragX = e.clientX
       dragVol = p.currentVolume
-      medallion.setPointerCapture(e.pointerId)
+      els.medallion.setPointerCapture(e.pointerId)
     })
-    medallion.addEventListener('pointermove', (e) => {
+    els.medallion.addEventListener('pointermove', (e) => {
       if (dragX === null) return
       applyVolume(dragVol + (e.clientX - dragX) / 140)
     })
-    medallion.addEventListener('pointerup', () => { dragX = null })
-    medallion.addEventListener('pointercancel', () => { dragX = null })
-    medallion.addEventListener('wheel', (e) => {
+    els.medallion.addEventListener('pointerup', () => { dragX = null })
+    els.medallion.addEventListener('pointercancel', () => { dragX = null })
+    els.medallion.addEventListener('wheel', (e) => {
       e.preventDefault()
       applyVolume(p.currentVolume + (e.deltaY < 0 ? 0.05 : -0.05))
     }, { passive: false })
-    medallion.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') applyVolume(p.currentVolume + 0.05)
-      if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') applyVolume(p.currentVolume - 0.05)
+    els.medallion.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+        e.preventDefault()
+        applyVolume(p.currentVolume + 0.05)
+      }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+        e.preventDefault()
+        applyVolume(p.currentVolume - 0.05)
+      }
     })
-    // Init from the player's current volume so a skin swap keeps it
+    // Init from the player's volume so a mid-playback skin swap keeps it
     applyVolume(p.currentVolume)
 
     // Fangs → prev / next
@@ -176,95 +258,257 @@ export class DraculaSkin implements Skin {
 
     // Track change
     p.onTrackChange = (track, idx) => {
-      const titleEl = c.querySelector<HTMLElement>('.dr-title')
-      const artistEl = c.querySelector<HTMLElement>('.dr-artist')
-      if (titleEl) titleEl.textContent = track.title
-      if (artistEl) artistEl.textContent = track.artist
+      els.title.textContent = track.title
+      els.title.title = track.title
+      els.artist.textContent = track.artist
+      els.artist.title = track.artist
+      this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }
 
     this.buildPlaylist()
   }
 
-  private buildPlaylist(): void {
-    const p = this.player!
-    const ol = this.container!.querySelector<HTMLOListElement>('.dr-playlist')!
-    ol.innerHTML = ''
-    p.playlist.forEach((track, i) => {
-      const li = document.createElement('li')
-      li.dataset.index = String(i)
-      li.textContent = track.title
-      li.setAttribute('role', 'button')
-      li.setAttribute('tabindex', '0')
-      li.setAttribute('aria-label', `Play ${track.title}`)
-      li.addEventListener('click', () => void p.playIndex(i))
-      li.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') void p.playIndex(i)
-      })
-      ol.appendChild(li)
+  private buildDrips(): void {
+    const host = this.container?.querySelector('.dr-blood')
+    if (!host) return
+    host.replaceChildren()
+    DRIP_X.forEach((x, i) => {
+      const drip = document.createElement('span')
+      drip.className = 'dr-drip'
+      drip.style.setProperty('--x', `${x}%`)
+      drip.style.setProperty('--w', `${1.8 + (i % 3) * 0.9}px`)
+      drip.style.setProperty('--h', `${7 + ((i * 7) % 10) * 1.1}px`)
+      drip.style.setProperty('--speed', `${1.7 + (i % 6) * 0.41}s`)
+      drip.style.setProperty('--delay', `${-(i * 0.31)}s`)
+      host.appendChild(drip)
     })
   }
 
+  private buildPlaylist(): void {
+    const p = this.player
+    if (!p || !this.els) return
+    const ol = this.els.playlist
+    ol.replaceChildren()
+
+    p.playlist.forEach((track, i) => {
+      const li = document.createElement('li')
+      li.className = 'dr-track'
+      li.dataset.index = String(i)
+      li.setAttribute('role', 'button')
+      li.setAttribute('tabindex', '0')
+      li.setAttribute('aria-label', `Play ${track.title}`)
+
+      const name = document.createElement('span')
+      name.className = 'dr-track-name'
+      name.textContent = `${String(i + 1).padStart(2, '0')}. ${track.title}`
+
+      const time = document.createElement('span')
+      time.className = 'dr-track-time'
+      time.textContent = `• ${this.trackDuration(track.url)}`
+
+      li.append(name, time)
+      li.addEventListener('click', () => void p.playIndex(i).catch(logPlayError))
+      li.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return
+        e.preventDefault()
+        void p.playIndex(i).catch(logPlayError)
+      })
+      ol.appendChild(li)
+    })
+
+    this.highlightPlaylistItem(this.activeIndex)
+    this.probeDurations()
+  }
+
   private highlightPlaylistItem(idx: number): void {
-    const ol = this.container?.querySelector('.dr-playlist')
-    if (!ol) return
+    const ol = this.els?.playlist
+    if (!ol || idx < 0) return
     ol.querySelectorAll('li').forEach((li, i) => {
       li.classList.toggle('active', i === idx)
       li.setAttribute('aria-current', i === idx ? 'true' : 'false')
     })
   }
 
-  private updatePlayState(): void {
-    const eyes = this.container?.querySelector('.dr-eyes')
-    if (!eyes) return
-    eyes.classList.toggle('playing', this.player?.audio.isPlaying ?? false)
+  /** Read each track's duration with a throwaway <audio> so the playlist can
+   *  show "• mm:ss" before the track has ever been decoded by the engine. */
+  private probeDurations(): void {
+    const p = this.player
+    if (!p) return
+    p.playlist.forEach((track) => {
+      if (this.probed.has(track.url)) return
+      this.probed.add(track.url)
+      const probe = new Audio()
+      probe.preload = 'metadata'
+      probe.addEventListener('loadedmetadata', () => {
+        if (Number.isFinite(probe.duration) && probe.duration > 0) {
+          this.durations.set(track.url, probe.duration)
+          this.buildPlaylist()
+        }
+        probe.src = ''
+      }, { once: true })
+      probe.addEventListener('error', () => { probe.src = '' }, { once: true })
+      probe.src = track.url
+    })
   }
 
-  private rotateMedallion(vol: number): void {
-    const m = this.container?.querySelector<HTMLElement>('.dr-layer-medallion')
-    if (!m) return
-    m.style.transform = `rotate(${vol * 2.7}deg)`
+  private trackDuration(url: string): string {
+    const seconds = this.durations.get(url)
+    return seconds ? fmt(seconds) : '--:--'
   }
 
-  // ── RAF loop ──────────────────────────────────────────────────────────────────
+  // ── RAF loop ─────────────────────────────────────────────────────────────────
 
-  private loop(): void {
-    this.rafId = requestAnimationFrame(() => this.loop())
-    this.drawVisualizer()
-    this.updateSeek()
+  private loop = (now: number): void => {
+    this.rafId = requestAnimationFrame(this.loop)
+    if (!this.player || !this.els) return
+    this.drawVisualizer(now)
+    this.updateEyes()
+    this.paintTime()
     this.updatePlayState()
   }
 
-  private drawVisualizer(): void {
-    if (!this.freqData || !this.player) return
-    const canvas = this.container?.querySelector<HTMLCanvasElement>('.dr-viz')
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')!
-    this.player.audio.getFrequencyData(this.freqData)
+  private updatePlayState(): void {
+    const playing = this.player?.audio.isPlaying ?? false
+    const eyes = this.els?.eyes
+    if (!eyes) return
+    if (eyes.classList.contains('playing') === playing) return
+    eyes.classList.toggle('playing', playing)
+    eyes.setAttribute('aria-pressed', String(playing))
+    eyes.setAttribute('aria-label', playing ? 'Pause' : 'Play')
+  }
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    const barW = canvas.width / this.freqData.length
-    for (let i = 0; i < this.freqData.length; i++) {
-      const h = (this.freqData[i] / 255) * canvas.height
-      // Deep crimson → purple sweep across the cape
-      ctx.fillStyle = `hsl(${320 - i * 1.2}, 80%, ${30 + h / 5}%)`
-      ctx.fillRect(i * barW, canvas.height - h, barW - 1, h)
+  private drawVisualizer(now: number): void {
+    const els = this.els
+    const p = this.player
+    if (!els || !p || !this.freqData) return
+
+    const canvas = els.canvas
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const rect = canvas.getBoundingClientRect()
+    if (rect.width === 0 || rect.height === 0) return
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const w = Math.max(1, Math.round(rect.width * dpr))
+    const h = Math.max(1, Math.round(rect.height * dpr))
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w
+      canvas.height = h
+    }
+    ctx.clearRect(0, 0, w, h)
+
+    const playing = p.audio.isPlaying
+    if (playing) p.audio.getFrequencyData(this.freqData)
+
+    const delta = this.lastFrame ? Math.min(2.5, (now - this.lastFrame) / 16.67) : 1
+    this.lastFrame = now
+
+    const pitch = w / BAR_COUNT
+    const barW = pitch * 0.55
+    const base = h - dpr
+
+    for (let i = 0; i < BAR_COUNT; i++) {
+      const x = (i + 0.5) * pitch
+      const frac = i / (BAR_COUNT - 1)
+
+      // Idle bars keep breathing while paused, like the web version
+      let target = 0.015 + 0.008 * (0.5 + 0.5 * Math.sin(now * 0.0008 + i * 0.31))
+      if (playing) {
+        // Log-ish bin mapping: the lows get the width, the highs get the tail
+        const bin = Math.min(
+          this.freqData.length - 1,
+          Math.max(1, Math.floor(Math.pow(frac, 2.2) * (this.freqData.length - 2) + 1)),
+        )
+        target += Math.pow(this.freqData[bin] / 255, 1.5) * 0.62
+      }
+
+      // Asymmetric smoothing: jump up fast, settle down slow
+      const response = target > this.levels[i] ? 0.16 : 0.06
+      this.levels[i] += (target - this.levels[i]) * (1 - Math.pow(1 - response, delta))
+
+      const barH = Math.max(2 * dpr, this.levels[i] * h)
+      const top = base - barH
+      const warm = frac < 0.5
+
+      const grad = ctx.createLinearGradient(0, top, 0, base)
+      grad.addColorStop(0, warm ? 'rgba(251, 86, 75, 0.95)' : 'rgba(183, 95, 243, 0.95)')
+      grad.addColorStop(0.45, warm ? 'rgba(150, 16, 32, 0.5)' : 'rgba(76, 20, 122, 0.5)')
+      grad.addColorStop(1, warm ? 'rgba(96, 8, 18, 0.16)' : 'rgba(44, 10, 72, 0.16)')
+
+      ctx.save()
+      ctx.fillStyle = grad
+      ctx.shadowColor = warm ? 'rgba(243, 40, 53, 0.55)' : 'rgba(149, 52, 242, 0.55)'
+      ctx.shadowBlur = 6 * dpr
+      ctx.fillRect(x - barW / 2, top, barW, barH)
+
+      // Gold cap on every bar
+      ctx.shadowBlur = 3 * dpr
+      ctx.shadowColor = '#e9b760'
+      ctx.fillStyle = 'rgba(244, 202, 126, 0.9)'
+      ctx.fillRect(x - barW / 2, top, barW, Math.max(1, dpr * 1.2))
+      ctx.restore()
     }
   }
 
-  private updateSeek(): void {
-    if (!this.player || !this.container) return
-    const seek  = this.container.querySelector<HTMLInputElement>('.dr-seek')
-    const timeEl = this.container.querySelector<HTMLElement>('.dr-time')
-    const dur = this.player.audio.duration
-    const cur = this.player.audio.currentTime
-    if (seek && dur > 0) seek.value = String(Math.round((cur / dur) * 1000))
-    if (timeEl) timeEl.textContent = `${fmt(cur)} / ${fmt(dur)}`
+  /** Eyes are a readout: socket bloom follows the real signal energy */
+  private updateEyes(): void {
+    const els = this.els
+    const p = this.player
+    if (!els || !p || !this.waveData) return
+
+    const playing = p.audio.isPlaying
+    let energy = 0
+    if (playing) {
+      p.audio.getWaveformData(this.waveData)
+      let sum = 0
+      for (let i = 0; i < this.waveData.length; i++) {
+        const v = (this.waveData[i] - 128) / 128
+        sum += v * v
+      }
+      energy = Math.sqrt(sum / this.waveData.length)
+    }
+
+    const level = playing ? Math.min(0.95, 0.3 + energy * 5.5) : 0.12
+    const quantized = Math.round(level * 12)
+    if (quantized === this.eyeLevel) return
+    this.eyeLevel = quantized
+
+    const filter = playing
+      ? `brightness(${(1.1 + energy * 1.6).toFixed(2)}) saturate(1.15) ` +
+        `drop-shadow(0 0 ${Math.min(18, 2 + energy * 45).toFixed(0)}px rgba(255,50,30,0.8))`
+      : 'brightness(0.55) saturate(0.7)'
+    els.eyeL.style.filter = filter
+    els.eyeR.style.filter = filter
+  }
+
+  private paintTime(): void {
+    const els = this.els
+    const p = this.player
+    if (!els || !p) return
+
+    const dur = p.audio.duration
+    const cur = Math.min(p.audio.currentTime, dur || 0)
+
+    if (!this.seeking && dur > 0) {
+      const value = String(Math.round((cur / dur) * 1000))
+      if (els.seek.value !== value) els.seek.value = value
+    }
+    els.seek.style.setProperty('--progress', `${Number(els.seek.value) / 10}%`)
+
+    const elapsedText = fmt(cur)
+    if (els.elapsed.textContent !== elapsedText) els.elapsed.textContent = elapsedText
+    const remainingText = `-${fmt(Math.max(0, dur - cur))}`
+    if (els.remaining.textContent !== remainingText) els.remaining.textContent = remainingText
   }
 }
 
-function fmt(s: number): string {
-  const m = Math.floor(s / 60)
-  const sec = Math.floor(s % 60)
-  return `${m}:${sec.toString().padStart(2, '0')}`
+function fmt(seconds: number): string {
+  if (!Number.isFinite(seconds)) return '--:--'
+  const s = Math.max(0, Math.floor(seconds))
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+}
+
+function logPlayError(err: unknown): void {
+  console.error('skinwalker: could not play track', err)
 }

@@ -8,6 +8,7 @@ interface SkinwalkerAPI {
   close: () => void
   maximize: () => void
   openAudioFiles: () => Promise<string[]>
+  readAudioFile: (url: string) => Promise<ArrayBuffer | null>
 }
 
 declare interface Window {

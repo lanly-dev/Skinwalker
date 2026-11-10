@@ -53,10 +53,23 @@ export class AudioEngine {
   }
 
   async loadUrl(url: string): Promise<void> {
-    const res = await fetch(url)
-    const arrayBuffer = await res.arrayBuffer()
-    this.buffer = await this.ctx.decodeAudioData(arrayBuffer)
+    const data = await this.readBytes(url)
+    this.buffer = await this.ctx.decodeAudioData(data)
     this.startOffset = 0
+  }
+
+  /** Chromium refuses fetch() on file:// URLs, so local tracks (bundled demo
+   *  files in a packaged build, and everything the native picker returns) are
+   *  read through the preload bridge instead. */
+  private async readBytes(url: string): Promise<ArrayBuffer> {
+    const absolute = new URL(url, window.location.href)
+    if (absolute.protocol === 'file:') {
+      const bytes = await window.skinwalker?.readAudioFile(absolute.href)
+      if (bytes) return bytes
+    }
+    const res = await fetch(absolute.href)
+    if (!res.ok) throw new Error(`Cannot load audio: ${absolute.href}`)
+    return res.arrayBuffer()
   }
 
   play(offset?: number): void {
@@ -112,5 +125,10 @@ export class AudioEngine {
   /** Fill a Uint8Array with frequency data for the visualizer */
   getFrequencyData(out: Uint8Array<ArrayBuffer>): void {
     this.analyser.getByteFrequencyData(out)
+  }
+
+  /** Fill a Uint8Array with time-domain data for RMS energy readouts */
+  getWaveformData(out: Uint8Array<ArrayBuffer>): void {
+    this.analyser.getByteTimeDomainData(out)
   }
 }

@@ -25,4 +25,8 @@ contextBridge.exposeInMainWorld('skinwalker', {
     const paths: string[] = await ipcRenderer.invoke('dialog:openAudio')
     return paths.map((p) => `file:///${p.replace(/\\/g, '/')}`)
   },
+
+  /** Read an audio file's bytes (file:// cannot be fetched by the renderer) */
+  readAudioFile: async (url: string): Promise<ArrayBuffer | null> =>
+    ipcRenderer.invoke('audio:read', url),
 })

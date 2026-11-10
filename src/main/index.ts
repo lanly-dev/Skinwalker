@@ -4,6 +4,8 @@
  */
 import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron'
 import { join } from 'path'
+import { readFile } from 'fs/promises'
+import { fileURLToPath } from 'url'
 import { is } from '@electron-toolkit/utils'
 
 let win: BrowserWindow | null = null
@@ -76,6 +78,21 @@ ipcMain.handle('dialog:openAudio', async () => {
     properties: ['openFile', 'multiSelections'],
   })
   return result.canceled ? [] : result.filePaths
+})
+
+/** Hand an audio file's bytes to the renderer — Chromium blocks fetch on
+ *  file:// URLs, so this is the only way picked / bundled local tracks load. */
+ipcMain.handle('audio:read', async (_e, url: string) => {
+  try {
+    const filePath = url.startsWith('file:') ? fileURLToPath(url) : url
+    const bytes = await readFile(filePath)
+    const copy = new Uint8Array(bytes.byteLength)
+    copy.set(bytes)
+    return copy.buffer
+  } catch (err) {
+    console.error('skinwalker: cannot read audio file', err)
+    return null
+  }
 })
 
 // ── App lifecycle ─────────────────────────────────────────────────────────────
