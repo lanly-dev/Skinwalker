@@ -112,6 +112,12 @@ export class DraculaSkin implements Skin {
     return /* html */ `
       <div class="dr-body" aria-label="Dracula media player">
 
+        <!-- Aura layers: soft halo + fine contour behind the plate. They soak
+             up the cut edge's JPEG grit so it reads as outline, not rough cut. -->
+        <span class="dr-aura" aria-hidden="true"></span>
+        <span class="dr-rim" aria-hidden="true"></span>
+        <span class="dr-plate" aria-hidden="true"></span>
+
         <!-- Chest panel = live title + artist (covers the baked placeholder) -->
         <div class="dr-track-info">
           <span class="dr-title">—</span>

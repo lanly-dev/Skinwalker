@@ -74,6 +74,20 @@ html, body {
 #titlebar button:hover      { background: rgba(255,255,255,0.09); color: var(--color-text); }
 #titlebar button.close:hover { background: #b3231b; color: #fff; }
 
+/* ── Skin as window chrome ────────────────────────────────────────────────────
+   The monster's body IS the titlebar: every skin surface drags the frameless
+   window. Anything the user can click opts back out, so controls keep working
+   (the other skins' anatomy controls already carry their own no-drag). */
+.skin,
+.skin > * { -webkit-app-region: drag; }
+.skin button,
+.skin input,
+.skin ol,
+.skin ul,
+.skin [role="button"],
+.skin [role="slider"],
+.skin [role="group"] { -webkit-app-region: no-drag; }
+
 /* ── Skin switcher ───────────────────────────────────────────────────────── */
 #skin-switcher {
   position: fixed;
@@ -625,11 +639,40 @@ input[type="range"]::-moz-range-thumb {
   height: 100vh;
   padding: 0;
   margin: 0;
-  background: var(--dr-frame-url) center / 100% 100% no-repeat;
+  background: none;
   border: none;
   border-radius: 0;
   box-shadow: none;
   filter: none;
+}
+
+/* Aura layers — a soft dark halo plus a fine contour painted behind the plate.
+   The plate's alpha edge carries JPEG grit; these absorb it into an
+   intentional-looking glow instead of a ragged silhouette. */
+.dracula-skin .dr-aura,
+.dracula-skin .dr-rim,
+.dracula-skin .dr-plate {
+  position: absolute;
+  inset: 0;
+  background: var(--dr-frame-url) center / 100% 100% no-repeat;
+  pointer-events: none;
+}
+.dracula-skin .dr-aura {
+  filter: blur(14px) brightness(0.45) saturate(1.35);
+  opacity: 1;
+  z-index: -3;
+}
+.dracula-skin .dr-rim {
+  filter: blur(2px) brightness(0.32);
+  opacity: 0.9;
+  z-index: -2;
+}
+.dracula-skin .dr-plate {
+  z-index: -1;
+  /* a warm contour + red bloom, following the plate's own alpha */
+  filter:
+    drop-shadow(0 0 2px rgba(255, 205, 130, 0.3))
+    drop-shadow(0 0 7px rgba(150, 20, 30, 0.6));
 }
 .dracula-skin .dr-body > *:not(.dr-silhouette):not(.dr-head) { position: absolute; }
 
