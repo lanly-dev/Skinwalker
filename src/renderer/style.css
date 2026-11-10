@@ -609,106 +609,145 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-controls button { background: rgba(40, 2, 8, 0.5); }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   DRACULA — IMAGE FRAME (2026-11-10)
-   The approved artwork is the frame (text-free plate with a real alpha
-   channel); every painted element is a live overlaid control. Geometry is %
-   of the 2:3 plate. Player mechanics follow the web version of the player:
-   a drip curtain on the blood line, a red seek fill, energy-driven eyes, a
-   crimson → violet spectrum with gold caps, and numbered playlist rows.
+   DRACULA — WEB PLATE (2026-11-10)
+   The plate is the artwork from the web version of the player: a full-bleed
+   2:3 character silhouette with the jeweled medallion at the throat. Every
+   position below is the web build's own percentage, so each live control
+   lands on its painted counterpart. Nothing may paint outside the silhouette.
    ════════════════════════════════════════════════════════════════════════════ */
 .dracula-skin {
-  filter:
-    drop-shadow(0 24px 44px rgba(0,0,0,0.65))
-    drop-shadow(0 0 34px rgba(150,0,0,0.22));
+  filter: none;
 }
 .dracula-skin .dr-body {
-  width: min(430px, calc((100vh - 84px) * 0.6667), 96vw);
-  aspect-ratio: 2 / 3;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
   padding: 0;
-  gap: 0;
-  background-image: var(--dr-frame-url);
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  /* The plate carries its own alpha (backdrop flood-filled out). */
+  margin: 0;
+  background: var(--dr-frame-url) center / 100% 100% no-repeat;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   filter: none;
 }
 .dracula-skin .dr-body > *:not(.dr-silhouette):not(.dr-head) { position: absolute; }
 
-/* Title panel over the chest */
+/* Chest panel = live title + artist, over the baked placeholder */
 .dracula-skin .dr-track-info {
-  left: 23%; right: 23%; top: 33.2%;
-  border-bottom: none;
-  padding-bottom: 0;
+  left: 27%; top: 38%;
+  width: 46%; height: 5.2%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 1px;
+  padding: 0;
+  border-bottom: none;
+  overflow: hidden;
+  background: linear-gradient(90deg, transparent, #180c19 7%, #180c19 93%, transparent);
+  text-shadow: 0 1px 4px #000;
   z-index: 3;
 }
 .dracula-skin .dr-title {
-  max-width: 100%;
-  font-size: 16px;
+  max-width: 96%;
+  font-family: var(--font-display);
+  font-size: 13px;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   color: #fbf1eb;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.95), 0 0 18px rgba(192,57,43,0.45);
 }
 .dracula-skin .dr-artist {
-  max-width: 100%;
-  font-size: 9px;
+  max-width: 96%;
+  font-size: 7.5px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #e96668;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.95);
+  color: #e96668;
 }
 
-/* Eyes = play/pause hotspot. The separated eye layers are driven by the
-   track's real RMS energy in JS, so no CSS pulse here. */
-.dracula-skin .dr-eyes {
-  left: 37.5%; top: 12.2%;
-  width: 25%; height: 9.5%;
-  padding: 0;
-  background: transparent;
+/* Eyes = audio readout riding the painted sockets */
+.dracula-skin .dr-eye {
+  position: absolute;
+  top: 16.3%;
+  width: 5.8%; height: 1.8%;
   border-radius: 50%;
+  background: radial-gradient(ellipse, #ff3f35 5%, rgba(240, 24, 29, 0.55) 32%, transparent 72%);
+  filter: blur(2px);
+  opacity: 0.12;
+  mix-blend-mode: screen;
+  pointer-events: none;
   z-index: 4;
 }
-.dracula-skin .dr-eyes:hover { background: rgba(255,60,40,0.07); }
-.dracula-skin .dr-eyes:active { background: rgba(255,60,40,0.13); }
-.dracula-skin .dr-eyes.playing ~ .dr-layer-eye-l,
-.dracula-skin .dr-eyes.playing ~ .dr-layer-eye-r { animation: none; }
+.dracula-skin .dr-eye-left { left: 42.5%; }
+.dracula-skin .dr-eye-right { right: 42.5%; }
 
-/* Cape interior = live spectrum */
+/* Cape interior = mirrored spectrum over the empty painted field */
 .dracula-skin .dr-cape {
-  left: 11%; top: 44.5%;
-  width: 78%; height: 34.5%;
+  left: 18%; top: 49.5%;
+  width: 64%; height: 22%;
   border: none;
-  border-radius: 16px;
-  background: radial-gradient(ellipse at 50% 62%, rgba(22,5,20,0.28), rgba(6,1,6,0.5));
+  border-radius: 0;
+  background: transparent;
   box-shadow: none;
   overflow: hidden;
   z-index: 1;
 }
 .dracula-skin .dr-viz { display: block; width: 100%; height: 100%; }
 
-/* Blood line = seek */
+/* Blood line = seek, bracketed by the volume speakers */
 .dracula-skin .dr-seek-region {
-  left: 23.5%; top: 40.2%;
-  width: 53%;
+  left: 27.2%; top: 43.35%;
+  width: 45.6%; height: 5.2%;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  justify-content: center;
+  gap: 0;
+  background: #170b18;
   z-index: 3;
 }
-.dracula-skin .dr-seek-top { position: relative; height: 18px; }
+.dracula-skin .dr-seek-top {
+  position: relative;
+  height: 13px;
+}
 
-/* Drip curtain: irregular drips hanging off the painted line */
+.dracula-skin .dr-vol {
+  position: absolute;
+  top: 50%;
+  width: 13px; height: 13px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #d24a4a;
+  opacity: calc(0.4 + var(--vol, 0.8) * 0.6);
+  transform: translateY(-50%);
+  transition: opacity 0.12s, filter 0.12s;
+  z-index: 5;
+}
+.dracula-skin .dr-vol svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+.dracula-skin .dr-vol-down { left: 0; }
+.dracula-skin .dr-vol-up { right: 0; }
+.dracula-skin .dr-vol-down svg { transform: scaleX(-1); }
+.dracula-skin .dr-vol:hover,
+.dracula-skin .dr-vol:focus-visible {
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(255, 90, 80, 0.9));
+}
+.dracula-skin .dr-vol:focus-visible { outline: 1px solid rgba(248, 220, 142, 0.8); }
+
 .dracula-skin .dr-blood {
   position: absolute;
-  left: 0; right: 0; top: 11px; height: 0;
+  left: 14px; right: 14px; top: 50%;
+  height: 0;
   pointer-events: none;
+  z-index: 2;
 }
 .dracula-skin .dr-drip {
   position: absolute;
@@ -727,7 +766,7 @@ input[type="range"]::-moz-range-thumb {
   content: '';
   position: absolute;
   bottom: -1px; left: 50%;
-  width: 3.5px; height: 3.5px;
+  width: 2.4px; height: 2.4px;
   border-radius: 50%;
   background: #e04846;
   transform: translateX(-50%);
@@ -745,103 +784,98 @@ input[type="range"]::-moz-range-thumb {
 }
 @keyframes dr-fall {
   0%, 58% { opacity: 1;   transform: translate(-50%, 0) scale(0.8); }
-  80%     { opacity: 0.8; transform: translate(-50%, 8px) scale(0.65); }
-  100%    { opacity: 0;   transform: translate(-50%, 14px) scale(0.35); }
+  80%     { opacity: 0.8; transform: translate(-50%, 5px) scale(0.65); }
+  100%    { opacity: 0;   transform: translate(-50%, 9px) scale(0.35); }
 }
 
 .dracula-skin .dr-seek {
   position: absolute;
-  left: 0; right: 0; top: 2px;
-  width: 100%;
-  height: 18px;
+  left: 15px; right: 15px;
+  top: 0;
+  width: auto;
+  height: 13px;
   margin: 0;
   background: transparent;
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
-  z-index: 2;
+  z-index: 3;
 }
 .dracula-skin .dr-seek::-webkit-slider-runnable-track {
-  height: 4px;
-  border-radius: 4px;
+  height: 3px;
+  border-radius: 3px;
   background: linear-gradient(
     to right,
-    #ff4438 0 var(--progress, 0%),
-    rgba(120, 30, 40, 0.32) var(--progress, 0%) 100%
+    #e13b40 0 var(--progress, 0%),
+    #88434b var(--progress, 0%) 100%
   );
-  box-shadow: 0 0 6px rgba(255, 60, 40, 0.5);
 }
 .dracula-skin .dr-seek::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 12px; height: 12px;
-  margin-top: -4px;
+  width: 9px; height: 9px;
+  margin-top: -3px;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #ffb3a8, #d81f16 60%, #7e0d0a);
-  border: 1px solid rgba(255, 190, 170, 0.7);
-  box-shadow: 0 0 10px rgba(255, 40, 25, 0.9);
+  background: #ee817e;
+  box-shadow: 0 0 6px #ff4752;
   cursor: pointer;
 }
 .dracula-skin .dr-seek::-moz-range-track {
-  height: 4px;
-  border-radius: 4px;
-  background: rgba(120, 30, 40, 0.32);
+  height: 3px;
+  border-radius: 3px;
+  background: #88434b;
 }
 .dracula-skin .dr-seek::-moz-range-progress {
-  height: 4px;
-  border-radius: 4px;
-  background: #ff4438;
+  height: 3px;
+  border-radius: 3px;
+  background: #e13b40;
 }
 .dracula-skin .dr-seek::-moz-range-thumb {
-  width: 12px; height: 12px;
-  border: 1px solid rgba(255, 190, 170, 0.7);
+  width: 9px; height: 9px;
+  border: 0;
   border-radius: 50%;
-  background: #d81f16;
-  box-shadow: 0 0 10px rgba(255, 40, 25, 0.9);
+  background: #ee817e;
+  box-shadow: 0 0 6px #ff4752;
 }
 
 .dracula-skin .dr-times {
-  position: relative;
-  z-index: 2;
   display: flex;
   justify-content: space-between;
-  margin-top: 2px;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 9.5px;
+  font-size: 8px;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: #eb7477;
-  text-shadow: 0 1px 5px rgba(0,0,0,0.95);
-}
-
-/* Medallion = volume (orbit dot circles the painted medallion) */
-.dracula-skin .dr-medallion {
-  left: 46.3%; top: 39.55%;
-  width: 7.4%; aspect-ratio: 1;
-  border-radius: 50%;
-  cursor: ew-resize;
-  touch-action: none;
-  display: block;
+  text-shadow: 0 1px 3px #150817;
   z-index: 4;
 }
+
+/* Medallion at the throat = play / pause (burns while playing) */
+.dracula-skin .dr-medallion {
+  left: 44%; top: 29%;
+  width: 12%; height: 7%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 6;
+  transition: box-shadow 0.3s, filter 0.3s;
+}
+.dracula-skin .dr-medallion:hover,
 .dracula-skin .dr-medallion:focus-visible {
-  outline: 2px solid rgba(233, 196, 106, 0.85);
-  outline-offset: 3px;
+  outline: 2px solid rgba(248, 220, 142, 0.8);
+  outline-offset: 2px;
+  box-shadow: 0 0 16px 5px rgba(223, 155, 60, 0.45);
 }
-.dr-medallion-orbit {
-  display: block;
-  width: 100%; height: 100%;
-  overflow: visible;
-  transform-origin: 50% 50%;
-  transition: transform 0.18s ease-out;
-  filter: drop-shadow(0 0 4px rgba(255, 200, 90, 0.85));
+.dracula-skin .dr-medallion.playing {
+  box-shadow: 0 0 18px 7px rgba(228, 73, 56, 0.35), inset 0 0 12px rgba(255, 179, 79, 0.18);
+  animation: dr-medallion-pulse 2s ease-in-out infinite;
 }
-.dr-medallion-orbit circle {
-  fill: #ffd977;
-  stroke: rgba(60, 20, 0, 0.55);
-  stroke-width: 1.4;
+@keyframes dr-medallion-pulse {
+  50% { box-shadow: 0 0 26px 9px rgba(239, 154, 58, 0.5), inset 0 0 10px rgba(255, 179, 79, 0.3); }
 }
 
-/* Fangs = prev/next hotspots */
+/* Lower fangs = prev / next hotspots */
 .dracula-skin .dr-controls {
   position: absolute;
   inset: 0;
@@ -851,91 +885,73 @@ input[type="range"]::-moz-range-thumb {
 }
 .dracula-skin .dr-controls button {
   position: absolute;
-  top: 72.3%;
-  width: 13%; height: 10.5%;
+  top: 72%;
+  width: 8%; height: 9.2%;
   padding: 0;
-  background: transparent;
   border: none;
+  background: transparent;
   border-radius: 50%;
-  pointer-events: auto;
   color: transparent;
   font-size: 0;
+  pointer-events: auto;
+  cursor: pointer;
 }
-.dracula-skin .dr-controls .dr-prev { left: 6.6%; }
-.dracula-skin .dr-controls .dr-next { right: 6.6%; }
-.dracula-skin .dr-controls button:hover {
+.dracula-skin .dr-controls .dr-prev { left: 10%; }
+.dracula-skin .dr-controls .dr-next { right: 10%; }
+.dracula-skin .dr-controls button:hover,
+.dracula-skin .dr-controls button:focus-visible {
   background: rgba(255, 240, 200, 0.08);
-  box-shadow: 0 0 18px rgba(255, 220, 160, 0.35);
+  box-shadow: 0 0 16px rgba(255, 220, 160, 0.4);
 }
 
-/* Playlist over the lower cape */
+/* Lower cape = playlist, covering the baked placeholder rows */
 .dracula-skin .dr-playlist {
-  left: 21%; top: 79.6%;
-  width: 58%; height: 10.4%;
+  left: 33%; top: 81.4%;
+  width: 34%; height: 6.8%;
   max-height: none;
   margin: 0;
-  padding: 3px 4px;
+  padding: 2px 3px;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0;
   overflow-y: auto;
   list-style: none;
-  background: rgba(5, 0, 4, 0.34);
+  background: #190c1a;
   border: none;
-  border-radius: 9px;
-  scrollbar-width: thin;
-  scrollbar-color: #b28448 transparent;
+  border-radius: 3px;
   z-index: 2;
 }
 .dracula-skin .dr-playlist .dr-track {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
-  gap: 6px;
-  padding: 1px 6px;
-  border-radius: 5px;
+  gap: 5px;
+  padding: 0 4px;
+  border-radius: 2px;
   color: #df6d70;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 10.5px;
-  line-height: 1.4;
+  font-size: 8px;
+  line-height: 1.55;
   white-space: nowrap;
   cursor: pointer;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.9);
-  transition: color 0.12s, background 0.12s;
+  transition: color 0.12s;
 }
 .dracula-skin .dr-playlist .dr-track:hover,
 .dracula-skin .dr-playlist .dr-track:focus-visible {
   color: #fff2bd;
-  background: rgba(255, 220, 140, 0.07);
+  outline: 1px solid #dbba78;
 }
 .dracula-skin .dr-playlist .dr-track.active {
   color: #f9d98c;
-  background: rgba(120, 0, 0, 0.2);
+  background: transparent;
   box-shadow: none;
-  text-shadow: 0 0 8px rgba(195, 131, 35, 0.9);
+  text-shadow: 0 0 6px rgba(195, 131, 35, 0.9);
 }
-.dr-track-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
-.dr-track-time { opacity: 0.85; font-variant-numeric: tabular-nums; }
-
-/* Separated element layers (extracted from the plate; full-canvas stack) */
-.dracula-skin .dr-layer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 2;
-}
-.dracula-skin .dr-layer-medallion {
-  z-index: 3;
-  transform-origin: 50% 41.7%;
-  transition: transform 0.25s;
-}
-.dracula-skin .dr-body:has(.dr-prev:hover) .dr-layer-fang-l,
-.dracula-skin .dr-body:has(.dr-prev:active) .dr-layer-fang-l,
-.dracula-skin .dr-body:has(.dr-next:hover) .dr-layer-fang-r,
-.dracula-skin .dr-body:has(.dr-next:active) .dr-layer-fang-r {
-  filter: brightness(1.3) drop-shadow(0 0 10px rgba(255, 240, 200, 0.85));
-}
+.dracula-skin .dr-playlist::-webkit-scrollbar { width: 3px; }
+.dracula-skin .dr-playlist::-webkit-scrollbar-thumb { background: #b28448; border-radius: 2px; }
+.dracula-skin .dr-playlist::-webkit-scrollbar-track { background: transparent; }
+.dracula-skin .dr-playlist .dr-track-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.dracula-skin .dr-playlist .dr-track-time { opacity: 0.85; font-variant-numeric: tabular-nums; }
 
 /* ════════════════════════════════════════════════════════════════════
    FRANKENSTEIN — IMAGE FRAME (2026-11-09)

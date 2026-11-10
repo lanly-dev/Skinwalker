@@ -1,31 +1,26 @@
 /**
  * DraculaSkin — design flagship skin.
  *
- * The approved artwork is the frame: a transparent plate
- * (assets/dracula-frame.webp) fills the frameless window, and every painted
- * element is a live control or readout:
+ * The plate is the artwork from the web version of the player: a transparent
+ * character silhouette (assets/dracula-frame.webp) whose painted anatomy is
+ * the interface. Live controls sit on the painted elements, and the baked
+ * placeholder panels (title, blood line, playlist) are covered by the live
+ * panels exactly as the web build does it.
  *
- *   Eyes ───────────── play/pause hotspot; the sockets bloom with the real
- *                     RMS energy of the track and dim when it stops
- *   Blood line ─────── seek (red fill to position, animated drip curtain,
- *                     elapsed / remaining readout)
- *   Medallion ──────── volume (drag / wheel / arrow keys; a gold orbit dot
- *                     and the medallion layer turn with the value)
- *   Cape interior ──── live spectrum (48 bars, crimson → violet, gold caps)
- *   Fangs ──────────── prev / next hotspots
- *   Chest panel ────── real title + artist
- *   Lower cape ─────── playlist with track numbers and durations
+ * Anatomy → control / readout:
+ *   Eyes ───────────── readout: the sockets bloom with the track's RMS energy
+ *   Medallion ──────── play / pause (burns while playing) — the web version's #play
+ *   Chest panel ────── live title + artist
+ *   Blood line ─────── seek: live fill, drip curtain, elapsed / remaining
+ *   Speakers ───────── volume down / up at the ends of the blood line
+ *   Cape interior ──── mirrored spectrum, crimson → violet with gold caps
+ *   Lower fangs ────── prev / next hotspots
+ *   Lower cape ─────── playlist (numbered rows with durations)
  *
- * The mechanics follow the web version of the player: energy-driven eye glow,
- * an irregular curtain of blood drips, attack/release-smoothed spectrum bars
- * with a gold cap on each, and "01. title • mm:ss" playlist rows.
+ * Geometry is taken from the web build's CSS, as percentages of the 2:3 stage,
+ * so the live elements land on the painted ones.
  */
 import draculaFrameUrl from '../assets/dracula-frame.webp'
-import eyeLeftUrl from '../assets/dracula-eye-left.png'
-import eyeRightUrl from '../assets/dracula-eye-right.png'
-import medallionUrl from '../assets/dracula-medallion.png'
-import fangLeftUrl from '../assets/dracula-fang-left.png'
-import fangRightUrl from '../assets/dracula-fang-right.png'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
@@ -34,19 +29,25 @@ const BAR_COUNT = 48
 /** Irregular drip curtain positions along the blood line, % of the seek width */
 const DRIP_X = [4, 8, 12, 17, 21, 25, 30, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 84, 89, 94]
 
+const SPEAKER_SVG =
+  '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+  '<path d="M4 9h4l5-4v14l-5-4H4z"/>' +
+  '<path d="M16.5 8.2a5.2 5.2 0 0 1 0 7.6" fill="none" stroke="currentColor" ' +
+  'stroke-width="2.2" stroke-linecap="round"/>' +
+  '</svg>'
+
 interface DraculaEls {
   title: HTMLElement
   artist: HTMLElement
-  eyes: HTMLButtonElement
-  eyeL: HTMLImageElement
-  eyeR: HTMLImageElement
+  eyeLeft: HTMLElement
+  eyeRight: HTMLElement
   canvas: HTMLCanvasElement
   seek: HTMLInputElement
   elapsed: HTMLElement
   remaining: HTMLElement
-  medallion: HTMLElement
-  orbit: SVGElement
-  medallionLayer: HTMLImageElement
+  medallion: HTMLButtonElement
+  volDown: HTMLButtonElement
+  volUp: HTMLButtonElement
   playlist: HTMLOListElement
 }
 
@@ -66,7 +67,7 @@ export class DraculaSkin implements Skin {
 
   private seeking = false
   private activeIndex = -1
-  /** Quantized eye level, so the full-canvas layer filters only repaint on change */
+  /** Quantized eye glow, so the DOM only updates when the level moves */
   private eyeLevel = -1
 
   private durations = new Map<string, number>()
@@ -111,26 +112,29 @@ export class DraculaSkin implements Skin {
     return /* html */ `
       <div class="dr-body" aria-label="Dracula media player">
 
-        <!-- Track info over the chest -->
+        <!-- Chest panel = live title + artist (covers the baked placeholder) -->
         <div class="dr-track-info">
           <span class="dr-title">—</span>
           <span class="dr-artist">—</span>
         </div>
 
-        <!-- Eyes = play/pause hotspot (the layers bloom with the audio) -->
-        <button class="dr-eyes" aria-label="Play" aria-pressed="false" title="Play / Pause"></button>
+        <!-- Eyes are a readout: these glows ride the painted sockets -->
+        <span class="dr-eye dr-eye-left" aria-hidden="true"></span>
+        <span class="dr-eye dr-eye-right" aria-hidden="true"></span>
 
-        <!-- Cape interior = live spectrum -->
+        <!-- Cape interior = mirrored spectrum -->
         <div class="dr-cape" aria-hidden="true">
           <canvas class="dr-viz"></canvas>
         </div>
 
-        <!-- Blood line = seek: fill, drip curtain, elapsed / remaining -->
+        <!-- Blood line = seek, bracketed by the volume speakers -->
         <div class="dr-seek-region" role="group" aria-label="Seek">
           <div class="dr-seek-top">
+            <button class="dr-vol dr-vol-down" aria-label="Volume down" title="Volume down">${SPEAKER_SVG}</button>
             <div class="dr-blood" aria-hidden="true"></div>
             <input class="dr-seek" type="range" min="0" max="1000" value="0"
                    aria-label="Seek through track" step="1" />
+            <button class="dr-vol dr-vol-up" aria-label="Volume up" title="Volume up">${SPEAKER_SVG}</button>
           </div>
           <div class="dr-times">
             <span class="dr-elapsed">00:00</span>
@@ -138,30 +142,17 @@ export class DraculaSkin implements Skin {
           </div>
         </div>
 
-        <!-- Medallion = volume (drag, wheel, or arrow keys) -->
-        <div class="dr-medallion" role="slider" tabindex="0"
-             aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80"
-             title="Volume — drag, scroll, or arrow keys">
-          <svg class="dr-medallion-orbit" viewBox="0 0 100 100" aria-hidden="true">
-            <circle cx="50" cy="7" r="6"></circle>
-          </svg>
-        </div>
+        <!-- Medallion at the throat = play / pause -->
+        <button class="dr-medallion" aria-label="Play" aria-pressed="false" title="Play / Pause"></button>
 
-        <!-- Fangs = prev / next hotspots -->
+        <!-- Lower fangs = prev / next hotspots -->
         <div class="dr-controls">
           <button class="dr-prev" aria-label="Previous track" title="Previous track"></button>
           <button class="dr-next" aria-label="Next track" title="Next track"></button>
         </div>
 
-        <!-- Playlist over the lower cape -->
+        <!-- Lower cape = playlist -->
         <ol class="dr-playlist" aria-label="Playlist"></ol>
-
-        <!-- Separated element layers (extracted from the plate art) -->
-        <img class="dr-layer dr-layer-eye-l" src="${eyeLeftUrl}" alt="" aria-hidden="true" draggable="false">
-        <img class="dr-layer dr-layer-eye-r" src="${eyeRightUrl}" alt="" aria-hidden="true" draggable="false">
-        <img class="dr-layer dr-layer-medallion" src="${medallionUrl}" alt="" aria-hidden="true" draggable="false">
-        <img class="dr-layer dr-layer-fang-l" src="${fangLeftUrl}" alt="" aria-hidden="true" draggable="false">
-        <img class="dr-layer dr-layer-fang-r" src="${fangRightUrl}" alt="" aria-hidden="true" draggable="false">
 
       </div>
     `
@@ -176,24 +167,23 @@ export class DraculaSkin implements Skin {
     const els: DraculaEls = {
       title: c.querySelector('.dr-title')!,
       artist: c.querySelector('.dr-artist')!,
-      eyes: c.querySelector('.dr-eyes')!,
-      eyeL: c.querySelector('.dr-layer-eye-l')!,
-      eyeR: c.querySelector('.dr-layer-eye-r')!,
+      eyeLeft: c.querySelector('.dr-eye-left')!,
+      eyeRight: c.querySelector('.dr-eye-right')!,
       canvas: c.querySelector('.dr-viz')!,
       seek: c.querySelector('.dr-seek')!,
       elapsed: c.querySelector('.dr-elapsed')!,
       remaining: c.querySelector('.dr-remaining')!,
       medallion: c.querySelector('.dr-medallion')!,
-      orbit: c.querySelector('.dr-medallion-orbit')!,
-      medallionLayer: c.querySelector('.dr-layer-medallion')!,
+      volDown: c.querySelector('.dr-vol-down')!,
+      volUp: c.querySelector('.dr-vol-up')!,
       playlist: c.querySelector('.dr-playlist')!,
     }
     this.els = els
 
     this.buildDrips()
 
-    // Eyes → play/pause
-    els.eyes.addEventListener('click', () => {
+    // Medallion → play/pause
+    els.medallion.addEventListener('click', () => {
       p.togglePlayPause()
       this.updatePlayState()
     })
@@ -213,42 +203,38 @@ export class DraculaSkin implements Skin {
       this.seeking = false
     })
 
-    // Medallion → volume: drag horizontally, wheel, or arrow keys
+    // Volume → the speaker icons bracketing the blood line
     const applyVolume = (v: number): void => {
       const vol = Math.min(1, Math.max(0, v))
       p.setVolume(vol)
-      els.orbit.style.transform = `rotate(${vol * 360 - 90}deg)`
-      els.medallionLayer.style.transform = `rotate(${vol * 1.2}deg)`
-      els.medallion.setAttribute('aria-valuenow', String(Math.round(vol * 100)))
-      els.medallion.setAttribute('aria-valuetext', `${Math.round(vol * 100)}%`)
+      const pct = Math.round(vol * 100)
+      const sync = (el: HTMLButtonElement, dir: string): void => {
+        el.style.setProperty('--vol', String(vol))
+        el.title = `Volume ${dir} — ${pct}%`
+        el.setAttribute('aria-label', `Volume ${dir} (${pct}%)`)
+      }
+      sync(els.volDown, 'down')
+      sync(els.volUp, 'up')
     }
-    let dragX: number | null = null
-    let dragVol = 0
-    els.medallion.addEventListener('pointerdown', (e) => {
-      dragX = e.clientX
-      dragVol = p.currentVolume
-      els.medallion.setPointerCapture(e.pointerId)
-    })
-    els.medallion.addEventListener('pointermove', (e) => {
-      if (dragX === null) return
-      applyVolume(dragVol + (e.clientX - dragX) / 140)
-    })
-    els.medallion.addEventListener('pointerup', () => { dragX = null })
-    els.medallion.addEventListener('pointercancel', () => { dragX = null })
-    els.medallion.addEventListener('wheel', (e) => {
-      e.preventDefault()
-      applyVolume(p.currentVolume + (e.deltaY < 0 ? 0.05 : -0.05))
-    }, { passive: false })
-    els.medallion.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+    const stepVolume = (delta: number): void => applyVolume(p.currentVolume + delta)
+    els.volDown.addEventListener('click', () => stepVolume(-0.05))
+    els.volUp.addEventListener('click', () => stepVolume(0.05))
+    for (const el of [els.volDown, els.volUp]) {
+      el.addEventListener('wheel', (e) => {
         e.preventDefault()
-        applyVolume(p.currentVolume + 0.05)
-      }
-      if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
-        e.preventDefault()
-        applyVolume(p.currentVolume - 0.05)
-      }
-    })
+        stepVolume(e.deltaY < 0 ? 0.05 : -0.05)
+      }, { passive: false })
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+          e.preventDefault()
+          stepVolume(0.05)
+        }
+        if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+          e.preventDefault()
+          stepVolume(-0.05)
+        }
+      })
+    }
     // Init from the player's volume so a mid-playback skin swap keeps it
     applyVolume(p.currentVolume)
 
@@ -277,8 +263,8 @@ export class DraculaSkin implements Skin {
       const drip = document.createElement('span')
       drip.className = 'dr-drip'
       drip.style.setProperty('--x', `${x}%`)
-      drip.style.setProperty('--w', `${1.8 + (i % 3) * 0.9}px`)
-      drip.style.setProperty('--h', `${7 + ((i * 7) % 10) * 1.1}px`)
+      drip.style.setProperty('--w', `${1 + (i % 3) * 0.6}px`)
+      drip.style.setProperty('--h', `${4 + ((i * 7) % 10) * 0.7}px`)
       drip.style.setProperty('--speed', `${1.7 + (i % 6) * 0.41}s`)
       drip.style.setProperty('--delay', `${-(i * 0.31)}s`)
       host.appendChild(drip)
@@ -370,14 +356,16 @@ export class DraculaSkin implements Skin {
 
   private updatePlayState(): void {
     const playing = this.player?.audio.isPlaying ?? false
-    const eyes = this.els?.eyes
-    if (!eyes) return
-    if (eyes.classList.contains('playing') === playing) return
-    eyes.classList.toggle('playing', playing)
-    eyes.setAttribute('aria-pressed', String(playing))
-    eyes.setAttribute('aria-label', playing ? 'Pause' : 'Play')
+    const medallion = this.els?.medallion
+    if (!medallion) return
+    if (medallion.classList.contains('playing') === playing) return
+    medallion.classList.toggle('playing', playing)
+    medallion.setAttribute('aria-pressed', String(playing))
+    medallion.setAttribute('aria-label', playing ? 'Pause' : 'Play')
   }
 
+  /** Mirrored spectrum, as drawn by the web version: each measured height is
+   *  drawn equally above and below the centre line. */
   private drawVisualizer(now: number): void {
     const els = this.els
     const p = this.player
@@ -404,54 +392,68 @@ export class DraculaSkin implements Skin {
     const delta = this.lastFrame ? Math.min(2.5, (now - this.lastFrame) / 16.67) : 1
     this.lastFrame = now
 
+    const mid = h / 2
     const pitch = w / BAR_COUNT
     const barW = pitch * 0.55
-    const base = h - dpr
+
+    // Faint gold centre line under the bars
+    ctx.save()
+    ctx.globalAlpha = 0.33
+    ctx.strokeStyle = '#bd8852'
+    ctx.lineWidth = Math.max(1, dpr * 0.7)
+    ctx.beginPath()
+    ctx.moveTo(w * 0.02, mid)
+    ctx.lineTo(w * 0.98, mid)
+    ctx.stroke()
+    ctx.restore()
 
     for (let i = 0; i < BAR_COUNT; i++) {
       const x = (i + 0.5) * pitch
       const frac = i / (BAR_COUNT - 1)
+      const edge = Math.abs((i - (BAR_COUNT - 1) / 2) / ((BAR_COUNT - 1) / 2))
 
-      // Idle bars keep breathing while paused, like the web version
-      let target = 0.015 + 0.008 * (0.5 + 0.5 * Math.sin(now * 0.0008 + i * 0.31))
+      // Idle bars keep breathing while paused
+      let target = 0.025 + 0.018 * (0.5 + 0.5 * Math.sin(now * 0.0008 + i * 0.31))
       if (playing) {
-        // Log-ish bin mapping: the lows get the width, the highs get the tail
         const bin = Math.min(
           this.freqData.length - 1,
           Math.max(1, Math.floor(Math.pow(frac, 2.2) * (this.freqData.length - 2) + 1)),
         )
-        target += Math.pow(this.freqData[bin] / 255, 1.5) * 0.62
+        target += Math.pow(this.freqData[bin] / 255, 1.5) * 0.8
       }
+      target *= 0.87 + 0.13 * (1 - edge)
 
-      // Asymmetric smoothing: jump up fast, settle down slow
-      const response = target > this.levels[i] ? 0.16 : 0.06
+      const response = target > this.levels[i] ? 0.12 : 0.045
       this.levels[i] += (target - this.levels[i]) * (1 - Math.pow(1 - response, delta))
 
-      const barH = Math.max(2 * dpr, this.levels[i] * h)
-      const top = base - barH
-      const warm = frac < 0.5
+      const half = Math.max(h * 0.015, this.levels[i] * h * 0.48)
+      const top = mid - half
+      const bottom = mid + half
+      const warm = i < BAR_COUNT * 0.5
 
-      const grad = ctx.createLinearGradient(0, top, 0, base)
-      grad.addColorStop(0, warm ? 'rgba(251, 86, 75, 0.95)' : 'rgba(183, 95, 243, 0.95)')
-      grad.addColorStop(0.45, warm ? 'rgba(150, 16, 32, 0.5)' : 'rgba(76, 20, 122, 0.5)')
-      grad.addColorStop(1, warm ? 'rgba(96, 8, 18, 0.16)' : 'rgba(44, 10, 72, 0.16)')
+      const grad = ctx.createLinearGradient(0, top, 0, bottom)
+      grad.addColorStop(0, warm ? 'rgba(251, 86, 75, 0.96)' : 'rgba(183, 95, 243, 0.96)')
+      grad.addColorStop(0.5, warm ? 'rgba(135, 16, 31, 0.44)' : 'rgba(76, 20, 122, 0.44)')
+      grad.addColorStop(1, warm ? 'rgba(251, 86, 75, 0.96)' : 'rgba(183, 95, 243, 0.96)')
 
       ctx.save()
       ctx.fillStyle = grad
-      ctx.shadowColor = warm ? 'rgba(243, 40, 53, 0.55)' : 'rgba(149, 52, 242, 0.55)'
-      ctx.shadowBlur = 6 * dpr
-      ctx.fillRect(x - barW / 2, top, barW, barH)
+      ctx.shadowColor = warm ? 'rgba(243, 40, 53, 0.65)' : 'rgba(149, 52, 242, 0.65)'
+      ctx.shadowBlur = 7 * dpr
+      ctx.fillRect(x - barW / 2, top, barW, half * 2)
 
-      // Gold cap on every bar
-      ctx.shadowBlur = 3 * dpr
+      // Gold caps top and bottom
+      ctx.shadowBlur = 4 * dpr
       ctx.shadowColor = '#e9b760'
       ctx.fillStyle = 'rgba(244, 202, 126, 0.9)'
-      ctx.fillRect(x - barW / 2, top, barW, Math.max(1, dpr * 1.2))
+      const cap = Math.max(1, dpr * 1.2)
+      ctx.fillRect(x - barW / 2, top, barW, cap)
+      ctx.fillRect(x - barW / 2, bottom - cap, barW, cap)
       ctx.restore()
     }
   }
 
-  /** Eyes are a readout: socket bloom follows the real signal energy */
+  /** Eyes are a readout: the glow follows the real signal energy */
   private updateEyes(): void {
     const els = this.els
     const p = this.player
@@ -469,17 +471,12 @@ export class DraculaSkin implements Skin {
       energy = Math.sqrt(sum / this.waveData.length)
     }
 
-    const level = playing ? Math.min(0.95, 0.3 + energy * 5.5) : 0.12
-    const quantized = Math.round(level * 12)
+    const glow = playing ? Math.min(0.95, 0.18 + energy * 5) : 0.12
+    const quantized = Math.round(glow * 20) / 20
     if (quantized === this.eyeLevel) return
     this.eyeLevel = quantized
-
-    const filter = playing
-      ? `brightness(${(1.1 + energy * 1.6).toFixed(2)}) saturate(1.15) ` +
-        `drop-shadow(0 0 ${Math.min(18, 2 + energy * 45).toFixed(0)}px rgba(255,50,30,0.8))`
-      : 'brightness(0.55) saturate(0.7)'
-    els.eyeL.style.filter = filter
-    els.eyeR.style.filter = filter
+    els.eyeLeft.style.opacity = String(quantized)
+    els.eyeRight.style.opacity = String(quantized)
   }
 
   private paintTime(): void {

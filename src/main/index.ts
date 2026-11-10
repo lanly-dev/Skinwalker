@@ -19,6 +19,11 @@ function createWindow(): void {
     frame: false,          // no OS chrome — the skin IS the window
     transparent: true,     // lets non-rectangular skins breathe
     backgroundColor: '#00000000',
+    // Windows paints a rectangular DWM shadow around a transparent window and
+    // rounds the corners on 11 — both make the window rectangle visible on the
+    // desktop, so the art alone defines the silhouette.
+    hasShadow: false,
+    roundedCorners: false,
     resizable: true,
     show: false,
     icon: join(__dirname, '../../resources/icon.png'),
