@@ -37,9 +37,9 @@ Costume Contest: a haunting UI that is polished/unforgettable AND where the spoo
 ## Scope v1
 - **Electron desktop app**; local audio files via native OS file picker + bundled royalty-free demo tracks.
 - Core player: play / pause / seek / volume, playlist, next / prev.
-- **At least 3 monster skins**, swappable mid-playback without stopping the track.
+- **Two monster skins** (Dracula flagship + Frankenstein) — no skin switcher, the app boots Dracula.
 - Per skin, functional anatomy: e.g. mouth or eyes as the live visualizer (Web Audio AnalyserNode), claw / tongue / vine as the seek bar, skin-themed play/pause and volume organs.
-- One skin is the design flagship (Dracula) — polish it hardest; the other two can be simpler but must be fully functional skins, not color swaps.
+- One skin is the design flagship (Dracula) — polish it hardest; Frankenstein can be simpler but must be a fully functional skin, not a color swap.
 - Frameless, transparent window — the monster body IS the window chrome. No OS titlebar.
 
 ## Non-goals (scope caps — do not cross without explicit approval)
@@ -49,7 +49,7 @@ Costume Contest: a haunting UI that is polished/unforgettable AND where the spoo
 - No auto-updater, no in-app store, no telemetry.
 
 ## Acceptance checks (must all pass before "done")
-- [ ] Load a track, play it, swap all 3 skins mid-play — audio never interrupts.
+- [ ] Load a track, play it — audio never interrupts.
 - [ ] Every visible control in every skin actually works (seek, volume, playlist).
 - [ ] Visualizer is driven by the real audio signal, not a fake animation loop.
 - [ ] Frameless window drags, minimizes, maximizes, and closes correctly.
@@ -59,7 +59,7 @@ Costume Contest: a haunting UI that is polished/unforgettable AND where the spoo
 
 ## Packaging checklist
 - [ ] Packaged installer / portable binary (electron-builder), public repo + MIT license + `/.kiro`.
-- [ ] Demo video < 3 min, public YouTube: play a track → swap skins mid-song → close-up of one skin where the anatomy IS the control.
+- [ ] Demo video < 3 min, public YouTube: play a track → close-up of the skin where the anatomy IS the control.
 - [ ] Devpost text description + Kiro-usage write-up (specs vs vibe coding, hooks, steering used).
 - [ ] Blog post about the build (Bonus Blog prize) + one social post starting with `#KiroweenHackathon26` (Social Blitz).
 
@@ -96,6 +96,8 @@ Costume Contest: a haunting UI that is polished/unforgettable AND where the spoo
 - **Plates size to the window, not to a filtered wrapper — 2026-11-11:** Frankenstein, Skeleton and Skeleton Trio rendered with a zero-height body after the image-frame pass. Cause: each skin's wrapper carries `filter: drop-shadow(...)`, and a filtered ancestor becomes the containing block for its positioned descendants — while the wrapper itself has no height (every child is absolute), so `.fr-body` / `.sk-body` / `.tr-body` with `inset: 0` resolved against a 0px-tall box. Dracula only escaped because its block sets `filter: none` and `position: fixed`. Fix: the wrappers stay `filter: none`, the drop-shadow moves onto the plate body, and all three bodies are `position: fixed; inset: 0; width: 100vw; height: 100vh`, which also overrides the stale card-era `width: min(440px, 96vw); margin: 0 auto`. Verified in the built renderer: 480×720 bodies for the portrait skins and 1024×576 for the Trio, every control inside its body, plate aspect equal to window aspect, and shape-mask coverage 72.6% / 75.3% / 63.5% / 68%.
 
 - **Card-era CSS removed — 2026-11-11:** the pre-image-frame blocks (Dracula/Frankenstein/Skeleton cards, the inline-SVG art sheet, Dracula's SVG silhouette) were still in `style.css`, and several of their declarations still won on live elements — the image-frame blocks only override the properties they declare. Cleanup rule: find declarations the live rule lacks (title weight/glow, the divider under the artist, the mono time font, playlist borders and row layout, the 10px inset the fang hotspots were tuned against, the faint socket rim on `.dr-eye`), fold them into the live rule, then delete the block. 422 lines removed (1719 → 1338; 54.8 → 38.5 kB); `npm run build` passes and Dracula/Frankenstein render the same as their pre-cleanup captures. One deliberate drop: `.dr-eye`'s card-era 2px rim and inset shadow — invisible under `mix-blend-mode: screen`.
+
+- **Lineup cut — 2026-11-11 (Lan's call):** Skeleton + Skeleton Trio removed (skin files, CSS blocks, plate assets), and the skin-switcher toggle is gone too — no mid-playback swapping. Dracula is the launch skin; Frankenstein stays registered but unreachable until a selector returns. Scope is two skins, no swap.
 
 ## Open decisions
 1. ~~Demo tracks~~ — RESOLVED 2026-11-10: six royalty-free tracks live in `public/tracks/` (3 synthesized + 3 Incompetech) and are wired in `src/renderer/main.ts`.

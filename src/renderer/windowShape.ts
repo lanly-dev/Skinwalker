@@ -163,7 +163,7 @@ function buildRects(on: Uint8Array, w: number, h: number): Rect[] {
   return out
 }
 
-/** Re-shape after a resize (the Trio swaps the window size on mount). */
+/** Re-shape after a resize (a skin may set the window size on mount). */
 export function installShapeResize(): void {
   window.addEventListener('resize', () => {
     if (!source) return

@@ -118,7 +118,7 @@ ipcMain.on('window:drag-end', () => {
   dragSize = null
 })
 
-/** Skins own the window shape: portrait skins are 480×720, the Trio is landscape */
+/** Skins own the window shape: all skins are portrait 480x720 */
 ipcMain.on('window:set-size', (_e, { width, height }) => {
   if (!win) return
   if (win.isMaximized()) win.unmaximize()

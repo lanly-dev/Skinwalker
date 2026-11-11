@@ -1,7 +1,7 @@
 /**
  * Renderer entry point.
  * Bootstraps Player, loads demo playlist, mounts default skin,
- * and renders the skin-switcher + window controls.
+ * and renders the window controls.
  */
 import { Player, type Track } from './player/Player'
 import { SKINS } from './skins/index'
@@ -25,9 +25,8 @@ const DEMO_TRACKS: Track[] = [
 const player = new Player()
 player.loadPlaylist(DEMO_TRACKS)
 
-let activeSkinIndex = 0
-player.mountSkin(SKINS[activeSkinIndex])
-void applySkinShape(SKINS[activeSkinIndex].shapeImage)
+player.mountSkin(SKINS[0])
+void applySkinShape(SKINS[0].shapeImage)
 installSkinDrag()
 installShapeResize()
 
@@ -70,35 +69,6 @@ function btn(label: string, ariaLabel: string, onClick: () => void): HTMLButtonE
 }
 
 renderWindowControls()
-
-// ── Skin switcher ─────────────────────────────────────────────────────────────
-function renderSwitcher(): void {
-  const existing = document.getElementById('skin-switcher')
-  if (existing) existing.remove()
-
-  const nav = document.createElement('nav')
-  nav.id = 'skin-switcher'
-  nav.setAttribute('aria-label', 'Monster skin selector')
-
-  SKINS.forEach((skin, i) => {
-    const b = document.createElement('button')
-    b.textContent = skin.label
-    b.setAttribute('aria-pressed', String(i === activeSkinIndex))
-    b.classList.toggle('active', i === activeSkinIndex)
-    b.addEventListener('click', () => {
-      if (i === activeSkinIndex) return
-      activeSkinIndex = i
-      player.mountSkin(skin)
-      void applySkinShape(skin.shapeImage)
-      renderSwitcher()
-    })
-    nav.appendChild(b)
-  })
-
-  document.body.appendChild(nav)
-}
-
-renderSwitcher()
 
 // ── Native file open ──────────────────────────────────────────────────────────
 function renderOpenButton(): void {

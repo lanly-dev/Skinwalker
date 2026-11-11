@@ -4,7 +4,7 @@
 
 Kiroween 2026 — **Costume Contest** entry.
 
-Swap monster skins mid-playback and every body part does real work: the mouth is the visualizer, the eyes toggle play/pause, the claws scrub the timeline. No decoration — pure functional anatomy.
+Every body part does real work: the mouth is the visualizer, the eyes toggle play/pause, the claws scrub the timeline. No decoration — pure functional anatomy.
 
 ---
 
@@ -14,7 +14,6 @@ Swap monster skins mid-playback and every body part does real work: the mouth is
 |---------|--------|---------|
 | 🧛 Dracula | flagship | eyes → play/pause · cape → visualizer · blood drip → seek · medallion → volume · fangs → prev/next |
 | ⚡ Frankenstein | functional | skull flat-top → visualizer · eyes → play/pause · neck bolts → prev/next · chest scar → seek · hand → volume |
-| 💀 Skeleton | functional | skull jaw → visualizer · eye sockets → play/pause · arm bones → prev/next · ribcage → seek · spine → volume |
 
 ---
 
