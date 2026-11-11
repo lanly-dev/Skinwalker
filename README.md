@@ -1,105 +1,98 @@
-# Skinwalker
+# Skinwalker 🎃
 
-> A media player where the skin is a living Halloween monster.
+A Halloween-themed media player where the monster's anatomy IS the interface — Kiroween 2026 Costume Contest entry.
 
-Kiroween 2026 — **Costume Contest** entry.
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Electron](https://img.shields.io/badge/Electron-45.3.0-47848F.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-7.0.2-3178C6.svg)
 
-Every body part does real work: the mouth is the visualizer, the eyes toggle play/pause, the claws scrub the timeline. No decoration — pure functional anatomy.
+## What Is This?
 
----
+Skinwalker is an Electron desktop media player where **the skin is a living Halloween monster**. Every body part is a working control:
 
-## Skins
+- 👁️ **Eyes** → Audio visualizer
+- 🩸 **Blood drip** → Seek bar (with 101+ animated blood effects)
+- ❤️ **Medallion** → Play/pause
+- 🦴 **Bones/Hands** → Previous/Next track
+- 🧛 **Monster body** → Window chrome (frameless, transparent)
 
-| Monster | Status | Anatomy |
-|---------|--------|---------|
-| 🧛 Dracula | flagship | medallion → play/pause · cape → visualizer · blood line → seek · painted speakers → volume · crossed hands → prev/next · tool row → close / minimize / add files / mini bat |
-| ⚡ Frankenstein | functional | skull flat-top → visualizer · eyes → play/pause · neck bolts → prev/next · chest scar → seek · hand → volume |
-| 💀 Skeleton | functional | pendant → play/pause · jaw → visualizer · bone board → playlist · blood line → seek · left bone column → volume · bone plaques → prev/next |
+## Features
 
----
+- **3 Monster Skins:** Dracula (flagship), Frankenstein, Skeleton
+- **Dual-Mode Audio:** File-based (MP3/WAV) + Procedural synthesis
+- **Real-Time Visualizer:** Driven by Web Audio API AnalyserNode
+- **Living Blood Effects:** 101+ animated blood drips, trails, and splatter
+- **Shaped Window:** OS window clips to monster silhouette (Windows/Linux)
+- **Bundled Tracks:** 6 royalty-free demo tracks included
 
-## Stack
-
-- **Electron 33** — frameless, transparent window (the monster IS the chrome)
-- **electron-vite** — Vite HMR for main + preload + renderer
-- **TypeScript** — strict, no UI framework
-- **Web Audio API** — real `AnalyserNode` drives the visualizer; no fake animation loops
-
----
-
-## Getting started
+## Quick Start
 
 ```bash
+# Install dependencies
 npm install
-npm run dev        # Electron app with HMR
+
+# Development mode (hot reload)
+npm run dev
+
+# Build for production
+npm run build
+
+# Package installer
+npm run package
 ```
 
-### Build
-
-```bash
-npm run build      # compile to out/
-npm run package    # electron-builder installer → release/
-```
-
-### Typecheck
-
-```bash
-npm run typecheck
-```
-
----
-
-## Project layout
+## Project Structure
 
 ```
-src/
-├── main/           # Electron main process (window, IPC, file dialog)
-├── preload/        # Context bridge → window.skinwalker API
-└── renderer/       # All UI
-    ├── audio/      # AudioEngine (Web Audio API wrapper)
-    ├── player/     # Player state + playlist logic
-    └── skins/      # Skin interface + one file per monster
-        └── index.ts  ← register new skins here
-public/
-└── tracks/         # Bundled royalty-free demo tracks (add .mp3 files here)
-resources/          # App icon and native assets
-.kiro/              # Kiro specs, steering, hooks (planned — required for submission)
+skinwalker/
+├── .kiro/              # Kiro workflows, steering, hooks, specs
+├── docs/               # Project documentation
+├── public/tracks/      # Bundled demo audio files
+├── reference/          # Design references (gitignored)
+├── resources/          # App icons and native assets
+├── scripts/            # Build and utility scripts
+├── src/
+│   ├── main/          # Electron main process
+│   ├── preload/       # IPC bridge (contextBridge)
+│   └── renderer/      # UI, player, audio engine, skins
+└── out/               # Build output (gitignored)
 ```
 
----
+## Tech Stack
 
-## Demo tracks
+- **Electron 45.3.0** — Desktop app framework
+- **TypeScript 7.0.2** — Type-safe development
+- **Vite 8** (via electron-vite 6.0) — Fast builds and HMR
+- **Web Audio API** — Audio playback and visualizer
+- **Vanilla DOM** — No UI framework, pure TypeScript + CSS
 
-Six demo tracks are included in `public/tracks/`:
+## Documentation
 
-**Synthetic (procedurally generated):**
-- **Nocturne In Blood** (54s, WAV) — dark ambient drone from boba.page synthesis
-- **Coffin Dream** (58s, WAV) — eerie atmospheric soundscape
-- **Widow's Kiss** (51s, WAV) — haunting ambient composition
+- **[AGENTS.md](docs/AGENTS.md)** — Project history, decisions, lessons learned
+- **[.kiro/specs/](/.kiro/specs/)** — Feature specifications
+- **[.kiro/steering/](/.kiro/steering/)** — Development guides and conventions
 
-**Royalty-free music (Incompetech, CC BY 4.0):**
-- **Baba Yaga** (MP3) — dark orchestral theme
-- **Darkling** (MP3) — eerie ambient
-- **Thief in the Night** (MP3) — suspenseful atmospheric
+## Kiroween 2026
 
-Regenerate synthetic tracks: `npm run generate-tracks`
+This is a **Costume Contest** entry for Kiroween 2026, built spec-first with Kiro AI.
 
-See `public/tracks/README.md` for sources, attribution, and technical details.
+- **Category:** Costume Contest (spooky UI where every element does functional work)
+- **Deadline:** Friday, December 4, 2026, 2:00 PM PT
+- **Requirements:** New project, MIT license, `.kiro/` folder committed, spec-first development
 
----
+### Kiro Usage
 
-## Adding a new skin
-
-1. Create `src/renderer/skins/YourMonsterSkin.ts` implementing the `Skin` interface.
-2. Map every monster body part to a real player control — no pure decoration.
-3. Register it in `src/renderer/skins/index.ts`.
-
----
+- ✅ All core features spec'd in `.kiro/specs/` before implementation
+- ✅ Steering files guide CSS, audio, and Electron conventions
+- ✅ Hooks automate TypeScript checks and session reminders
+- ✅ Workflow for structured feature development
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — See [LICENSE](LICENSE) file for details.
 
----
+## Credits
 
-*Built with [Kiro](https://kiro.dev) for [Kiroween 2026](https://kiro.dev/kiroween).*
+- **Demo Music:** Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0
+- **Synthesis Algorithm:** Inspired by boba.page reference implementation
+- **Built With:** Kiro AI for spec-first development

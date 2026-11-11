@@ -133,8 +133,70 @@ because main's portrait floor (380×560) would otherwise clamp the square bat. V
 web-build position on the painted speakers, with a gold level bar under each. Dracula is
 `SKINS[0]` again so the updated skin actually launches; there is still no switcher.
 
+## Recent Improvements (2026-11-08)
+- **Blood effects massively enhanced:** Dracula seekbar now has 101+ blood elements (21 main drips + 40 small + 30 splatter + 10 trails) with procedural generation in `buildDrips()`, plus inline SVG dripping edge with 14 animated elements. Glow effects reduced by 50% for matte/realistic blood appearance.
+- **Complete Kiro infrastructure:** Full `.kiro/` folder created with specs (6 files), steering files (7 files including auto-load guides), hooks (2 active), workflows (1 template), and comprehensive documentation explaining all Kiro concepts.
+- **Code optimization:** Removed 5 unused Dracula assets (eye-left/right, fang-left/right, medallion), added CSS variables for blood colors to `:root`, verified all code is in active use. CSS: 35.74 KB, TypeScript: 0 errors.
+- **Dependencies upgraded:** Electron 33→45.3.0, TypeScript 5→7.0.2, Vite 2→8.3.8, electron-vite 2→6.0.0, electron-builder 24→26.18.0, @electron-toolkit packages to latest. Build output: -116 packages (-25%), 343 total packages, all builds passing.
+- **File structure reorganization:** Created `docs/` folder for documentation, moved AGENTS.md there, created professional README.md at root, PROJECT-STRUCTURE.md guide, organized .kiro/ with separate docs/ and specs/ subfolders.
+- **Kiro methodology documentation:** Created `understanding-kiro.md` (500+ lines explaining specs, steering, hooks, workflows) and `QUICK-REFERENCE.md` (1-page cheat sheet). Project now exemplifies spec-first development for Kiroween judging.
+
 ## Open decisions
 1. ~~Demo tracks~~ — RESOLVED 2026-11-10: six royalty-free tracks live in `public/tracks/` (3 synthesized + 3 Incompetech) and are wired in `src/renderer/main.ts`.
 
 ## How we work
 Plan → Work → Assess → Compound. When a session earns a lesson (a bug's real cause, a workflow that works), write it into this file the moment it is earned. When a decision above is made, update the Open decisions section in the same session — undecided items stay visibly undecided, never silently assumed.
+
+
+## Lessons Earned (Session 2026-11-08)
+
+### Procedural Blood Generation
+When building complex visual effects like the 101+ blood drips, procedural generation in code (TypeScript function returning HTML strings) beats static HTML:
+- **Flexibility:** Single function call with parameters controls density, size distribution
+- **Maintainability:** One function to update, not 100+ elements in markup
+- **Performance:** Generates once at mount, not parsed on every page load
+- **Scalability:** Easy to add variations (trails, splatter, pools) without bloating files
+
+### CSS Variable Organization
+When effects use multiple shades of the same hue, define them as CSS variables in `:root`:
+```css
+--blood-dark: #7c121d;
+--blood-bright: #d83c3b;
+--blood-orange: #e04846;
+```
+**Benefits:** Color adjustments in one place, easier theme variants, consistent palette enforcement.
+
+### Dependency Upgrade Strategy
+When upgrading major versions across multiple packages:
+1. **Check compatibility:** Run `npm outdated` to see available versions
+2. **Update package.json manually:** Gives full control over version choices
+3. **Install and verify:** `npm install` then `npm run typecheck` and `npm run build`
+4. **Test incrementally:** Don't upgrade everything at once if one package breaks
+5. **Document rationale:** Note which packages maxed out at specific versions
+
+### Kiro Infrastructure Organization
+When building a Kiroween entry, organize `.kiro/` clearly from the start:
+- **`.kiro/specs/`** — Technical specifications for features (spec-first requirement)
+- **`.kiro/docs/`** — Summaries, reports, non-spec documentation
+- **`.kiro/steering/`** — Context files that guide Kiro sessions
+- **`.kiro/hooks/`** — Automation triggers (JSON files)
+- **`.kiro/workflows/`** — Multi-step workflow definitions
+
+Keep root-level docs/ separate for user-facing documentation (README, PROJECT-STRUCTURE).
+
+### File Structure Best Practices
+When a project matures, organize for two audiences:
+- **Root level:** User-facing (README, LICENSE, package.json)
+- **docs/ folder:** Project documentation (AGENTS.md, structure guides)
+- **src/ folder:** Implementation code
+- **.kiro/ folder:** Kiro methodology artifacts (never gitignored for Kiroween)
+
+This separation makes the repo professional and submission-ready.
+
+### Stale Sync Prevention (Reinforced Lesson)
+**Always re-sync before pushing**, especially after time away:
+```bash
+git pull --rebase
+git diff origin/main <changed-file>  # For every file
+```
+Stale local state can revert recent work. Verify every changed file against remote main at push time.

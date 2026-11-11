@@ -28,6 +28,15 @@ This is the Skinwalker media player — a Kiroween 2026 **Costume Contest** entr
 - Applies to: code, comments, specs, docs, commits, READMEs, screenshots, Devpost text
 - Local directory layout is PRIVATE
 
+### 3. No Secrets in Public Repo
+**Never commit secrets, credentials, or sensitive data.**
+- ❌ API keys, tokens, passwords, private keys
+- ❌ Personal information (usernames, email addresses, machine names)
+- ❌ Environment variables containing secrets
+- ✅ Use `.env` files (gitignored) for local secrets
+- ✅ Use placeholder values in documentation
+- **Before any commit:** Review diff for secrets, absolute paths, personal data
+
 ### 3. Kiro Does Core Implementation
 - Other agents (Claude, etc.) can: plan, prototype, write docs, prep assets
 - Kiro must: write the core app implementation

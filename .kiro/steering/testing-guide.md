@@ -166,6 +166,93 @@ All items from AGENTS.md must pass:
 - [ ] `npm run build` produces working binary
 - [ ] App runs from clean install with no dependencies
 
+## Pre-Commit Security Checklist
+
+**CRITICAL:** Review every file before committing to public repo
+
+### Absolute Paths (NEVER COMMIT)
+- [ ] Search for `C:\Users\` or `/home/` or `~/`
+- [ ] Search for machine-specific usernames
+- [ ] Search for absolute paths in: code, comments, specs, docs
+- [ ] Verify all paths are repo-relative (e.g., `src/main.ts`)
+
+### Secrets & Credentials (NEVER COMMIT)
+- [ ] No API keys, tokens, passwords
+- [ ] No private keys or certificates
+- [ ] No email addresses or personal contact info
+- [ ] No `.env` files with real values
+- [ ] Check for accidentally committed credentials in git history
+
+### Personal Information (NEVER COMMIT)
+- [ ] No full names unless public contributors
+- [ ] No machine names (hostname, computer name)
+- [ ] No internal network paths
+- [ ] No company-internal references
+
+### Pre-Commit Review Commands
+```bash
+# Search for common violations before committing
+git diff --cached | grep -i "c:\\\|/home/\|users/"
+git diff --cached | grep -i "password\|secret\|token\|api.key"
+
+# Review every changed file
+git diff --cached --name-only
+git diff --cached <filename>  # Review each file
+
+# If violations found, STOP and fix before committing
+```
+
+### Safe Submission Checklist
+- [ ] Review `git diff` for every changed file
+- [ ] All paths are repo-relative
+- [ ] No secrets or credentials
+- [ ] No personal information
+- [ ] Screenshots contain no desktop UI with paths
+- [ ] Demo video shows only the app, not file explorer
+- [ ] Devpost text has no absolute paths
+- [ ] README has no absolute paths
+
+## Pre-Commit Security Checklist
+
+**CRITICAL:** Review every file before committing to public repo
+
+### Absolute Paths (NEVER COMMIT)
+- [ ] Search for `C:\Users\` or `/home/` or `~/`
+- [ ] Search for machine-specific usernames (TBMT, etc.)
+- [ ] Search for absolute paths in: code, comments, specs, docs
+- [ ] Verify all paths are repo-relative (e.g., `src/main.ts`)
+
+### Secrets & Credentials (NEVER COMMIT)
+- [ ] No API keys, tokens, passwords
+- [ ] No private keys or certificates
+- [ ] No email addresses or personal contact info
+- [ ] No `.env` files with real values
+- [ ] Check for accidentally committed credentials in git history
+
+### Personal Information (NEVER COMMIT)
+- [ ] No full names unless public contributors
+- [ ] No machine names (hostname, computer name)
+- [ ] No internal network paths
+- [ ] No company-internal references
+
+### Pre-Commit Commands
+```bash
+# Search for common violations
+git diff --cached | grep -i "c:\\\|/home/\|users/"
+git diff --cached | grep -i "password\|secret\|token\|api.key"
+git diff --cached | grep -i "TBMT"
+
+# If any found, STOP and fix before committing
+```
+
+### Safe Submission Checklist
+- [ ] Review `git diff` for every changed file
+- [ ] All paths are repo-relative
+- [ ] No secrets or credentials
+- [ ] No personal information
+- [ ] Screenshots contain no desktop UI with paths
+- [ ] Demo video shows only the app, not file explorer
+
 ## Performance Acceptance Criteria
 
 - [ ] Application starts in < 3 seconds
