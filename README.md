@@ -74,7 +74,7 @@ skinwalker/
 
 ## Kiroween 2026
 
-This is a **Costume Contest** entry for Kiroween 2026, built spec-first with Kiro AI.
+This is a **Costume Contest** entry for Kiroween 2026, developed with Kiro as part of a mixed-tooling workflow — see **Kiro Usage** below for the honest breakdown.
 
 - **Category:** Costume Contest (spooky UI where every element does functional work)
 - **Deadline:** Friday, December 4, 2026, 2:00 PM PT
@@ -82,10 +82,11 @@ This is a **Costume Contest** entry for Kiroween 2026, built spec-first with Kir
 
 ### Kiro Usage
 
-- ✅ All core features spec'd in `.kiro/specs/` before implementation
-- ✅ Steering files guide CSS, audio, and Electron conventions
-- ✅ Hooks automate TypeScript checks and session reminders
-- ✅ Workflow for structured feature development
+- ✅ Steering files in `.kiro/steering/` guide CSS, audio, and Electron conventions across the project
+- ✅ Hooks in `.kiro/hooks/` automate TypeScript checks, spec-first reminders, and security/privacy checks
+- ✅ A workflow in `.kiro/workflows/` structures new-skin feature development
+- ✅ Specs in `.kiro/specs/` cover the code-optimization pass and the Dracula blood-effects feature — those were built spec-first from their specs
+- Disclosure: the core player and skin system were built with mixed tooling, with Kiro steering and hooks in the loop. Spec-driven development applies where specs exist, and newer feature work is done spec-first in Kiro. The `/.kiro` contents are the real working files, not a retroactive trail.
 
 ## License
 
@@ -95,4 +96,4 @@ MIT — See [LICENSE](LICENSE) file for details.
 
 - **Demo Music:** Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0
 - **Synthesis Algorithm:** Inspired by boba.page reference implementation
-- **Built With:** Kiro AI for spec-first development
+- **Built With:** Kiro (steering, hooks, workflow, and spec-guided feature work) alongside other development tools
