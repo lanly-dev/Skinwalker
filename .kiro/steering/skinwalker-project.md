@@ -37,6 +37,8 @@ This is the Skinwalker media player — a Kiroween 2026 **Costume Contest** entr
 - ✅ Use placeholder values in documentation
 - **Before any commit:** Review diff for secrets, absolute paths, personal data
 
+**Rationale:** Privacy protection and professionalism. While not explicitly a disqualifying rule, maintaining clean, portable, private-info-free code is a best practice for any public submission.
+
 ### 3. Kiro Does Core Implementation
 - Other agents (Claude, etc.) can: plan, prototype, write docs, prep assets
 - Kiro must: write the core app implementation

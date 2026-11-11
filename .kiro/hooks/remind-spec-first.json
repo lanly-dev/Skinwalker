@@ -7,7 +7,7 @@
       "description": "Reminds agent to create spec before implementing new features",
       "action": {
         "type": "agent",
-        "prompt": "🎃 Skinwalker Project — Kiroween 2026 Entry\n\nCRITICAL REMINDERS:\n1. **Spec-First:** Every new feature needs a `.kiro/specs/[feature].md` file BEFORE implementation\n2. **No Absolute Paths:** Never use local file paths (C:\\, /home/, ~/) in any output\n3. **Read AGENTS.md First:** Check current decisions and lessons before starting\n\nIf implementing a feature without a spec, STOP and create the spec first."
+        "prompt": "🎃 Skinwalker Project — Kiroween 2026 Entry\n\nCRITICAL REMINDERS:\n1. **Spec-First:** Every new feature needs a `.kiro/specs/[feature].md` file BEFORE implementation\n2. **No Absolute Paths (Standing Rule):** NEVER use local file paths (C:\\Users\\, /home/, ~/workspace/) in ANY output, code, docs, or commits\n3. **No Secrets:** NEVER commit passwords, API keys, tokens, credentials, or personal information (usernames, machine names)\n4. **Repo-Relative Paths Only:** Always use paths like `src/main.ts` or `.kiro/specs/feature.md`\n5. **Read docs/AGENTS.md First:** Check current decisions and lessons before starting\n\nThese protect privacy and maintain professionalism in the public submission."
       }
     }
   ]

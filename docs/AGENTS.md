@@ -4,7 +4,7 @@ Kiroween 2026 entry — **Costume Contest**. Read this file first in every sessi
 
 ## Status
 - Name **Skinwalker** — CONFIRMED 2026-11-08. (Proposed 2026-11-06; collision check run 2026-11-06 — CLEAR: no repo by that name in the `lanly-dev` namespace (66 repos checked) and no media player by that name found. Watch-outs noted and accepted: the word is used elsewhere, including horror games / Skinwalker Ranch, and it is a Navajo figure with a taboo around casual use. Trademark registers and domain availability were not checked.)
-- Repo `lanly-dev/Skinwalker` — **created 2026-11-08** (private for now; Kiroween submission requires public — flip before submitting). Electron app built in Kiro; first commit + Electron migration landed 2026-11-08.
+- Repo `lanly-dev/skinwalker` — **PUBLIC** (required for Kiroween submission). Electron app built in Kiro; first commit + Electron migration landed 2026-11-08.
 - Deadline for the whole hackathon: **Fri Dec 4, 2026, 2:00 PM PT**. Credit request (shared 4,000-credit pool, one code per entrant) due **Dec 1, 12:00 PM PT**.
 
 ## What this is
@@ -149,6 +149,22 @@ Plan → Work → Assess → Compound. When a session earns a lesson (a bug's re
 
 
 ## Lessons Earned (Session 2026-11-08)
+
+### Security & Privacy (Critical Standing Rule)
+**NEVER commit absolute paths or secrets to the public repo:**
+- **Absolute Paths:** No `C:\Users\`, `/home/`, `~/workspace/` anywhere (code, docs, specs, commits, screenshots, Devpost)
+- **Secrets:** No API keys, tokens, passwords, credentials, private keys
+- **Personal Info:** No usernames (TBMT), machine names, email addresses, internal network paths
+- **Always use repo-relative paths:** `src/main.ts`, `.kiro/specs/feature.md`, `docs/AGENTS.md`
+
+**Pre-commit checklist:**
+```bash
+git diff --cached | grep -i "c:\\\|/home/\|users/"  # Check for paths
+git diff --cached | grep -i "password\|secret\|token"  # Check for secrets
+git diff --name-only --cached  # Review every file
+```
+
+This is a **KIROWEEN STANDING RULE** (privacy and professionalism).
 
 ### Procedural Blood Generation
 When building complex visual effects like the 101+ blood drips, procedural generation in code (TypeScript function returning HTML strings) beats static HTML:

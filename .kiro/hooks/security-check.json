@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Security & Privacy Check",
+      "trigger": "UserPromptSubmit",
+      "matcher": "commit|push|git",
+      "action": {
+        "type": "agent",
+        "prompt": "SECURITY REMINDER: Before committing or pushing:\n\n1. NO ABSOLUTE PATHS: Check for C:\\Users\\, /home/, ~/ in all changed files\n2. NO SECRETS: Check for passwords, tokens, API keys, credentials\n3. NO PERSONAL INFO: Check for usernames (TBMT), machine names, email addresses\n4. USE REPO-RELATIVE PATHS: All paths must be relative (e.g., src/main.ts, .kiro/specs/)\n\nThis is a standing rule for privacy and professionalism in public submissions.\n\nReview git diff before proceeding."
+      }
+    }
+  ]
+}
