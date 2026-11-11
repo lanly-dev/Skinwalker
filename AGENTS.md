@@ -99,6 +99,24 @@ Costume Contest: a haunting UI that is polished/unforgettable AND where the spoo
 
 - **Lineup cut — 2026-11-11 (Lan's call):** Skeleton + Skeleton Trio removed (skin files, CSS blocks, plate assets), and the skin-switcher toggle is gone too — no mid-playback swapping. Dracula is the launch skin; Frankenstein stays registered but unreachable until a selector returns. Scope is two skins, no swap.
 
+- **Skeleton returns — the web build's neon plate (2026-11-11, Lan's pick):**
+the lineup cut is partly reversed: `SkeletonSkin` is back, rebuilt from the Boba
+web build (`SKINWALKER PLAYER • v1.0 SKELETON`) instead of the old portrait bust.
+The stage art was embedded as a base64 JPEG in the page; its near-black backdrop
+(0,8,15) is flood-filled to alpha with a 2px fringe pass, and the plate ships as
+`src/renderer/assets/skeleton-frame.webp` (1536×1024, 64% coverage). Every live
+element keeps the web build's own stage percentages: bone board 30.5%/7.4%
+39×17 (playlist), pendant 45.6%/58.3% (play/pause, breathes while playing), jaw
+canvas 45.8%/43.7% 7.8×7.2 (20 mirrored bars, colour blocks of seven), seek
+28.5%/80.4% 43.2×2.3, times 29%/82.6%, title block 30.1%/69.9% 40.5×10,
+prev/next 29%/58% at 85.7%, vertical volume on the left bone 16.25%/43.7%
+2.25×21.9, eye glows 45.3%/51.8% at 32.9%. The skin owns a 3:2 window
+(960×640) — the first skin since the Trio to set `windowSize`. **Shape-mask check:** every live panel (board, title block, seek, times, pendant, volume, jaw) sits 100% inside the painted silhouette at the mask's half resolution, and the plate has no enclosed transparent pockets — the rib gaps are connected to the image border, so they stay click-through — which means `windowShape.ts` needed no change for this skin. Deliberate
+call: the four painted icons on the right bone column get no hotspots (three
+were dead "coming soon" stubs on the web) — painted detail, not controls. With
+no switcher, `SKINS[0]` is what launches, so Skeleton boots first and Dracula
+and Frankenstein stay registered behind it.
+
 ## Open decisions
 1. ~~Demo tracks~~ — RESOLVED 2026-11-10: six royalty-free tracks live in `public/tracks/` (3 synthesized + 3 Incompetech) and are wired in `src/renderer/main.ts`.
 

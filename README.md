@@ -14,6 +14,7 @@ Every body part does real work: the mouth is the visualizer, the eyes toggle pla
 |---------|--------|---------|
 | 🧛 Dracula | flagship | eyes → play/pause · cape → visualizer · blood drip → seek · medallion → volume · fangs → prev/next |
 | ⚡ Frankenstein | functional | skull flat-top → visualizer · eyes → play/pause · neck bolts → prev/next · chest scar → seek · hand → volume |
+| 💀 Skeleton | functional | pendant → play/pause · jaw → visualizer · bone board → playlist · blood line → seek · left bone column → volume · bone plaques → prev/next |
 
 ---
 

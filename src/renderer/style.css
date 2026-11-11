@@ -781,4 +781,249 @@ input[type="range"]::-moz-range-thumb {
   background: rgba(105, 245, 124, 0.1);
   font-weight: 600;
 }
+/* ════════════════════════════════════════════════════════════════════════
+   SKELETON — WEB PLATE (2026-11-11)
+   The plate is the web build's neon skeleton: raised arms hold a bone
+   board, the pendant is play/pause, the jaw is the visualizer, the left
+   bone column is volume. Every position below is the web build's own
+   percentage of its 3:2 stage, and this skin owns a 3:2 window, so each
+   live element lands on its painted counterpart.
+   ════════════════════════════════════════════════════════════════════════ */
+[data-skin="skeleton"] {
+  --color-accent: #35dfff;
+}
 
+.skeleton-skin { filter: none; }
+
+.skeleton-skin .sk-body {
+  /* Fixed and window-sized: a filtered or auto-height wrapper would resolve
+     the absolute children against a 0px box (see the 2026-11-11 sizing note). */
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  container-type: inline-size;
+  background: var(--sk-frame-url) center / 100% 100% no-repeat;
+}
+
+/* Bone board overhead = playlist */
+.skeleton-skin .sk-board {
+  position: absolute;
+  left: 30.5%;
+  top: 7.4%;
+  width: 39%;
+  height: 17%;
+  background: #001018;
+  border-radius: 0.8cqw;
+  overflow: hidden;
+  z-index: 2;
+}
+.skeleton-skin .sk-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #42dbff #001018;
+}
+.skeleton-skin .sk-row {
+  display: grid;
+  grid-template-columns: 3.8cqw 1fr auto;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 3.7cqw;
+  min-height: 3.7cqw;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: 0.6cqw;
+  background: #001018;
+  color: #e3d2a6;
+  padding: 0 0.9cqw;
+  font: 1.95cqw Georgia, "Times New Roman", serif;
+  cursor: pointer;
+  gap: 0.55cqw;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+.skeleton-skin .sk-row-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.skeleton-skin .sk-row-time { font: bold 1.6cqw Georgia, serif; }
+.skeleton-skin .sk-skull {
+  font: 2.5cqw Georgia, serif;
+  color: var(--row, #35dfff);
+  text-shadow: 0 0 0.8cqw var(--row, #35dfff);
+}
+.skeleton-skin .sk-row:hover { background: #063342; }
+.skeleton-skin .sk-row.active {
+  border-color: #62e4ff;
+  color: #35dfff;
+  box-shadow: inset 0 0 1cqw #168ada, 0 0 0.6cqw #30cfff;
+}
+
+/* Eye sockets = readout: the bloom follows the jaw energy */
+.skeleton-skin .sk-eye {
+  position: absolute;
+  top: 32.9%;
+  width: 2%;
+  height: 3%;
+  border-radius: 50%;
+  background: #64e9ff;
+  filter: blur(0.3cqw);
+  opacity: var(--eye, 0.16);
+  box-shadow: 0 0 1.5cqw 1cqw #008cff;
+  pointer-events: none;
+  z-index: 2;
+}
+.skeleton-skin .sk-eye-left { left: 45.3%; }
+.skeleton-skin .sk-eye-right { left: 51.8%; }
+
+/* Jaw = visualizer */
+.skeleton-skin .sk-viz {
+  position: absolute;
+  left: 45.8%;
+  top: 43.7%;
+  width: 7.8%;
+  height: 7.2%;
+  border-radius: 40%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Pendant at the throat = play / pause */
+.skeleton-skin .sk-pendant {
+  position: absolute;
+  left: 45.6%;
+  top: 58.3%;
+  width: 8.8%;
+  height: 11.6%;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  z-index: 4;
+}
+.skeleton-skin .sk-body.playing .sk-pendant {
+  box-shadow: 0 0 2cqw #29dbff, inset 0 0 1.7cqw #55e8ff;
+  animation: sk-breathe 1.6s ease-in-out infinite;
+}
+@keyframes sk-breathe {
+  50% { box-shadow: 0 0 3cqw #39ddff, inset 0 0 2cqw #36c8ff; }
+}
+
+/* Left bone column = volume (vertical drag, as in the web build) */
+.skeleton-skin .sk-volume {
+  position: absolute;
+  left: 16.25%;
+  top: 43.7%;
+  width: 2.25%;
+  height: 21.9%;
+  margin: 0;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  appearance: slider-vertical;
+  -webkit-appearance: slider-vertical;
+  accent-color: #49e4ff;
+  cursor: pointer;
+  background: #001018;
+  filter: drop-shadow(0 0 0.4cqw #24d5ff);
+  z-index: 3;
+}
+
+/* Title block = live title + artist over the painted one */
+.skeleton-skin .sk-meta {
+  position: absolute;
+  left: 30.1%;
+  top: 69.9%;
+  width: 40.5%;
+  height: 10%;
+  background: #001018;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 3;
+}
+.skeleton-skin .sk-track {
+  font: 3.6cqw Georgia, "Times New Roman", serif;
+  letter-spacing: 0.02em;
+  color: #f2dfaf;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.skeleton-skin .sk-artist {
+  font: bold 1.6cqw Georgia, serif;
+  letter-spacing: 0.15cqw;
+  color: #c9c6ad;
+}
+.skeleton-skin .sk-artist b { color: #11e2ff; }
+
+/* Blood line = seek */
+.skeleton-skin .sk-seek {
+  position: absolute;
+  left: 28.5%;
+  top: 80.4%;
+  width: 43.2%;
+  height: 2.3%;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background: linear-gradient(90deg, #2fe3ff var(--progress, 0%), #062632 var(--progress, 0%));
+  border: 1px solid #47dcff;
+  border-radius: 2cqw;
+  box-shadow: 0 0 0.6cqw #19cfff;
+  z-index: 3;
+}
+.skeleton-skin .sk-seek::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.8cqw;
+  height: 1.8cqw;
+  border: 2px solid #b3f7ff;
+  border-radius: 50%;
+  background: #22c9ff;
+  box-shadow: 0 0 0.7cqw #21caff;
+}
+.skeleton-skin .sk-times {
+  position: absolute;
+  left: 29%;
+  top: 82.6%;
+  width: 42.5%;
+  display: flex;
+  justify-content: space-between;
+  background: #001018;
+  color: #26e6ff;
+  font: bold 1.85cqw monospace;
+  padding: 0 0.2cqw;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Bone plaques = prev / next */
+.skeleton-skin .sk-prev,
+.skeleton-skin .sk-next {
+  position: absolute;
+  top: 85.7%;
+  width: 13%;
+  height: 8.6%;
+  padding: 0;
+  border: 0;
+  border-radius: 24%;
+  background: transparent;
+  cursor: pointer;
+  z-index: 4;
+}
+.skeleton-skin .sk-prev { left: 29%; }
+.skeleton-skin .sk-next { left: 58%; }
+.skeleton-skin .sk-prev:hover,
+.skeleton-skin .sk-next:hover { background: rgba(22, 207, 250, 0.14); }
+.skeleton-skin .sk-prev:active,
+.skeleton-skin .sk-next:active { transform: scale(0.97); }
