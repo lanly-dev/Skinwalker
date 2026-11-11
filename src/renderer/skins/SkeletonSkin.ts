@@ -23,6 +23,7 @@ import eyeRightLayer from '../assets/skeleton-eye-right.png'
 export class SkeletonSkin implements Skin {
   readonly id = 'skeleton'
   readonly label = 'Skeleton'
+  readonly shapeImage = framePlate
 
   private container: HTMLElement | null = null
   private rafId = 0

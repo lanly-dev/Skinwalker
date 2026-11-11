@@ -54,6 +54,7 @@ interface DraculaEls {
 export class DraculaSkin implements Skin {
   readonly id = 'dracula'
   readonly label = 'Dracula'
+  readonly shapeImage = draculaFrameUrl
 
   private container: HTMLElement | null = null
   private player: Player | null = null

@@ -24,6 +24,7 @@ import dialLayer from '../assets/frankenstein-dial.png'
 export class FrankensteinSkin implements Skin {
   readonly id = 'frankenstein'
   readonly label = 'Frankenstein'
+  readonly shapeImage = framePlate
 
   private container: HTMLElement | null = null
   private rafId = 0

@@ -5,6 +5,8 @@
  */
 import { Player, type Track } from './player/Player'
 import { SKINS } from './skins/index'
+import { applySkinShape, installShapeResize } from './windowShape'
+import { installSkinDrag } from './skinDrag'
 import './style.css'
 
 // ── Demo playlist ─────────────────────────────────────────────────────────────
@@ -25,6 +27,9 @@ player.loadPlaylist(DEMO_TRACKS)
 
 let activeSkinIndex = 0
 player.mountSkin(SKINS[activeSkinIndex])
+void applySkinShape(SKINS[activeSkinIndex].shapeImage)
+installSkinDrag()
+installShapeResize()
 
 // ── Window controls (frameless) ───────────────────────────────────────────────
 function renderWindowControls(): void {
@@ -84,6 +89,7 @@ function renderSwitcher(): void {
       if (i === activeSkinIndex) return
       activeSkinIndex = i
       player.mountSkin(skin)
+      void applySkinShape(skin.shapeImage)
       renderSwitcher()
     })
     nav.appendChild(b)

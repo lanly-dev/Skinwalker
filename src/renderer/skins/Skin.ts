@@ -14,6 +14,9 @@ export interface Skin {
   /** Window shape this skin wants; the window reshapes on swap.
    *  Omit for the default portrait 480×720. */
   readonly windowSize?: { width: number; height: number }
+  /** Plate artwork whose alpha defines the OS window shape and the drag
+   *  area. Omit and the window stays a plain rectangle. */
+  readonly shapeImage?: string
   mount(player: Player): void
   unmount(): void
   /** Called when tracks are added mid-session so the skin can refresh its playlist UI */

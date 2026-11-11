@@ -75,18 +75,9 @@ html, body {
 #titlebar button.close:hover { background: #b3231b; color: #fff; }
 
 /* ── Skin as window chrome ────────────────────────────────────────────────────
-   The monster's body IS the titlebar: every skin surface drags the frameless
-   window. Anything the user can click opts back out, so controls keep working
-   (the other skins' anatomy controls already carry their own no-drag). */
-.skin,
-.skin > * { -webkit-app-region: drag; }
-.skin button,
-.skin input,
-.skin ol,
-.skin ul,
-.skin [role="button"],
-.skin [role="slider"],
-.skin [role="group"] { -webkit-app-region: no-drag; }
+   The skin's drag is pointer-driven (src/renderer/skinDrag.ts) so it starts
+   only on painted pixels — native drag regions are rectangles and would let
+   the empty plate margins move the window. The titlebar keeps its own. */
 
 /* ── Skin switcher ───────────────────────────────────────────────────────── */
 #skin-switcher {

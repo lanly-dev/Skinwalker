@@ -12,9 +12,15 @@ contextBridge.exposeInMainWorld('skinwalker', {
   /** Drag the frameless window */
   dragWindow: (delta: { mouseX: number; mouseY: number }) =>
     ipcRenderer.send('window:drag', delta),
+  beginWindowDrag: () => ipcRenderer.send('window:drag-start'),
+  endWindowDrag: () => ipcRenderer.send('window:drag-end'),
 
   setWindowSize: (size: { width: number; height: number }) =>
     ipcRenderer.send('window:set-size', size),
+
+  /** Shape the OS window to the active skin's silhouette (Windows/Linux) */
+  setWindowShape: (rects: Array<{ x: number; y: number; width: number; height: number }>) =>
+    ipcRenderer.send('window:set-shape', rects),
 
   minimize: () => ipcRenderer.send('window:minimize'),
   close:    () => ipcRenderer.send('window:close'),

@@ -22,6 +22,7 @@ import eyesLayer from '../assets/skeleton-trio-eyes.png'
 export class SkeletonTrioSkin implements Skin {
   readonly id = 'skeleton-trio'
   readonly label = 'Skeleton Trio'
+  readonly shapeImage = framePlate
   /** Landscape skin — the window reshapes to 16:9 while this skin is active */
   readonly windowSize = { width: 1024, height: 576 }
 
