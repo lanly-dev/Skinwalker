@@ -63,7 +63,7 @@ src/
 public/
 └── tracks/         # Bundled royalty-free demo tracks (add .mp3 files here)
 resources/          # App icon and native assets
-.kiro/              # Kiro specs, steering, hooks (planned — required for submission)
+.kiro/              # Kiro specs, steering, hooks, workflows, docs
 ```
 
 ---
