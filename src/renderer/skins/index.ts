@@ -8,7 +8,7 @@ import { FrankensteinSkin } from './FrankensteinSkin'
 import { SkeletonSkin }     from './SkeletonSkin'
 
 export const SKINS: readonly Skin[] = [
-  new SkeletonSkin(),      // launch skin — the web build's neon plate
-  new DraculaSkin(),       // flagship — polish this hardest
+  new DraculaSkin(),       // launch skin — flagship, on the updated web plate
+  new SkeletonSkin(),      // the web build's neon plate
   new FrankensteinSkin(),
 ]

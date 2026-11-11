@@ -117,6 +117,22 @@ were dead "coming soon" stubs on the web) — painted detail, not controls. With
 no switcher, `SKINS[0]` is what launches, so Skeleton boots first and Dracula
 and Frankenstein stay registered behind it.
 
+- **Dracula rebuilt on the updated web build (2026-11-11, Lan's new link):** the reference page
+changed — a new 2:3 plate (velvet robe, crossed hands, baked speaker glyphs at the blood line's
+ends), new stage percentages, a tool row revealed on hover and a mini bat player. The plate and
+the bat were alpha-cut with a border-seeded flood fill; the robe reaches the bottom frame edge,
+so the bottom border is excluded from the seeds — seeding it starts the fill inside the figure
+and the robe dissolves into speckles. Live geometry is the web build's own: title 27%/43.5%
+46×5.5, seek 27.2%/49.6% 45.6×5.2, medallion 44%/34.1% 12×7, spectrum zone 19%/55% 62×17,
+hands 13%/57% at 72% 30×11, tracklist 36%/88% 28×5.7, eyes 42.5%/16.3% 5.8×1.8; all sizes run
+in `cqw` so the UI scales with the window as it does on the web. New controls: the hover tool
+row (close, minimize, add files, mini bat — the web's dead "change skin" stub is not rendered,
+same rule as the Skeleton icons) and the mini bat, which shrinks the window to 380×380 and
+re-shapes the OS region to the bat; `window:set-size` now accepts an optional minimum size,
+because main's portrait floor (380×560) would otherwise clamp the square bat. Volume keeps its
+web-build position on the painted speakers, with a gold level bar under each. Dracula is
+`SKINS[0]` again so the updated skin actually launches; there is still no switcher.
+
 ## Open decisions
 1. ~~Demo tracks~~ — RESOLVED 2026-11-10: six royalty-free tracks live in `public/tracks/` (3 synthesized + 3 Incompetech) and are wired in `src/renderer/main.ts`.
 

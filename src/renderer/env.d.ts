@@ -5,7 +5,7 @@ interface SkinwalkerAPI {
   dragWindow: (delta: { mouseX: number; mouseY: number }) => void
   beginWindowDrag: () => void
   endWindowDrag: () => void
-  setWindowSize: (size: { width: number; height: number }) => void
+  setWindowSize: (size: { width: number; height: number; minWidth?: number; minHeight?: number }) => void
   setWindowShape: (rects: Array<{ x: number; y: number; width: number; height: number }>) => void
   minimize: () => void
   close: () => void

@@ -1,40 +1,41 @@
 /**
  * DraculaSkin — design flagship skin.
  *
- * The plate is the artwork from the web version of the player: a transparent
- * character silhouette (assets/dracula-frame.webp) whose painted anatomy is
- * the interface. Live controls sit on the painted elements, and the baked
- * placeholder panels (title, blood line, playlist) are covered by the live
- * panels exactly as the web build does it.
+ * Built on the updated web build's artwork: a full vampire in a velvet robe,
+ * hands crossed low, the jeweled play medallion at the throat, with a baked
+ * title, blood line and tracklist. Live controls sit on the painted anatomy
+ * and the baked panels are covered by the live ones, as in the web build.
  *
  * Anatomy → control / readout:
  *   Eyes ───────────── readout: the sockets bloom with the track's RMS energy
- *   Medallion ──────── play / pause (burns while playing) — the web version's #play
- *   Chest panel ────── live title + artist
+ *   Medallion ──────── play / pause (a pause glyph covers the baked triangle)
+ *   Title panel ────── live title + artist
  *   Blood line ─────── seek: live fill, drip curtain, elapsed / remaining
- *   Speakers ───────── volume down / up at the ends of the blood line
- *   Cape interior ──── mirrored spectrum, crimson → violet with gold caps
- *   Lower fangs ────── prev / next hotspots
- *   Lower cape ─────── playlist (numbered rows with durations)
+ *   Speakers ───────── volume at the painted speakers ending the line
+ *   Cape interior ──── mirrored spectrum (dims while the tool row is up)
+ *   Crossed hands ──── prev / next
+ *   Tracklist ──────── playlist rows with probed durations
+ *   Tool row ───────── close, minimize, add files, mini bat (on hover)
+ *   Bat ────────────── mini player: the window itself becomes the bat
  *
- * Geometry is taken from the web build's CSS, as percentages of the 2:3 stage,
- * so the live elements land on the painted ones.
+ * Every position in style.css is the web build's own stage percentage.
  */
 import draculaFrameUrl from '../assets/dracula-frame.webp'
+import draculaBatUrl from '../assets/dracula-bat.webp'
+import draculaToolsUrl from '../assets/dracula-tools.jpg'
+import { applySkinShape } from '../windowShape'
+import { openLocalFiles } from '../openFiles'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
 /** Spectrum resolution (same as the web version) */
 const BAR_COUNT = 48
 /** Irregular drip curtain positions along the blood line, % of the seek width */
-const DRIP_X = [4, 8, 12, 17, 21, 25, 30, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 84, 89, 94]
+const DRIP_X = [4, 8, 12, 17, 21, 25, 29, 34, 39, 43, 48, 52, 57, 62, 67, 72, 77, 82, 87, 91, 96]
 
-const SPEAKER_SVG =
-  '<svg viewBox="0 0 24 24" aria-hidden="true">' +
-  '<path d="M4 9h4l5-4v14l-5-4H4z"/>' +
-  '<path d="M16.5 8.2a5.2 5.2 0 0 1 0 7.6" fill="none" stroke="currentColor" ' +
-  'stroke-width="2.2" stroke-linecap="round"/>' +
-  '</svg>'
+/** The 2:3 stage, and the square bat the window shrinks to. */
+const STAGE_SIZE = { width: 480, height: 720, minWidth: 380, minHeight: 560 }
+const MINI_SIZE = { width: 380, height: 380, minWidth: 320, minHeight: 320 }
 
 interface DraculaEls {
   title: HTMLElement
@@ -46,9 +47,11 @@ interface DraculaEls {
   elapsed: HTMLElement
   remaining: HTMLElement
   medallion: HTMLButtonElement
+  miniPlay: HTMLButtonElement
   volDown: HTMLButtonElement
   volUp: HTMLButtonElement
   playlist: HTMLOListElement
+  zone: HTMLElement
 }
 
 export class DraculaSkin implements Skin {
@@ -60,6 +63,7 @@ export class DraculaSkin implements Skin {
   private player: Player | null = null
   private els: DraculaEls | null = null
   private rafId = 0
+  private mini = false
 
   private freqData: Uint8Array<ArrayBuffer> | null = null
   private waveData: Uint8Array<ArrayBuffer> | null = null
@@ -76,12 +80,15 @@ export class DraculaSkin implements Skin {
 
   mount(player: Player): void {
     this.player = player
+    this.mini = false
     const app = document.getElementById('app')!
     document.documentElement.dataset.skin = this.id
 
     this.container = document.createElement('div')
     this.container.className = 'skin dracula-skin'
     this.container.style.setProperty('--dr-frame-url', `url("${draculaFrameUrl}")`)
+    this.container.style.setProperty('--dr-bat-url', `url("${draculaBatUrl}")`)
+    this.container.style.setProperty('--dr-tools-url', `url("${draculaToolsUrl}")`)
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
@@ -95,6 +102,7 @@ export class DraculaSkin implements Skin {
 
   unmount(): void {
     cancelAnimationFrame(this.rafId)
+    document.removeEventListener('pointerdown', this.onDocPointerDown)
     const player = this.player
     if (player) player.onTrackChange = null
     this.container?.remove()
@@ -111,55 +119,74 @@ export class DraculaSkin implements Skin {
 
   private template(): string {
     return /* html */ `
-      <div class="dr-body" aria-label="Dracula media player">
+      <div class="dr-body">
 
-        <!-- Aura layers: soft halo + fine contour behind the plate. They soak
-             up the cut edge's JPEG grit so it reads as outline, not rough cut. -->
-        <span class="dr-aura" aria-hidden="true"></span>
-        <span class="dr-rim" aria-hidden="true"></span>
-        <span class="dr-plate" aria-hidden="true"></span>
+        <div class="dr-stage" aria-label="Dracula media player">
 
-        <!-- Chest panel = live title + artist (covers the baked placeholder) -->
-        <div class="dr-track-info">
-          <span class="dr-title">—</span>
-          <span class="dr-artist">—</span>
-        </div>
+          <!-- Aura layers: soft halo + fine contour behind the plate -->
+          <span class="dr-aura" aria-hidden="true"></span>
+          <span class="dr-rim" aria-hidden="true"></span>
+          <span class="dr-plate" aria-hidden="true"></span>
 
-        <!-- Eyes are a readout: these glows ride the painted sockets -->
-        <span class="dr-eye dr-eye-left" aria-hidden="true"></span>
-        <span class="dr-eye dr-eye-right" aria-hidden="true"></span>
-
-        <!-- Cape interior = mirrored spectrum -->
-        <div class="dr-cape" aria-hidden="true">
-          <canvas class="dr-viz"></canvas>
-        </div>
-
-        <!-- Blood line = seek, bracketed by the volume speakers -->
-        <div class="dr-seek-region" role="group" aria-label="Seek">
-          <div class="dr-seek-top">
-            <button class="dr-vol dr-vol-down" aria-label="Volume down" title="Volume down">${SPEAKER_SVG}</button>
-            <div class="dr-blood" aria-hidden="true"></div>
-            <input class="dr-seek" type="range" min="0" max="1000" value="0"
-                   aria-label="Seek through track" step="1" />
-            <button class="dr-vol dr-vol-up" aria-label="Volume up" title="Volume up">${SPEAKER_SVG}</button>
+          <!-- Title panel = live title + subtitle over the baked pair -->
+          <div class="dr-track-info">
+            <span class="dr-title">—</span>
+            <span class="dr-artist">—</span>
           </div>
-          <div class="dr-times">
-            <span class="dr-elapsed">00:00</span>
-            <span class="dr-remaining">-00:00</span>
+
+          <!-- Eyes are a readout: these glows ride the painted sockets -->
+          <span class="dr-eye dr-eye-left" aria-hidden="true"></span>
+          <span class="dr-eye dr-eye-right" aria-hidden="true"></span>
+
+          <!-- Medallion at the throat = play / pause -->
+          <button class="dr-medallion" aria-label="Play" aria-pressed="false" title="Play / Pause">
+            <span class="dr-pause-glyph" aria-hidden="true"></span>
+          </button>
+
+          <!-- Blood line = seek, bracketed by the painted speakers -->
+          <div class="dr-seek-region" role="group" aria-label="Seek">
+            <div class="dr-seek-top">
+              <button class="dr-vol dr-vol-down" aria-label="Volume down" title="Volume down"></button>
+              <div class="dr-blood" aria-hidden="true"></div>
+              <input class="dr-seek" type="range" min="0" max="1000" value="0"
+                     aria-label="Seek through track" step="1" />
+              <button class="dr-vol dr-vol-up" aria-label="Volume up" title="Volume up"></button>
+            </div>
+            <div class="dr-times">
+              <span class="dr-elapsed">00:00</span>
+              <span class="dr-remaining">-00:00</span>
+            </div>
           </div>
-        </div>
 
-        <!-- Medallion at the throat = play / pause -->
-        <button class="dr-medallion" aria-label="Play" aria-pressed="false" title="Play / Pause"></button>
+          <!-- Cape interior = spectrum; hover reveals the tool row -->
+          <div class="dr-zone" tabindex="0" role="group"
+               aria-label="Player controls; hover, focus or click to reveal">
+            <canvas class="dr-viz" aria-hidden="true"></canvas>
+            <div class="dr-tools">
+              <button class="dr-tool dr-tool-close" aria-label="Close player" title="Close player"></button>
+              <button class="dr-tool dr-tool-minimize" aria-label="Minimize" title="Minimize"></button>
+              <button class="dr-tool dr-tool-folder" aria-label="Add audio files" title="Add audio files"></button>
+              <button class="dr-tool dr-tool-bat" aria-label="Mini bat player" title="Mini bat player"></button>
+            </div>
+          </div>
 
-        <!-- Lower fangs = prev / next hotspots -->
-        <div class="dr-controls">
+          <!-- Crossed hands = prev / next -->
           <button class="dr-prev" aria-label="Previous track" title="Previous track"></button>
           <button class="dr-next" aria-label="Next track" title="Next track"></button>
+
+          <!-- Tracklist = playlist, covering the baked rows -->
+          <ol class="dr-playlist" aria-label="Playlist"></ol>
+
         </div>
 
-        <!-- Lower cape = playlist -->
-        <ol class="dr-playlist" aria-label="Playlist"></ol>
+        <!-- Mini bat: the window shrinks to this plate -->
+        <div class="dr-mini">
+          <button class="dr-mini-close" aria-label="Close player" title="Close player"></button>
+          <button class="dr-mini-play" aria-label="Play" aria-pressed="false" title="Play / Pause">
+            <span class="dr-pause-glyph" aria-hidden="true"></span>
+          </button>
+          <button class="dr-mini-restore" aria-label="Back to the full player" title="Back to the full player"></button>
+        </div>
 
       </div>
     `
@@ -181,19 +208,23 @@ export class DraculaSkin implements Skin {
       elapsed: c.querySelector('.dr-elapsed')!,
       remaining: c.querySelector('.dr-remaining')!,
       medallion: c.querySelector('.dr-medallion')!,
+      miniPlay: c.querySelector('.dr-mini-play')!,
       volDown: c.querySelector('.dr-vol-down')!,
       volUp: c.querySelector('.dr-vol-up')!,
       playlist: c.querySelector('.dr-playlist')!,
+      zone: c.querySelector('.dr-zone')!,
     }
     this.els = els
 
     this.buildDrips()
 
-    // Medallion → play/pause
-    els.medallion.addEventListener('click', () => {
+    // Medallion + mini bat play = play / pause
+    const toggle = (): void => {
       p.togglePlayPause()
       this.updatePlayState()
-    })
+    }
+    els.medallion.addEventListener('click', toggle)
+    els.miniPlay.addEventListener('click', toggle)
 
     // Seek: paint while dragging, commit on release (restarting the buffer on
     // every input event would stutter, as in the web version)
@@ -210,7 +241,7 @@ export class DraculaSkin implements Skin {
       this.seeking = false
     })
 
-    // Volume → the speaker icons bracketing the blood line
+    // Volume → the painted speakers at the ends of the blood line
     const applyVolume = (v: number): void => {
       const vol = Math.min(1, Math.max(0, v))
       p.setVolume(vol)
@@ -245,9 +276,31 @@ export class DraculaSkin implements Skin {
     // Init from the player's volume so a mid-playback skin swap keeps it
     applyVolume(p.currentVolume)
 
-    // Fangs → prev / next
+    // Crossed hands → prev / next
     c.querySelector('.dr-prev')!.addEventListener('click', () => p.prev())
     c.querySelector('.dr-next')!.addEventListener('click', () => p.next())
+
+    // Tool row: close, minimize, add files, mini bat. No skin button — the
+    // web build's is a "coming soon" stub and this build has no switcher.
+    c.querySelector('.dr-tool-close')!.addEventListener('click', () => window.skinwalker?.close?.())
+    c.querySelector('.dr-tool-minimize')!.addEventListener('click', () => window.skinwalker?.minimize?.())
+    c.querySelector('.dr-tool-folder')!.addEventListener('click', () => void openLocalFiles(p))
+    c.querySelector('.dr-tool-bat')!.addEventListener('click', () => this.enterMini())
+    c.querySelector('.dr-mini-restore')!.addEventListener('click', () => this.exitMini())
+    c.querySelector('.dr-mini-close')!.addEventListener('click', () => window.skinwalker?.close?.())
+
+    // Hover / focus reveal the tool row; a click on the cape pins it open
+    els.zone.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('button')) return
+      els.zone.classList.toggle('revealed')
+    })
+    els.zone.addEventListener('keydown', (e) => {
+      if (e.target !== els.zone) return
+      if (e.key !== 'Enter' && e.key !== ' ') return
+      e.preventDefault()
+      els.zone.classList.toggle('revealed')
+    })
+    document.addEventListener('pointerdown', this.onDocPointerDown)
 
     // Track change
     p.onTrackChange = (track, idx) => {
@@ -262,6 +315,33 @@ export class DraculaSkin implements Skin {
     this.buildPlaylist()
   }
 
+  private onDocPointerDown = (e: PointerEvent): void => {
+    const zone = this.els?.zone
+    if (!zone) return
+    if (!(e.target as HTMLElement).closest('.dr-zone')) zone.classList.remove('revealed')
+  }
+
+  // ── Mini bat ─────────────────────────────────────────────────────────────────
+
+  private enterMini(): void {
+    if (!this.container || this.mini) return
+    this.mini = true
+    this.container.classList.add('mini-mode')
+    this.els?.zone.classList.remove('revealed')
+    window.skinwalker?.setWindowSize?.(MINI_SIZE)
+    void applySkinShape(draculaBatUrl)
+  }
+
+  private exitMini(): void {
+    if (!this.container || !this.mini) return
+    this.mini = false
+    this.container.classList.remove('mini-mode')
+    window.skinwalker?.setWindowSize?.(STAGE_SIZE)
+    void applySkinShape(draculaFrameUrl)
+  }
+
+  // ── Playlist ─────────────────────────────────────────────────────────────────
+
   private buildDrips(): void {
     const host = this.container?.querySelector('.dr-blood')
     if (!host) return
@@ -270,10 +350,11 @@ export class DraculaSkin implements Skin {
       const drip = document.createElement('span')
       drip.className = 'dr-drip'
       drip.style.setProperty('--x', `${x}%`)
-      drip.style.setProperty('--w', `${1 + (i % 3) * 0.6}px`)
-      drip.style.setProperty('--h', `${4 + ((i * 7) % 10) * 0.7}px`)
+      drip.style.setProperty('--w', `${0.16 + (i % 3) * 0.08}cqw`)
+      drip.style.setProperty('--h', `${0.55 + ((i * 7) % 10) * 0.13}cqw`)
       drip.style.setProperty('--speed', `${1.7 + (i % 6) * 0.41}s`)
       drip.style.setProperty('--delay', `${-(i * 0.31)}s`)
+      drip.style.fontSize = `${0.12 + (i % 3) * 0.04}cqw`
       host.appendChild(drip)
     })
   }
@@ -363,12 +444,14 @@ export class DraculaSkin implements Skin {
 
   private updatePlayState(): void {
     const playing = this.player?.audio.isPlaying ?? false
-    const medallion = this.els?.medallion
-    if (!medallion) return
-    if (medallion.classList.contains('playing') === playing) return
-    medallion.classList.toggle('playing', playing)
-    medallion.setAttribute('aria-pressed', String(playing))
-    medallion.setAttribute('aria-label', playing ? 'Pause' : 'Play')
+    const els = this.els
+    if (!els) return
+    if (els.medallion.classList.contains('playing') === playing) return
+    for (const btn of [els.medallion, els.miniPlay]) {
+      btn.classList.toggle('playing', playing)
+      btn.setAttribute('aria-pressed', String(playing))
+      btn.setAttribute('aria-label', playing ? 'Pause' : 'Play')
+    }
   }
 
   /** Mirrored spectrum, as drawn by the web version: each measured height is

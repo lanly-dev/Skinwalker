@@ -15,7 +15,7 @@ contextBridge.exposeInMainWorld('skinwalker', {
   beginWindowDrag: () => ipcRenderer.send('window:drag-start'),
   endWindowDrag: () => ipcRenderer.send('window:drag-end'),
 
-  setWindowSize: (size: { width: number; height: number }) =>
+  setWindowSize: (size: { width: number; height: number; minWidth?: number; minHeight?: number }) =>
     ipcRenderer.send('window:set-size', size),
 
   /** Shape the OS window to the active skin's silhouette (Windows/Linux) */

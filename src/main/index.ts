@@ -118,12 +118,24 @@ ipcMain.on('window:drag-end', () => {
   dragSize = null
 })
 
-/** Skins own the window shape: all skins are portrait 480x720 */
-ipcMain.on('window:set-size', (_e, { width, height }) => {
-  if (!win) return
+/** Skins own the window shape. A skin may also hand its own minimum size:
+ *  the mini bat is 380x380, below the portrait skin's 380x560 floor. */
+ipcMain.on('window:set-size', (_e, size: {
+  width: number
+  height: number
+  minWidth?: number
+  minHeight?: number
+}) => {
+  if (!win || !size) return
   if (win.isMaximized()) win.unmaximize()
-  win.setSize(Math.round(width), Math.round(height))
-  win.center()
+  const { width, height, minWidth, minHeight } = size
+  if (typeof minWidth === 'number' && typeof minHeight === 'number') {
+    win.setMinimumSize(Math.round(minWidth), Math.round(minHeight))
+  }
+  if (Number.isFinite(width) && Number.isFinite(height)) {
+    win.setSize(Math.round(width), Math.round(height))
+    win.center()
+  }
 })
 
 /** Shape the OS window to the active skin's silhouette (Windows/Linux).

@@ -7,6 +7,7 @@ import { Player, type Track } from './player/Player'
 import { SKINS } from './skins/index'
 import { applySkinShape, installShapeResize } from './windowShape'
 import { installSkinDrag } from './skinDrag'
+import { openLocalFiles } from './openFiles'
 import './style.css'
 
 // ── Demo playlist ─────────────────────────────────────────────────────────────
@@ -76,16 +77,7 @@ function renderOpenButton(): void {
   btn.id = 'open-files'
   btn.textContent = '+ Add files'
   btn.setAttribute('aria-label', 'Add local audio files')
-  btn.addEventListener('click', async () => {
-    const urls = await window.skinwalker.openAudioFiles()
-    if (!urls.length) return
-    const newTracks: Track[] = urls.map((url) => ({
-      title: decodeURIComponent(url.split('/').pop() ?? url).replace(/\.[^.]+$/, ''),
-      artist: 'Local',
-      url,
-    }))
-    player.addTracks(newTracks)
-  })
+  btn.addEventListener('click', () => void openLocalFiles(player))
   document.body.appendChild(btn)
 }
 
