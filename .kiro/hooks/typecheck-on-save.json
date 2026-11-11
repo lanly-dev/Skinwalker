@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "TypeCheck on TypeScript Save",
+      "trigger": "PostFileSave",
+      "description": "Runs TypeScript compiler check when saving .ts files to catch errors immediately",
+      "matcher": "\\\\.ts$",
+      "action": {
+        "type": "command",
+        "command": "npm run typecheck",
+        "timeout": 30
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "version": "1.0",
+  "name": "new-skin-feature",
+  "description": "Workflow for adding a new feature to an existing skin (spec → implement → test)",
+  "inputs": {
+    "skinName": {
+      "description": "Which skin to modify (dracula, frankenstein, skeleton)",
+      "required": true
+    },
+    "featureName": {
+      "description": "Name of the feature to add (e.g., 'blood-pool-effect', 'eye-glow')",
+      "required": true
+    },
+    "featureDescription": {
+      "description": "Brief description of what this feature does",
+      "required": true
+    }
+  },
+  "steps": [
+    {
+      "id": "create-spec",
+      "name": "Create Feature Specification",
+      "agent": "wf-coder",
+      "prompt": "Create a specification file at `.kiro/specs/{{skinName}}-{{featureName}}.md` for the following feature:\n\nSkin: {{skinName}}\nFeature: {{featureName}}\nDescription: {{featureDescription}}\n\nUse the template from `.kiro/steering/spec-template.md`. Include:\n- Requirements (functional, technical, non-functional)\n- Design approach\n- Implementation tasks\n- Acceptance criteria\n\nDo NOT implement yet — spec only.",
+      "captureOutput": "specPath"
+    },
+    {
+      "id": "implement-feature",
+      "name": "Implement Feature",
+      "agent": "wf-coder",
+      "prompt": "Implement the feature specified in {{specPath}}.\n\nModify these files as needed:\n- `src/renderer/skins/{{skinName}}Skin.ts` (capitalize first letter)\n- `src/renderer/style.css` (add CSS for .{{skinName}}-skin)\n\nFollow patterns from existing code. Run `npm run typecheck` to verify.\n\nImplementation only — do not update spec yet.",
+      "captureOutput": "changedFiles"
+    },
+    {
+      "id": "test-feature",
+      "name": "Test Implementation",
+      "agent": "wf-coder",
+      "prompt": "Test the implemented feature:\n\n1. Run `npm run typecheck` — must pass with zero errors\n2. Check `npm run dev` output for any runtime errors\n3. Verify acceptance criteria from {{specPath}}\n\nFiles changed: {{changedFiles}}\n\nReport: Does the feature work as specified? List any issues found.",
+      "captureOutput": "testResults"
+    },
+    {
+      "id": "update-spec",
+      "name": "Update Spec with Implementation Notes",
+      "agent": "wf-coder",
+      "prompt": "Update {{specPath}} to mark it complete:\n\n1. Change Status to 'Complete'\n2. Fill in 'Implementation Notes' section:\n   - What changed from original design (if anything)\n   - Lessons learned\n   - Any deferred items\n\nTest results: {{testResults}}",
+      "captureOutput": "finalSpecPath"
+    },
+    {
+      "id": "update-agents-md",
+      "name": "Update AGENTS.md",
+      "agent": "wf-coder",
+      "prompt": "If this feature introduced any new lessons or decisions, update AGENTS.md:\n\n- Add to 'Decisions' section if it's a project-level choice\n- Add to 'Common Pitfalls' if it revealed a gotcha\n- Add to relevant skin's decision history\n\nFeature: {{skinName}} {{featureName}}\nSpec: {{finalSpecPath}}\n\nOnly update if there's a lesson worth recording. Otherwise skip.",
+      "captureOutput": "agentsMdUpdated"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Remind About Spec-First Development",
+      "trigger": "SessionStart",
+      "description": "Reminds agent to create spec before implementing new features",
+      "action": {
+        "type": "agent",
+        "prompt": "🎃 Skinwalker Project — Kiroween 2026 Entry\n\nCRITICAL REMINDERS:\n1. **Spec-First:** Every new feature needs a `.kiro/specs/[feature].md` file BEFORE implementation\n2. **No Absolute Paths:** Never use local file paths (C:\\, /home/, ~/) in any output\n3. **Read AGENTS.md First:** Check current decisions and lessons before starting\n\nIf implementing a feature without a spec, STOP and create the spec first."
+      }
+    }
+  ]
+}
