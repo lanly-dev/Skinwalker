@@ -9,13 +9,21 @@
   --color-dim:     #8b8194;
   --glass:         rgba(16, 12, 24, 0.72);
   --hairline:      rgba(236, 227, 209, 0.14);
-  --color-accent:  #e9c46a;   /* overridden per skin */
+  --color-accent:  #e9c46a;
 
   --radius:        14px;
   --font-ui:       'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-display:  'Palatino Linotype', Palatino, Georgia, serif;
   --font-mono:     'Cascadia Mono', 'Courier New', Courier, monospace;
   --titlebar-h:    36px;
+
+  /* Blood effect colors (Dracula) */
+  --blood-dark:    #7c121d;
+  --blood-bright:  #d83c3b;
+  --blood-orange:  #e04846;
+  --blood-crimson: #a01f26;
+  --blood-deep:    #b82833;
+  --blood-glow:    rgba(181, 34, 41, 0.4);
 }
 
 ::selection { background: #6b0f0f; color: #fff; }
