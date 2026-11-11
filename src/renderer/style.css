@@ -994,11 +994,19 @@ input[type="range"]::-moz-range-thumb {
    separated layers. Geometry measured from the plate.
    ════════════════════════════════════════════════════════════════════ */
 .frankenstein-skin {
-  filter: drop-shadow(0 18px 44px rgba(0, 0, 0, 0.55));
+  /* No filter here: a filtered ancestor becomes the containing block for its
+     positioned children, and this wrapper has no height of its own — the body
+     would resolve inset:0 against a zero-height box. The shadow lives on the
+     plate instead, exactly as Dracula's layers do. */
+  filter: none;
 }
 .frankenstein-skin .fr-body {
-  position: absolute;
+  position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  filter: drop-shadow(0 18px 44px rgba(0, 0, 0, 0.55));
   display: block;
   padding: 0;
   background: var(--fr-frame-url) center / 100% 100% no-repeat;
@@ -1218,11 +1226,17 @@ input[type="range"]::-moz-range-thumb {
    cores are separated layers; volume is the spine (vertical drag).
    ════════════════════════════════════════════════════════════════════ */
 .skeleton-skin {
-  filter: drop-shadow(0 18px 44px rgba(0, 0, 0, 0.55));
+  /* See Frankenstein: the wrapper must stay unfiltered so the fixed plate can
+     size itself to the window. */
+  filter: none;
 }
 .skeleton-skin .sk-body {
-  position: absolute;
+  position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  filter: drop-shadow(0 18px 44px rgba(0, 0, 0, 0.55));
   display: block;
   padding: 0;
   background: var(--sk-frame-url) center / 100% 100% no-repeat;
@@ -1465,12 +1479,18 @@ input[type="range"]::-moz-range-thumb {
   --color-accent: #8adcff;
 }
 .skeleton-trio-skin {
-  filter: drop-shadow(0 18px 44px rgba(0, 0, 0, 0.55));
+  /* See Frankenstein: the wrapper must stay unfiltered so the fixed plate can
+     size itself to the window. */
+  filter: none;
 }
 .skeleton-trio-skin .tr-body {
-  position: absolute;
+  position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
   background: var(--tr-frame-url) center / 100% 100% no-repeat;
+  filter: drop-shadow(0 18px 44px rgba(0, 0, 0, 0.55));
 }
 .skeleton-trio-skin .tr-layer {
   position: absolute;
