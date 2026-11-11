@@ -182,113 +182,6 @@ input[type="range"]::-moz-range-thumb {
   --color-accent: #c0392b;
 }
 
-.dracula-skin .dr-body {
-  /* Character-as-frame: no card, no border — the SVG silhouette behind the
-     controls is the body; padding keeps content inside the cape outline. */
-  position: relative;
-  width: min(460px, 97vw);
-  padding: 176px 64px 92px;
-  display: flex;
-  flex-direction: column;
-  gap: 11px;
-  margin: 0 auto;
-  filter:
-    drop-shadow(0 24px 44px rgba(0,0,0,0.65))
-    drop-shadow(0 0 34px rgba(150,0,0,0.25));
-}
-
-.dr-track-info  { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px; padding-bottom: 12px; border-bottom: 1px solid rgba(180,20,20,0.25); }
-.dr-title       { font-family: var(--font-display); font-size: 20px; font-weight: bold; color: var(--color-text); text-shadow: 0 0 18px rgba(192,57,43,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.dr-artist      { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #9c6060; }
-
-/* Eyes = play/pause */
-.dr-eyes {
-  display: flex;
-  justify-content: center;
-  gap: 44px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px 8px;
-  border-radius: var(--radius);
-  transition: background 0.2s;
-}
-.dr-eyes:hover { background: rgba(180,0,0,0.07); }
-
-.dr-eye {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 44%, #1a0505, #3a0808 60%, #1a0404);
-  border: 2px solid #5a1010;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
-  transition: background 0.25s, box-shadow 0.25s;
-}
-.dr-eyes.playing .dr-eye {
-  background: radial-gradient(circle at 50% 44%, #300, #c0392b 55%, #6b0000);
-  border-color: #ff6b6b;
-  box-shadow: 0 0 18px rgba(192,57,43,0.8), 0 0 40px rgba(150,0,0,0.45), inset 0 0 8px rgba(255,120,120,0.6);
-  animation: dr-eye-pulse 1.8s ease-in-out infinite alternate;
-}
-@keyframes dr-eye-pulse {
-  from { box-shadow: 0 0 12px rgba(192,57,43,0.6), 0 0 28px rgba(150,0,0,0.3); }
-  to   { box-shadow: 0 0 24px rgba(192,57,43,1.0), 0 0 52px rgba(150,0,0,0.55); }
-}
-
-/* Cape = visualizer */
-.dr-cape {
-  border: 1px solid #3d0a0a;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #080206;
-  box-shadow: inset 0 8px 20px rgba(0,0,0,0.85);
-}
-.dr-viz { display: block; width: 100%; height: 80px; }
-
-/* Blood drip = seek */
-.dr-seek-region { display: flex; flex-direction: column; gap: 5px; }
-.dr-time        { font-family: var(--font-mono); font-size: 11px; color: var(--color-dim); text-align: right; font-variant-numeric: tabular-nums; }
-
-/* Medallion = volume */
-.dr-volume-region { display: flex; align-items: center; gap: 10px; }
-.dr-medallion {
-  font-size: 16px;
-  color: #c0a050;
-  display: inline-block;
-  transition: transform 0.3s;
-  text-shadow: 0 0 10px rgba(192,160,80,0.5);
-}
-
-/* Fangs = prev/next */
-.dr-controls { display: flex; justify-content: space-between; }
-.dr-controls button {
-  background: rgba(80,0,0,0.25);
-  border: 1px solid #4a1010;
-  color: var(--color-text);
-  padding: 7px 18px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
-}
-.dr-controls button:hover { border-color: #c0392b; color: #ff8080; box-shadow: 0 0 12px rgba(192,57,43,0.3); }
-
-/* Playlist */
-.dr-playlist {
-  list-style: none;
-  max-height: 88px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 6px;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(180,20,20,0.12);
-  border-radius: var(--radius);
-}
-.dr-playlist li { padding: 5px 9px; border-radius: 7px; cursor: pointer; color: var(--color-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.1s, color 0.1s; }
-.dr-playlist li:hover  { background: rgba(255,255,255,0.05); color: var(--color-text); }
-.dr-playlist li.active { color: #e05050; background: rgba(120,0,0,0.2); box-shadow: inset 3px 0 0 #c0392b; }
-
 /* ════════════════════════════════════════════════════════════════════════════
    FRANKENSTEIN SKIN
    ════════════════════════════════════════════════════════════════════════════ */
@@ -296,322 +189,12 @@ input[type="range"]::-moz-range-thumb {
   --color-accent: #5ecf5e;
 }
 
-.frankenstein-skin .fr-body {
-  width: min(440px, 96vw);
-  background: linear-gradient(170deg, #0c150c 0%, #080f08 55%, #060a06 100%);
-  border: 1px solid #1e3a1e;
-  border-radius: 4px;   /* flat-top, angular — Frankenstein's slab aesthetic */
-  padding: 22px 20px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-shadow:
-    0 24px 60px rgba(0,0,0,0.7),
-    0 0 40px rgba(60,200,60,0.08),
-    inset 0 1px 0 rgba(200,255,200,0.06);
-  margin: 0 auto;
-}
-
-.fr-track-info { display: flex; flex-direction: column; gap: 3px; padding-bottom: 12px; border-bottom: 1px solid rgba(60,180,60,0.2); }
-.fr-title      { font-family: var(--font-display); font-size: 20px; font-weight: bold; color: var(--color-text); text-shadow: 0 0 14px rgba(80,220,80,0.35); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fr-artist     { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #5a8a5a; }
-
-/* Skull/flat-top = visualizer */
-.fr-skull {
-  border: 2px solid #2a4a2a;
-  border-bottom: none;
-  border-radius: 4px 4px 0 0;
-  overflow: hidden;
-  background: #030803;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 0 14px rgba(60,220,60,0.1);
-}
-.fr-viz { display: block; width: 100%; height: 72px; }
-
-/* Eyes = play/pause */
-.fr-eyes {
-  display: flex;
-  justify-content: center;
-  gap: 44px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px 8px;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-.fr-eyes:hover { background: rgba(60,180,60,0.06); }
-
-.fr-eye {
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 44%, #040d04, #1a301a 60%, #0a180a);
-  border: 2px solid #2a4a2a;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.85);
-  transition: background 0.25s, box-shadow 0.25s;
-}
-.fr-eyes.playing .fr-eye {
-  background: radial-gradient(circle at 50% 44%, #0a200a, #5ecf5e 55%, #1a5a1a);
-  border-color: #9eff9e;
-  box-shadow: 0 0 16px rgba(80,220,80,0.8), 0 0 38px rgba(60,180,60,0.4), inset 0 0 8px rgba(160,255,160,0.5);
-  animation: fr-eye-pulse 2s ease-in-out infinite alternate;
-}
-@keyframes fr-eye-pulse {
-  from { box-shadow: 0 0 10px rgba(80,220,80,0.6), 0 0 26px rgba(60,180,60,0.3); }
-  to   { box-shadow: 0 0 22px rgba(80,220,80,1.0), 0 0 48px rgba(60,180,60,0.5); }
-}
-
-/* Bolts = prev/next */
-.fr-controls { display: flex; justify-content: space-between; }
-.fr-controls button {
-  background: rgba(0,40,0,0.3);
-  border: 1px solid #2a4a2a;
-  color: var(--color-text);
-  padding: 7px 18px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
-}
-.fr-controls button:hover { border-color: #5ecf5e; color: #9eff9e; box-shadow: 0 0 12px rgba(80,220,80,0.25); }
-
-/* Chest scar = seek */
-.fr-seek-region { display: flex; flex-direction: column; gap: 5px; }
-.fr-time        { font-family: var(--font-mono); font-size: 11px; color: var(--color-dim); text-align: right; font-variant-numeric: tabular-nums; }
-
-/* Hand = volume */
-.fr-volume-region { display: flex; align-items: center; gap: 10px; }
-.fr-hand          { font-size: 16px; filter: hue-rotate(100deg) saturate(0.7); }
-
-/* Playlist */
-.fr-playlist {
-  list-style: none;
-  max-height: 120px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 6px;
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(60,180,60,0.1);
-  border-radius: 4px;
-}
-.fr-playlist li { padding: 5px 9px; border-radius: 3px; cursor: pointer; color: var(--color-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.1s, color 0.1s; }
-.fr-playlist li:hover  { background: rgba(255,255,255,0.04); color: var(--color-text); }
-.fr-playlist li.active { color: #5ecf5e; background: rgba(60,180,60,0.12); box-shadow: inset 3px 0 0 #5ecf5e; }
-
 /* ════════════════════════════════════════════════════════════════════════════
    SKELETON SKIN
    ════════════════════════════════════════════════════════════════════════════ */
 [data-skin="skeleton"] {
   --color-accent: #c8cdd6;
 }
-
-.skeleton-skin .sk-body {
-  width: min(440px, 96vw);
-  background: linear-gradient(170deg, #0d0e10 0%, #090a0c 55%, #060708 100%);
-  border: 1px solid #2a2d35;
-  border-radius: 10px;
-  padding: 22px 20px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-shadow:
-    0 24px 60px rgba(0,0,0,0.75),
-    0 0 40px rgba(180,190,210,0.05),
-    inset 0 1px 0 rgba(220,225,235,0.07);
-  margin: 0 auto;
-}
-
-.sk-track-info { display: flex; flex-direction: column; gap: 3px; padding-bottom: 12px; border-bottom: 1px solid rgba(180,190,210,0.15); }
-.sk-title      { font-family: var(--font-display); font-size: 20px; font-weight: bold; color: var(--color-text); text-shadow: 0 0 14px rgba(200,210,220,0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sk-artist     { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #7a8090; }
-
-/* Eye sockets = play/pause */
-.sk-eyes {
-  display: flex;
-  justify-content: center;
-  gap: 44px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px 8px;
-  border-radius: var(--radius);
-  transition: background 0.2s;
-}
-.sk-eyes:hover { background: rgba(200,210,220,0.04); }
-
-.sk-eye {
-  width: 32px; height: 32px;
-  border-radius: 40% 40% 50% 50%;   /* skull socket shape */
-  background: radial-gradient(circle at 50% 44%, #050608, #141620 60%, #0a0b10);
-  border: 2px solid #2a2d38;
-  box-shadow: inset 0 4px 10px rgba(0,0,0,0.9);
-  transition: background 0.25s, box-shadow 0.25s;
-}
-.sk-eyes.playing .sk-eye {
-  background: radial-gradient(circle at 50% 44%, #101218, #4a5070 55%, #1e2030);
-  border-color: #c8cdd6;
-  box-shadow: 0 0 16px rgba(180,190,220,0.65), 0 0 36px rgba(140,150,180,0.3), inset 0 0 8px rgba(220,225,240,0.4);
-  animation: sk-eye-pulse 2.2s ease-in-out infinite alternate;
-}
-@keyframes sk-eye-pulse {
-  from { box-shadow: 0 0 10px rgba(180,190,220,0.45), 0 0 24px rgba(140,150,180,0.2); }
-  to   { box-shadow: 0 0 22px rgba(180,190,220,0.85), 0 0 46px rgba(140,150,180,0.45); }
-}
-
-/* Skull jaw = visualizer */
-.sk-jaw {
-  border: 1px solid #2a2d35;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #040507;
-  box-shadow: inset 0 8px 20px rgba(0,0,0,0.9);
-}
-.sk-viz { display: block; width: 100%; height: 64px; }
-
-/* Arm bones = prev/next */
-.sk-controls { display: flex; justify-content: space-between; }
-.sk-controls button {
-  background: rgba(20,22,28,0.4);
-  border: 1px solid #2a2d38;
-  color: var(--color-text);
-  padding: 7px 18px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
-}
-.sk-controls button:hover { border-color: #c8cdd6; color: #fff; box-shadow: 0 0 12px rgba(180,190,220,0.2); }
-
-/* Ribcage = seek */
-.sk-seek-region { display: flex; flex-direction: column; gap: 5px; }
-.sk-time        { font-family: var(--font-mono); font-size: 11px; color: var(--color-dim); text-align: right; font-variant-numeric: tabular-nums; }
-
-/* Spine = volume */
-.sk-volume-region { display: flex; align-items: center; gap: 10px; }
-.sk-spine { font-size: 14px; color: #8090a8; letter-spacing: -2px; }
-
-/* Playlist */
-.sk-playlist {
-  list-style: none;
-  max-height: 120px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 6px;
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(180,190,210,0.08);
-  border-radius: var(--radius);
-}
-.sk-playlist li { padding: 5px 9px; border-radius: 7px; cursor: pointer; color: var(--color-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.1s, color 0.1s; }
-.sk-playlist li:hover  { background: rgba(255,255,255,0.04); color: var(--color-text); }
-.sk-playlist li.active { color: #c8cdd6; background: rgba(160,170,190,0.1); box-shadow: inset 3px 0 0 #c8cdd6; }
-
-/* ════════════════════════════════════════════════════════════════════════════
-   INLINE SVG ART — added 2026-11-09
-   The SVG rides the existing class hooks: eyes stay the play/pause button,
-   the medallion still rotates with volume, fangs/bolts/leaves sit inside
-   the prev/next buttons. Fills are CSS-driven so the playing state lights
-   the irises exactly like the old CSS radial eyes did.
-   ════════════════════════════════════════════════════════════════════════════ */
-
-/* Eyes: center the SVG inside the socket span */
-.dr-eye, .fr-eye, .st-eye {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.dr-eye svg, .fr-eye svg, .st-eye svg { width: 27px; height: 27px; display: block; }
-.dr-sclera, .fr-sclera, .st-sclera { fill: #cfc4ae; opacity: 0.28; }
-.dr-pupil, .fr-pupil, .st-pupil { fill: #0a0202; }
-.dr-iris { fill: #570d0d; transition: fill 0.25s; }
-.fr-iris { fill: #123d12; transition: fill 0.25s; }
-.st-iris { fill: #3d5410; transition: fill 0.25s; }
-.dr-eyes.playing .dr-iris { fill: #ff2418; filter: drop-shadow(0 0 4px rgba(255, 60, 40, 0.95)); }
-.fr-eyes.playing .fr-iris { fill: #6dff6d; filter: drop-shadow(0 0 4px rgba(110, 255, 110, 0.95)); }
-.st-eyes.playing .st-iris { fill: #d8f542; filter: drop-shadow(0 0 4px rgba(200, 240, 80, 0.95)); }
-
-/* Dracula: widow's-peak hairline */
-.dr-hairline { display: block; width: 100%; height: 34px; margin-bottom: -10px; }
-.dr-hairline path { fill: #08030a; stroke: rgba(192, 57, 43, 0.4); stroke-width: 1.2; }
-
-/* Dracula: cape scalloped wings under the visualizer */
-.dr-cape { position: relative; }
-.dr-cape-wings { display: block; width: 100%; height: 14px; }
-.dr-cape-wings path { fill: #3d0510; stroke: rgba(192, 57, 43, 0.35); stroke-width: 0.8; }
-
-/* Dracula: medallion (the span still rotates via rotateMedallion) */
-.dr-medallion svg { width: 23px; height: 23px; display: block; }
-.dr-medallion-ring { fill: rgba(30, 20, 5, 0.6); stroke: #c0a050; stroke-width: 1.6; }
-.dr-medallion-gem { fill: #8f0f14; stroke: #e8b4b4; stroke-width: 0.6; }
-.dr-medallion-spark { fill: #ffd9d9; opacity: 0.9; }
-
-/* Dracula: fangs inside prev/next */
-.dr-fang { width: 11px; height: 13px; vertical-align: -2px; margin: 0 5px; }
-.dr-fang path { fill: #e8ddc8; stroke: #8a7a5c; stroke-width: 0.6; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)); }
-
-/* Frankenstein: forehead stitches over the skull visualizer */
-.fr-skull { position: relative; }
-.fr-stitches { position: absolute; top: 5px; left: 10px; width: calc(100% - 20px); height: 10px; pointer-events: none; }
-.fr-stitch-line { stroke: #9eff9e; stroke-width: 1.3; opacity: 0.45; }
-.fr-stitch-ticks { stroke: #9eff9e; stroke-width: 1.6; opacity: 0.85; }
-
-/* Frankenstein: neck bolts inside prev/next */
-.fr-bolt { width: 12px; height: 15px; vertical-align: -2px; margin: 0 5px; }
-.fr-bolt polygon { fill: #aef2ae; stroke: #2a4a2a; stroke-width: 0.8; filter: drop-shadow(0 0 4px rgba(94, 207, 94, 0.8)); }
-
-/* Swamp Thing: vine tendrils curling over the visualizer corners */
-.st-vines { position: relative; }
-.st-tendrils { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.st-tendril { fill: none; stroke: #7ab648; stroke-width: 2.4; stroke-linecap: round; opacity: 0.55; filter: drop-shadow(0 0 3px rgba(122, 182, 72, 0.6)); }
-
-/* Swamp Thing: leaves inside prev/next */
-.st-leaf { width: 13px; height: 13px; vertical-align: -2px; margin: 0 5px; }
-.st-leaf path { fill: #558f2c; stroke: #dfffc9; stroke-width: 0.7; }
-
-/* ════════════════════════════════════════════════════════════════════════════
-   DRACULA — CHARACTER FRAME (2026-11-09)
-   The silhouette SVG is the window shape; controls live inside the anatomy.
-   ════════════════════════════════════════════════════════════════════════════ */
-.dracula-skin .dr-silhouette {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-.dracula-skin .dr-body > *:not(.dr-silhouette):not(.dr-head) { position: relative; z-index: 1; }
-.dr-silhouette-trim { fill: none; stroke: rgba(233, 196, 106, 0.55); stroke-width: 1.6; }
-.dr-collar-line { fill: none; stroke: rgba(233, 196, 106, 0.28); stroke-width: 1.2; }
-
-/* Head overlays the silhouette's face zone */
-.dracula-skin .dr-head {
-  position: absolute;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 170px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 2;
-}
-.dracula-skin .dr-hairline { width: 132px; height: 48px; margin-bottom: -6px; }
-.dracula-skin .dr-hairline path { stroke: rgba(233, 196, 106, 0.35); }
-.dracula-skin .dr-eyes { gap: 16px; padding: 4px 8px; }
-.dracula-skin .dr-eye { width: 44px; height: 44px; }
-.dracula-skin .dr-eye.left  { transform: rotate(-9deg) scaleY(0.78); }
-.dracula-skin .dr-eye.right { transform: rotate(9deg) scaleY(0.78); }
-.dracula-skin .dr-viz { height: 72px; }
-.dracula-skin .dr-playlist { width: 86%; margin: 0 auto; max-height: 82px; }
-.dracula-skin .dr-playlist li { padding: 4px 9px; }
-.dracula-skin .dr-controls { padding: 0 10px; }
-
-/* Cape interior and playlist sit on the silhouette — soften their boxes */
-.dracula-skin .dr-cape { background: rgba(8, 2, 6, 0.55); border-color: rgba(61, 10, 10, 0.7); }
-.dracula-skin .dr-playlist { background: rgba(0, 0, 0, 0.22); }
-.dracula-skin .dr-controls button { background: rgba(40, 2, 8, 0.5); }
 
 /* ════════════════════════════════════════════════════════════════════════════
    DRACULA — WEB PLATE (2026-11-10)
@@ -665,7 +248,7 @@ input[type="range"]::-moz-range-thumb {
     drop-shadow(0 0 2px rgba(255, 205, 130, 0.3))
     drop-shadow(0 0 7px rgba(150, 20, 30, 0.6));
 }
-.dracula-skin .dr-body > *:not(.dr-silhouette):not(.dr-head) { position: absolute; }
+.dracula-skin .dr-body > * { position: absolute; }
 
 /* Chest panel = live title + artist, over the baked placeholder */
 .dracula-skin .dr-track-info {
@@ -687,6 +270,8 @@ input[type="range"]::-moz-range-thumb {
   max-width: 96%;
   font-family: var(--font-display);
   font-size: 13px;
+  font-weight: 700;
+  text-shadow: 0 0 18px rgba(192, 57, 43, 0.5);
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
@@ -913,6 +498,8 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-controls {
   position: absolute;
   inset: 0;
+  /* the fang hotspots were tuned against this inset */
+  padding: 0 10px;
   display: block;
   pointer-events: none;
   z-index: 3;
@@ -967,6 +554,7 @@ input[type="range"]::-moz-range-thumb {
   font-size: 8px;
   line-height: 1.55;
   white-space: nowrap;
+  overflow: hidden;
   cursor: pointer;
   transition: color 0.12s;
 }
@@ -975,6 +563,7 @@ input[type="range"]::-moz-range-thumb {
   color: #fff2bd;
   outline: 1px solid #dbba78;
 }
+.dracula-skin .dr-playlist .dr-track:hover { background: rgba(255, 255, 255, 0.05); }
 .dracula-skin .dr-playlist .dr-track.active {
   color: #f9d98c;
   background: transparent;
@@ -1068,6 +657,11 @@ input[type="range"]::-moz-range-thumb {
   top: 49.3%;
   width: 46%;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(60, 180, 60, 0.2);
   text-align: center;
   z-index: 3;
   pointer-events: none;
@@ -1166,7 +760,9 @@ input[type="range"]::-moz-range-thumb {
   position: absolute;
   right: 0;
   top: 21px;
+  font-family: var(--font-mono);
   font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
   letter-spacing: 0.08em;
   color: #c9f5cf;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
@@ -1196,6 +792,10 @@ input[type="range"]::-moz-range-thumb {
   margin: 0;
   padding: 4px;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid rgba(60, 180, 60, 0.1);
   overflow-y: auto;
   z-index: 3;
   background: rgba(8, 10, 14, 0.55);
@@ -1212,8 +812,12 @@ input[type="range"]::-moz-range-thumb {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: background 0.1s, color 0.1s;
 }
-.frankenstein-skin .fr-playlist li:hover { background: rgba(105, 245, 124, 0.14); }
+.frankenstein-skin .fr-playlist li:hover {
+  background: rgba(105, 245, 124, 0.14);
+  color: var(--color-text);
+}
 .frankenstein-skin .fr-playlist li.active {
   color: #69f57c;
   background: rgba(105, 245, 124, 0.1);
@@ -1294,6 +898,11 @@ input[type="range"]::-moz-range-thumb {
   top: 37.2%;
   width: 44%;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(180, 190, 210, 0.15);
   text-align: center;
   z-index: 3;
   pointer-events: none;
@@ -1392,7 +1001,9 @@ input[type="range"]::-moz-range-thumb {
   position: absolute;
   right: 0;
   top: 21px;
+  font-family: var(--font-mono);
   font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
   letter-spacing: 0.08em;
   color: #d7ecfa;
   text-shadow: 0 1px 3px rgba(2, 6, 12, 0.95);
@@ -1445,6 +1056,10 @@ input[type="range"]::-moz-range-thumb {
   margin: 0;
   padding: 4px;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid rgba(180, 190, 210, 0.08);
   overflow-y: auto;
   z-index: 3;
   background: rgba(6, 10, 16, 0.45);
@@ -1461,8 +1076,12 @@ input[type="range"]::-moz-range-thumb {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: background 0.1s, color 0.1s;
 }
-.skeleton-skin .sk-playlist li:hover { background: rgba(140, 220, 255, 0.14); }
+.skeleton-skin .sk-playlist li:hover {
+  background: rgba(140, 220, 255, 0.14);
+  color: var(--color-text);
+}
 .skeleton-skin .sk-playlist li.active {
   color: #8adcff;
   background: rgba(140, 220, 255, 0.1);
