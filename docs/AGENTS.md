@@ -212,7 +212,7 @@ Plan → Work → Assess → Compound. When a session earns a lesson (a bug's re
 **NEVER commit absolute paths or secrets to the public repo:**
 - **Absolute Paths:** No `C:\Users\`, `/home/`, `~/workspace/` anywhere (code, docs, specs, commits, screenshots, Devpost)
 - **Secrets:** No API keys, tokens, passwords, credentials, private keys
-- **Personal Info:** No usernames (TBMT), machine names, email addresses, internal network paths
+- **Personal Info:** No usernames (your OS login name), machine names, email addresses, internal network paths
 - **Always use repo-relative paths:** `src/main.ts`, `.kiro/specs/feature.md`, `docs/AGENTS.md`
 
 **Pre-commit checklist:**

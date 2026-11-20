@@ -6,3 +6,6 @@ package-lock.json
 # Reference images (local only — never ship)
 reference/**
 !reference/README.md
+# electron-builder output
+dist/
+release/

@@ -27,7 +27,7 @@ claims in docs, and draft the submission texts. No new product features.
 ## Tasks
 - [x] T1: This spec.
 - [x] T2: Rules checklist verified against live rules (R1).
-- [ ] T3: Remove username from tracked files; ignore `dist/` (R2).
+- [x] T3: Remove username from tracked files; ignore `dist/` (R2).
 - [ ] T4: Correct stale claims in README, docs, steering, specs (R3).
 - [ ] T5: `.kiro/INDEX.md` and `docs/submission/AUDIT.md` (R2, R4).
 - [ ] T6: Submission drafts (R5, R6).

@@ -218,7 +218,7 @@ git diff --cached <filename>  # Review each file
 
 ### Absolute Paths (NEVER COMMIT)
 - [ ] Search for `C:\Users\` or `/home/` or `~/`
-- [ ] Search for machine-specific usernames (TBMT, etc.)
+- [ ] Search for machine-specific usernames (your OS login name)
 - [ ] Search for absolute paths in: code, comments, specs, docs
 - [ ] Verify all paths are repo-relative (e.g., `src/main.ts`)
 
@@ -240,7 +240,7 @@ git diff --cached <filename>  # Review each file
 # Search for common violations
 git diff --cached | grep -i "c:\\\|/home/\|users/"
 git diff --cached | grep -i "password\|secret\|token\|api.key"
-git diff --cached | grep -i "TBMT"
+git diff --cached | grep -i "$USERNAME"
 
 # If any found, STOP and fix before committing
 ```
