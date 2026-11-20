@@ -1,6 +1,6 @@
 # Submission Readiness Specification
 
-**Status:** In Progress
+**Status:** Complete (2026-11-20). Maintainer items remain, marked in `docs/submission/`.
 **Created:** 2026-11-20
 **Owner:** Maintainer
 **Implementation:** Kiro (docs and audit only; no feature code)
@@ -16,8 +16,8 @@ claims in docs, and draft the submission texts. No new product features.
 - [x] R2: Every checklist item audited with a real command or file read and marked PASS / FAIL / UNVERIFIED in `docs/submission/AUDIT.md`.
 - [x] R3: No doc claims a result that was not observed. Untestable claims are marked UNVERIFIED.
 - [x] R4: `.kiro/INDEX.md` lists every steering file, hook, spec and workflow, and what each does, plus an honest list of what was not built from a spec.
-- [ ] R5: Drafts in `docs/submission/`: description, Kiro usage write-up, demo script, blog post, social post (starts with `#KiroweenHackathon26`).
-- [ ] R6: Anything only the maintainer knows is marked `[MAINTAINER: ...]` or `[YOU: ...]`.
+- [x] R5: Drafts in `docs/submission/`: description, Kiro usage write-up, demo script, blog post, social post (starts with `#KiroweenHackathon26`).
+- [x] R6: Anything only the maintainer knows is marked `[MAINTAINER: ...]` or `[YOU: ...]`.
 
 ### Non-Functional Requirements
 - No absolute local paths, usernames, or secrets in any file or commit.
@@ -30,7 +30,7 @@ claims in docs, and draft the submission texts. No new product features.
 - [x] T3: Remove username from tracked files; ignore `dist/` (R2).
 - [x] T4: Correct stale claims in README, docs, steering, specs (R3).
 - [x] T5: `.kiro/INDEX.md` and `docs/submission/AUDIT.md` (R2, R4).
-- [ ] T6: Submission drafts (R5, R6).
+- [x] T6: Submission drafts (R5, R6).
 
 ## Acceptance Criteria
 - `npm run typecheck` and `npm run build` pass.
