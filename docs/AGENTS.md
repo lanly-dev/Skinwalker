@@ -24,6 +24,8 @@ Costume Contest: a haunting UI that is polished/unforgettable AND where the spoo
 
 Sources: the hackathon overview, the Official Rules, and the Resources tab at kiroween.devpost.com. If anything in this file conflicts with the Official Rules, the Official Rules win. Rules may be amended during the window — re-verify before submitting.
 
+**Re-verified 2026-11-20** against the live Official Rules page (kiroween.devpost.com/rules): dates, repo requirements, submission package, judging criteria and bonus prize conditions match this section. One addition: the app URL field is satisfied by the public GitHub repo plus a built installer; no release is published yet (see docs/submission/AUDIT.md).
+
 ### Dates (all Pacific Time)
 - **Submission Period: Oct 30, 2026, 9:00 AM – Fri Dec 4, 2026, 2:00 PM.** No extensions; late submissions are not accepted.
 - **Judging Period: Dec 16, 2026 – Jan 29, 2027.** The project must remain available **free of charge and without any restriction** for judge testing until the Judging Period ends; failure to provide access when requested may result in disqualification.
