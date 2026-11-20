@@ -1,6 +1,6 @@
 # Dracula Seekbar Blood Effects Specification
 
-**Status:** Complete  
+**Status:** Partially implemented (corrected 2026-11-20). Committed code has the 21-drip curtain only (`DRIP_X`, `buildDrips()` in `src/renderer/skins/DraculaSkin.ts`). The 40 small drips, 30 splatters and 10 trails below were never committed. This spec was committed 2026-11-11, after the drip code (2026-11-10), so it is a retrospective spec.  
 **Created:** 2026-11-10  
 **Owner:** User request (seekbar blood enhancement + dripping edge)  
 **Implementation:** Kiro

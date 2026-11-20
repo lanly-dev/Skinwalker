@@ -171,7 +171,7 @@ Before December 4, 2026, 2:00 PM PT:
 - Write-up must explain **how Kiro improved workflow**
 
 ### For "Quality and Design":
-- 101+ blood effects show polish
+- animated blood-drip curtain show polish
 - Window shaping shows technical excellence
 - Web Audio visualizer is sophisticated
 - Character anatomy as controls is creative

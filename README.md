@@ -10,20 +10,20 @@ A Halloween-themed media player where the monster's anatomy IS the interface —
 
 Skinwalker is an Electron desktop media player where **the skin is a living Halloween monster**. Every body part is a working control:
 
-- 👁️ **Eyes** → Audio visualizer
-- 🩸 **Blood drip** → Seek bar (with 101+ animated blood effects)
+- 🌀 **Cape / jaw / skull** → Audio visualizer (varies by skin; see `docs/README.md` for the per-skin anatomy table)
+- 🩸 **Blood line** → Seek bar (Dracula adds a 21-drip animated curtain)
 - ❤️ **Medallion** → Play/pause
-- 🦴 **Bones/Hands** → Previous/Next track
+- 🦴 **Hands / bones / bolts** → Previous/Next track
 - 🧛 **Monster body** → Window chrome (frameless, transparent)
 
 ## Features
 
 - **3 Monster Skins:** Dracula (flagship), Frankenstein, Skeleton
-- **Dual-Mode Audio:** File-based (MP3/WAV) + Procedural synthesis
+- **Audio:** local MP3/WAV playback through the Web Audio API. The three bundled WAV demo tracks were synthesized offline by `npm run generate-tracks`; the app itself does not synthesize audio at runtime.
 - **Real-Time Visualizer:** Driven by Web Audio API AnalyserNode
-- **Living Blood Effects:** 101+ animated blood drips, trails, and splatter
-- **Shaped Window:** OS window clips to monster silhouette (Windows/Linux)
-- **Bundled Tracks:** 6 royalty-free demo tracks included
+- **Animated blood drips:** Dracula's blood line has a 21-drip CSS-animated curtain.
+- **Shaped Window:** the window is clipped to the monster silhouette with `setShape` (code path runs on Windows and Linux, skipped on macOS). Checked on Windows only that the packaged app launches; the clipped shape and Linux are UNVERIFIED.
+- **Bundled Tracks:** 6 demo tracks: 3 synthesized WAVs and 3 Kevin MacLeod MP3s (CC BY 4.0)
 
 ## Quick Start
 
@@ -78,14 +78,14 @@ This is a **Costume Contest** entry for Kiroween 2026, developed with Kiro as pa
 
 - **Category:** Costume Contest (spooky UI where every element does functional work)
 - **Deadline:** Friday, December 4, 2026, 2:00 PM PT
-- **Requirements:** New project, MIT license, `.kiro/` folder committed, spec-first development
+- **Requirements:** new project, MIT license, `.kiro/` folder committed
 
 ### Kiro Usage
 
 - ✅ Steering files in `.kiro/steering/` guide CSS, audio, and Electron conventions across the project
 - ✅ Hooks in `.kiro/hooks/` automate TypeScript checks, spec-first reminders, and security/privacy checks
 - ✅ A workflow in `.kiro/workflows/` structures new-skin feature development
-- ✅ Specs in `.kiro/specs/` cover the code-optimization pass and the Dracula blood-effects feature — those were built spec-first from their specs
+- ⚠️ Specs in `.kiro/specs/` cover the code-optimization pass, the Dracula blood-effects feature and submission readiness. `git log` shows the blood-effects spec was committed after its feature code, and the blood-effects spec describes elements (splatter, trails) that were never committed. See `.kiro/INDEX.md` for the full list of what was and was not built from a spec.
 - Disclosure: the core player and skin system were built with mixed tooling, with Kiro steering and hooks in the loop. Spec-driven development applies where specs exist, and newer feature work is done spec-first in Kiro. The `/.kiro` contents are the real working files, not a retroactive trail.
 
 ## License

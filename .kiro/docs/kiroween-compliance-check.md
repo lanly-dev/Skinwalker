@@ -1,7 +1,7 @@
 # Kiroween 2026 Requirements — Compliance Check
 **Project:** Skinwalker  
 **Last Check:** November 8, 2026  
-**Status:** ✅ COMPLIANT  
+**Status:** SUPERSEDED. This file was last checked 2026-11-08 and several lines below were not verified. The current audit is `docs/submission/AUDIT.md` (2026-11-20).  
 **Official Rules:** See `.kiro/docs/kiroween-2026-official-rules.md`
 
 ## Official Submission Requirements
@@ -50,7 +50,7 @@ Must use **one or more** of: Vibe coding, Hooks, Steering, MCP, Specs
 ### ✅ Specs (Spec-First Development)
 - `.kiro/specs/dracula-blood-effects.md`
 - `.kiro/specs/code-optimization.md`
-- Specs committed before implementation
+- Specs committed (timing: see `.kiro/INDEX.md`; they were not all committed before the code)
 
 ### ✅ Steering Docs
 - `.kiro/steering/skinwalker-project.md` — Core project context
@@ -75,7 +75,7 @@ Must use **one or more** of: Vibe coding, Hooks, Steering, MCP, Specs
 **Our Implementation:**
 - ✅ Monster anatomy IS the interface (not decoration)
 - ✅ Polished character designs (Dracula, Skeleton)
-- ✅ Unforgettable: 101+ blood effects, window shaping
+- ✅ Unforgettable: animated blood-drip curtain, window shaping
 - ✅ Hauntingly beautiful: transparent window, visualizer
 
 ## Action Items Before Submission

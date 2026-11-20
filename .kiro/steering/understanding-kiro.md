@@ -129,7 +129,7 @@ Problems encountered, solutions found
 #### Example: Blood Effects Spec
 
 See `.kiro/specs/dracula-blood-effects.md` for a complete example showing:
-- Requirements (101+ blood elements, animations)
+- Requirements (blood-drip elements, animations)
 - Design approach (procedural generation + CSS)
 - Implementation tasks (3 phases)
 - Acceptance criteria (60 FPS, no pointer blocking)
@@ -426,7 +426,7 @@ You: "Add more blood effects to the seekbar"
 #### 4. I Create Spec
 ```
 📋 Create: .kiro/specs/dracula-blood-effects.md
-   - Requirements: 101+ blood elements
+   - Requirements: blood-drip elements
    - Design: Procedural generation + CSS
    - Tasks: 3 phases
    - Acceptance: 60 FPS, no pointer blocking

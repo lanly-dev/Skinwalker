@@ -52,7 +52,7 @@ Documented existing work with retroactive spec:
 
 #### `dracula-blood-effects.md`
 Complete specification for the blood effects feature including:
-- All 101+ blood elements
+- All blood-drip elements
 - SVG dripping edge
 - Glow reduction iterations
 - Performance characteristics

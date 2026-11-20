@@ -4,7 +4,7 @@
 
 Kiroween 2026 — **Costume Contest** entry.
 
-Every body part does real work: the mouth is the visualizer, the eyes toggle play/pause, the claws scrub the timeline. No decoration — pure functional anatomy.
+Every body part is meant to do real work. The table below lists the anatomy-to-control mapping per skin, taken from the skin source files.
 
 ---
 
@@ -20,7 +20,7 @@ Every body part does real work: the mouth is the visualizer, the eyes toggle pla
 
 ## Stack
 
-- **Electron 33** — frameless, transparent window (the monster IS the chrome)
+- **Electron 45** — frameless, transparent window (the monster IS the chrome)
 - **electron-vite** — Vite HMR for main + preload + renderer
 - **TypeScript** — strict, no UI framework
 - **Web Audio API** — real `AnalyserNode` drives the visualizer; no fake animation loops
@@ -38,7 +38,7 @@ npm run dev        # Electron app with HMR
 
 ```bash
 npm run build      # compile to out/
-npm run package    # electron-builder installer → release/
+npm run package    # electron-builder installer → dist/
 ```
 
 ### Typecheck

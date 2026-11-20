@@ -79,11 +79,11 @@ Sources: the hackathon overview, the Official Rules, and the Resources tab at ki
 - Keep the project free and unrestricted for judges through Jan 29, 2027.
 
 ## Stack — DECIDED 2026-11-08
-- **Electron 33 + electron-vite + TypeScript** (no UI framework — vanilla DOM + SVG).
+- **Electron 33 at decision time, now 45.3.0 (see Recent Improvements) + electron-vite + TypeScript** (no UI framework — vanilla DOM + SVG).
 - Renderer: Vite-bundled, strict TypeScript, Web Audio API (`AnalyserNode` for visualizer).
 - Main process: frameless transparent window; IPC for drag, window controls, native file dialog.
 - Preload: locked-down `contextBridge` — `window.skinwalker` API only.
-- Build output: `out/` (gitignored). Packaged installers: `release/` (gitignored).
+- Build output: `out/` (gitignored). Packaged installers: `dist/` (gitignored).
 - Key paths:
   - `src/main/index.ts` — Electron main process
   - `src/preload/index.ts` — context bridge
@@ -95,7 +95,7 @@ Sources: the hackathon overview, the Official Rules, and the Resources tab at ki
 ## Scope v1
 - **Electron desktop app**; local audio files via native OS file picker + bundled royalty-free demo tracks.
 - Core player: play / pause / seek / volume, playlist, next / prev.
-- **Two monster skins** (Dracula flagship + Frankenstein) — no skin switcher, the app boots Dracula.
+- **Three monster skins** (Dracula flagship, Skeleton, Frankenstein; registry order in `src/renderer/skins/index.ts`) — no skin switcher, the app boots Dracula.
 - Per skin, functional anatomy: e.g. mouth or eyes as the live visualizer (Web Audio AnalyserNode), claw / tongue / vine as the seek bar, skin-themed play/pause and volume organs.
 - One skin is the design flagship (Dracula) — polish it hardest; Frankenstein can be simpler but must be a fully functional skin, not a color swap.
 - Frameless, transparent window — the monster body IS the window chrome. No OS titlebar.
@@ -192,8 +192,8 @@ web-build position on the painted speakers, with a gold level bar under each. Dr
 `SKINS[0]` again so the updated skin actually launches; there is still no switcher.
 
 ## Recent Improvements (2026-11-08)
-- **Blood effects massively enhanced:** Dracula seekbar now has 101+ blood elements (21 main drips + 40 small + 30 splatter + 10 trails) with procedural generation in `buildDrips()`, plus inline SVG dripping edge with 14 animated elements. Glow effects reduced by 50% for matte/realistic blood appearance.
-- **Complete Kiro infrastructure:** Full `.kiro/` folder created with specs (6 files), steering files (7 files including auto-load guides), hooks (2 active), workflows (1 template), and comprehensive documentation explaining all Kiro concepts.
+- **Blood effects (CORRECTED 2026-11-20):** an earlier entry here claimed blood-drip elements. Only the 21-drip curtain (`DRIP_X` and `buildDrips()` in `src/renderer/skins/DraculaSkin.ts`) exists in committed code; `git log -S` finds no splatter or trail code in any commit.
+- **Complete Kiro infrastructure:** Full `.kiro/` folder created with specs (3 files incl. submission-readiness), steering files (7 files including auto-load guides), hooks (3), workflows (1 template), and comprehensive documentation explaining all Kiro concepts.
 - **Code optimization:** Removed 5 unused Dracula assets (eye-left/right, fang-left/right, medallion), added CSS variables for blood colors to `:root`, verified all code is in active use. CSS: 35.74 KB, TypeScript: 0 errors.
 - **Dependencies upgraded:** Electron 33→45.3.0, TypeScript 5→7.0.2, Vite 2→8.3.8, electron-vite 2→6.0.0, electron-builder 24→26.18.0, @electron-toolkit packages to latest. Build output: -116 packages (-25%), 343 total packages, all builds passing.
 - **File structure reorganization:** Created `docs/` folder for documentation, moved AGENTS.md there, created professional README.md at root, PROJECT-STRUCTURE.md guide, organized .kiro/ with separate docs/ and specs/ subfolders.
@@ -225,7 +225,7 @@ git diff --name-only --cached  # Review every file
 This is a **KIROWEEN STANDING RULE** (privacy and professionalism).
 
 ### Procedural Blood Generation
-When building complex visual effects like the 101+ blood drips, procedural generation in code (TypeScript function returning HTML strings) beats static HTML:
+When building complex visual effects like the blood-drip curtain, procedural generation in code (TypeScript function returning HTML strings) beats static HTML:
 - **Flexibility:** Single function call with parameters controls density, size distribution
 - **Maintainability:** One function to update, not 100+ elements in markup
 - **Performance:** Generates once at mount, not parsed on every page load

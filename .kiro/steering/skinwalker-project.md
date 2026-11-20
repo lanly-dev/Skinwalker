@@ -7,7 +7,7 @@ inclusion: always
 This is the Skinwalker media player — a Kiroween 2026 **Costume Contest** entry where monster anatomy IS the interface.
 
 ## Project Identity
-- **Type:** Electron desktop app (Electron 33 + electron-vite + TypeScript)
+- **Type:** Electron desktop app (Electron 45 + electron-vite + TypeScript)
 - **Category:** Costume Contest — spooky UI where every monster element does functional work
 - **Deadline:** Fri Dec 4, 2026, 2:00 PM PT
 - **Credit Budget:** ~900 of shared 4,000 (explore elsewhere, execute in Kiro)
@@ -60,7 +60,7 @@ This is the Skinwalker media player — a Kiroween 2026 **Costume Contest** entr
 - `src/renderer/player/Player.ts` — core playback logic
 - `src/renderer/audio/AudioEngine.ts` — dual-mode audio (synthetic + file)
 - `src/renderer/style.css` — per-skin themes
-- `AGENTS.md` — project decisions, lessons, status (read first every session)
+- `docs/AGENTS.md` — project decisions, lessons, status (read first every session)
 
 ### NPM Scripts
 - `npm run dev` — dev server (Vite HMR)
@@ -75,7 +75,7 @@ This is the Skinwalker media player — a Kiroween 2026 **Costume Contest** entr
 - ✅ Local audio playback (file picker + bundled demo tracks)
 - ✅ Core controls: play/pause, seek, volume, next/prev, playlist
 - ✅ Real-time visualizer driven by audio signal
-- ✅ Dracula skin (flagship with 101+ blood effects)
+- ✅ Dracula skin (flagship with a 21-drip blood curtain)
 - ✅ Frankenstein + Skeleton skins (simpler but fully functional)
 - ✅ Frameless transparent window shaped to character silhouette
 
@@ -96,12 +96,12 @@ Every skin follows this pattern:
    - Blood line/ribcage → seek bar
    - Spine/dial → volume control
    - Fangs/hands/bones → prev/next track
-4. **Window shaping** — OS window clips to character silhouette (Windows/Linux)
+4. **Window shaping** — OS window clips to character silhouette (Windows build launches; shape not visually verified; Linux unverified; skipped on macOS)
 
 ## Development Workflow
 
 ### Before Starting Any Feature
-1. Read `AGENTS.md` — check current decisions and lessons
+1. Read `docs/AGENTS.md` — check current decisions and lessons
 2. Check if a spec exists in `.kiro/specs/`
 3. If no spec: **CREATE IT FIRST** (see spec template below)
 4. Run `npm run typecheck` to verify baseline is clean
