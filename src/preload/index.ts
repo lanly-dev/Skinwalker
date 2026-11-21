@@ -27,10 +27,8 @@ contextBridge.exposeInMainWorld('skinwalker', {
   maximize: () => ipcRenderer.send('window:maximize'),
 
   /** Open native file picker, returns array of file:// URLs */
-  openAudioFiles: async (): Promise<string[]> => {
-    const paths: string[] = await ipcRenderer.invoke('dialog:openAudio')
-    return paths.map((p) => `file:///${p.replace(/\\/g, '/')}`)
-  },
+  openAudioFiles: async (): Promise<string[]> =>
+    ipcRenderer.invoke('dialog:openAudio'),
 
   /** Read an audio file's bytes (file:// cannot be fetched by the renderer) */
   readAudioFile: async (url: string): Promise<ArrayBuffer | null> =>

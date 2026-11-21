@@ -100,6 +100,9 @@ export class SkeletonSkin implements Skin {
 
   onPlaylistUpdate(): void {
     this.buildPlaylist()
+    // Added rows land at the bottom of the board; show them.
+    const list = this.els?.playlist
+    if (list) list.scrollTop = list.scrollHeight
   }
 
   // ── DOM ──────────────────────────────────────────────────────────────────────

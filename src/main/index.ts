@@ -5,7 +5,7 @@
 import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron'
 import { join } from 'path'
 import { readFile } from 'fs/promises'
-import { fileURLToPath } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 import { is } from '@electron-toolkit/utils'
 
 let win: BrowserWindow | null = null
@@ -173,15 +173,28 @@ ipcMain.on('window:maximize', () => {
   win.isMaximized() ? win.unmaximize() : win.maximize()
 })
 
-/** Open a native file-picker for local audio files */
+/** Open a native file-picker for local audio files. Returns file:// URLs —
+ *  pathToFileURL keeps spaces, '%' and '#' in a filename intact, so the read
+ *  IPC can turn them back into the exact path that was picked. */
+const AUDIO_EXTENSIONS = [
+  'mp3', 'm4a', 'aac', 'flac', 'wav', 'ogg', 'oga', 'opus',
+  'aiff', 'aif', 'alac', 'wma', 'ape', 'm4b', 'mp4', 'webm', 'caf',
+]
+
 ipcMain.handle('dialog:openAudio', async () => {
   if (!win) return []
   const result = await dialog.showOpenDialog(win, {
-    title: 'Add tracks',
-    filters: [{ name: 'Audio', extensions: ['mp3', 'flac', 'ogg', 'wav', 'm4a'] }],
+    title: 'Add audio files',
+    // Open where music lives; the default (Downloads) is usually all folders.
+    defaultPath: app.getPath('music'),
+    filters: [
+      { name: 'Audio', extensions: AUDIO_EXTENSIONS },
+      // Escape hatch: a format missing from the list must still be pickable.
+      { name: 'All files', extensions: ['*'] },
+    ],
     properties: ['openFile', 'multiSelections'],
   })
-  return result.canceled ? [] : result.filePaths
+  return result.canceled ? [] : result.filePaths.map((p) => pathToFileURL(p).href)
 })
 
 /** Hand an audio file's bytes to the renderer — Chromium blocks fetch on

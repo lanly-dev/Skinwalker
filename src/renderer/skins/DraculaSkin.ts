@@ -117,6 +117,10 @@ export class DraculaSkin implements Skin {
 
   onPlaylistUpdate(): void {
     this.buildPlaylist()
+    // Picked files append at the bottom, but the board is shorter than the
+    // list — without this the new rows are scrolled out of sight.
+    const list = this.els?.playlist
+    if (list) list.scrollTop = list.scrollHeight
   }
 
   // ── DOM ──────────────────────────────────────────────────────────────────────

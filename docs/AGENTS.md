@@ -216,6 +216,31 @@ hand. The focus outline is clipped to the same silhouette, so keyboard focus sho
 full glow instead of a rectangle.
 The two masks are cut per side; they are lit differently and are not mirrors.
 
+**The folder tool adds files again (2026-11-21):** the tool-row coffin and the floating pill both
+run `openLocalFiles`, and both looked like they only opened a folder. Two causes. First, the
+title was built with a bare `decodeURIComponent(url.split('/').pop())` — a filename with a
+literal `%` (`100%.mp3`) throws `URIError` there, so the whole selection was dropped after the
+dialog closed and the playlist never changed. Titles now decode best-effort, and the path→URL
+step moved to `pathToFileURL` in the main process, so spaces, `%` and `#` survive the trip to
+`audio:read`. Second, the picker's filter listed only five extensions and Windows hides
+non-matching files, so a music folder showed nothing but subfolders: the filter now covers the
+common audio formats and carries an "All files" escape hatch, and the dialog opens at the OS
+Music folder instead of Downloads. New rows are also scrolled into view by `onPlaylistUpdate` —
+all three track boards are shorter than the playlist, so appended files used to land below the
+visible rows, which read as "not added" even when the track was there.
+
+**The mini bat had no head (2026-11-21):** the bat plate's alpha shapes the mini window, and its
+cut-out flood fill had run in through the gap above the crown and eaten the head — the fur is
+nearly as dark as the backdrop, so the whole face was transparent and the desktop showed straight
+through the middle of the bat; the plate read as a winged collar with glowing eyes. Rebuilt from
+the original 1254×1254 artwork the plate was cut from: close the narrow channels (30px disk), fill
+the enclosed interior, and take the colours from the source, which still has the face, medallion
+and fur under the cut. Two repairs were tried and dropped first — restoring alpha where the
+source luminance is above the backdrop (the fur is as dark as the shadow, so the body turned
+translucent) and smearing the nearest fur colour into the pockets (it read as a grey halo). The
+mini window is now solid: 0 enclosed transparent pixels, 30.7% opaque. `reference/dracula-web/
+fix-bat.py` reproduces it and `dracula-bat-original.webp` keeps the pre-repair plate.
+
 ## Recent Improvements (2026-11-08)
 - **Blood effects (CORRECTED 2026-11-20):** an earlier entry here claimed blood-drip elements. Only the 21-drip curtain (`DRIP_X` and `buildDrips()` in `src/renderer/skins/DraculaSkin.ts`) exists in committed code; `git log -S` finds no splatter or trail code in any commit.
 - **Complete Kiro infrastructure:** Full `.kiro/` folder created with specs (3 files incl. submission-readiness), steering files (7 files including auto-load guides), hooks (3), workflows (1 template), and comprehensive documentation explaining all Kiro concepts.

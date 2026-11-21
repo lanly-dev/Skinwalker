@@ -60,6 +60,9 @@ export class FrankensteinSkin implements Skin {
 
   onPlaylistUpdate(): void {
     this.buildPlaylist()
+    // Added rows land at the bottom of the board; show them.
+    const list = this.container?.querySelector<HTMLOListElement>('.fr-playlist')
+    if (list) list.scrollTop = list.scrollHeight
   }
 
   // ── DOM ──────────────────────────────────────────────────────────────────────
