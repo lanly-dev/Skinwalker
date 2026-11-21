@@ -18,9 +18,13 @@ contextBridge.exposeInMainWorld('skinwalker', {
   setWindowSize: (size: { width: number; height: number; minWidth?: number; minHeight?: number }) =>
     ipcRenderer.send('window:set-size', size),
 
-  /** Shape the OS window to the active skin's silhouette (Windows/Linux) */
-  setWindowShape: (rects: Array<{ x: number; y: number; width: number; height: number }>) =>
-    ipcRenderer.send('window:set-shape', rects),
+  /** Shape the OS window to the active skin's silhouette (Windows/Linux).
+   *  `from` is the viewport the rects were sampled from; the main process
+   *  scales them to the window's current size. */
+  setWindowShape: (
+    rects: Array<{ x: number; y: number; width: number; height: number }>,
+    from?: { width: number; height: number },
+  ) => ipcRenderer.send('window:set-shape', { rects, from }),
 
   minimize: () => ipcRenderer.send('window:minimize'),
   close:    () => ipcRenderer.send('window:close'),

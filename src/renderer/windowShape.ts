@@ -28,10 +28,15 @@ let source: string | null = null
 let resizeTimer: number | undefined
 /** The silhouette currently applied, so a drag can lift it and put it back. */
 let lastRects: Rect[] = []
+/** Viewport the current rects were sampled from. The main process scales the
+ *  region from this size to the window's actual size, so a resize between
+ *  sampling and applying can never cut bands out of the silhouette. */
+let lastFrom: { width: number; height: number } | null = null
 
-function send(rects: Rect[]): void {
+function send(rects: Rect[], from = lastFrom ?? { width: window.innerWidth, height: window.innerHeight }): void {
   lastRects = rects
-  window.skinwalker?.setWindowShape?.(rects)
+  lastFrom = from
+  window.skinwalker?.setWindowShape?.(rects, from)
 }
 
 /**
@@ -40,12 +45,12 @@ function send(rects: Rect[]): void {
  * against its own outline; a plain rectangle moves as one piece.
  */
 export function clearShapeForDrag(): void {
-  if (lastRects.length) window.skinwalker?.setWindowShape?.([])
+  if (lastRects.length) window.skinwalker?.setWindowShape?.([], lastFrom ?? undefined)
 }
 
 /** Put the silhouette back once the drag ends. */
 export function restoreShape(): void {
-  if (lastRects.length) window.skinwalker?.setWindowShape?.(lastRects)
+  if (lastRects.length) window.skinwalker?.setWindowShape?.(lastRects, lastFrom ?? undefined)
 }
 
 /** True when the point sits on the painted body of the active skin. */
@@ -138,7 +143,7 @@ export async function applySkinShape(url?: string, attempt = 0): Promise<void> {
   maskW = w
   maskH = h
   mask = body
-  send(buildRects(on, w, h))
+  send(buildRects(on, w, h), { width: viewW, height: viewH })
 }
 
 /** One rect per scanline, merged vertically where the runs line up. */

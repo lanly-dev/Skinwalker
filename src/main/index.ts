@@ -140,24 +140,41 @@ ipcMain.on('window:set-size', (_e, size: {
 
 /** Shape the OS window to the active skin's silhouette (Windows/Linux).
  *  Outside the rects nothing is drawn and no mouse events arrive, so the
- *  transparent corners fall through to the desktop. */
-ipcMain.on('window:set-shape', (_e, rects: Array<{ x: number; y: number; width: number; height: number }>) => {
+ *  transparent corners fall through to the desktop.
+ *
+ *  The rects carry the viewport they were sampled from and are scaled to the
+ *  window's size here. Filtering out-of-range rects instead is what cut
+ *  horizontal bands out of the mini bat: entering mini mode resizes and
+ *  reshapes together, so the wide wing rows were sampled at the stage size
+ *  and thrown away once the window was 380×380, leaving only the narrow crown
+ *  and tail. */
+ipcMain.on('window:set-shape', (
+  _e,
+  payload:
+    | { rects?: Array<{ x: number; y: number; width: number; height: number }>; from?: { width: number; height: number } }
+    | undefined,
+) => {
   if (!win || win.isDestroyed() || process.platform === 'darwin' || process.env['SKINWALKER_SHAPE'] === '0') return
   try {
-    const [w, h] = win.getSize()
+    const rects = payload?.rects
+    const from = payload?.from
+    const [w, h] = win.getContentSize()
+    const sx = from && from.width > 0 ? w / from.width : 1
+    const sy = from && from.height > 0 ? h / from.height : 1
     const clean = Array.isArray(rects)
       ? rects
-          .filter(
-            (r) =>
-              r &&
-              r.width > 0 &&
-              r.height > 0 &&
-              r.x >= 0 &&
-              r.y >= 0 &&
-              r.x + r.width <= w &&
-              r.y + r.height <= h,
-          )
-          .map((r) => ({ x: Math.round(r.x), y: Math.round(r.y), width: Math.round(r.width), height: Math.round(r.height) }))
+          .filter((r) => r && r.width > 0 && r.height > 0)
+          .map((r) => {
+            const x = Math.max(0, Math.min(w - 1, Math.round(r.x * sx)))
+            const y = Math.max(0, Math.min(h - 1, Math.round(r.y * sy)))
+            return {
+              x,
+              y,
+              width: Math.max(0, Math.min(w - x, Math.round(r.width * sx))),
+              height: Math.max(0, Math.min(h - y, Math.round(r.height * sy))),
+            }
+          })
+          .filter((r) => r.width > 0 && r.height > 0)
       : []
     lastShape = clean
     win.setShape(clean)

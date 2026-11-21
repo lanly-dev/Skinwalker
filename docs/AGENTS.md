@@ -246,11 +246,17 @@ bat's crown and bottom ornament with the desktop between them. The plate was fin
 was not. `enterMini()` sent `setWindowSize` and called `applySkinShape` in the same tick, so the
 rects were sampled from the 480×720 stage viewport and sent while the window was still that size;
 by the time Windows applied them the window was 380×380, so every wide row (the wings) fell
-outside the window and was clipped, while the narrow head and tail rects survived — horizontal
-bands. The mini/restore path now reshapes after the resize has landed, and `applySkinShape`
-resamples (at most twice) when `innerWidth`/`innerHeight` changed while the mask was being
-sampled. Verified on the real window: renderer 382×380, region bbox 0,30–382,328 — inside the
-window, no bands.
+outside the window and was silently dropped, while the narrow head and tail rects survived —
+horizontal bands with the desktop showing between them. Restarting never helped because the
+cause was the drop rule, not stale state. The rects now carry the viewport they were sampled
+from (`setWindowShape(rects, from)`), and the main process scales them to the window's content
+size and clamps each one instead of discarding it; the mini/restore path also reshapes after the
+resize lands, and `applySkinShape` resamples (twice max) if the viewport changed mid-sample.
+Verified on the real window: renderer 382×380, region 119 rects covering the bat and its aura;
+a 100px square sampled from a 764×760 viewport came out as `50,50,100,100` at 382×380, and
+restoring built the stage's 163-rect region. GDI `CopyFromScreen`/`BitBlt` cannot capture
+per-pixel-alpha layered windows on Win11, so verify the region with `GetWindowRgn`/
+`GetRegionData`, not a desktop grab.
 
 ## Recent Improvements (2026-11-08)
 - **Blood effects (CORRECTED 2026-11-20):** an earlier entry here claimed blood-drip elements. Only the 21-drip curtain (`DRIP_X` and `buildDrips()` in `src/renderer/skins/DraculaSkin.ts`) exists in committed code; `git log -S` finds no splatter or trail code in any commit.

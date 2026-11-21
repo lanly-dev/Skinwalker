@@ -6,7 +6,10 @@ interface SkinwalkerAPI {
   beginWindowDrag: () => void
   endWindowDrag: () => void
   setWindowSize: (size: { width: number; height: number; minWidth?: number; minHeight?: number }) => void
-  setWindowShape: (rects: Array<{ x: number; y: number; width: number; height: number }>) => void
+  setWindowShape: (
+    rects: Array<{ x: number; y: number; width: number; height: number }>,
+    from?: { width: number; height: number },
+  ) => void
   minimize: () => void
   close: () => void
   maximize: () => void
