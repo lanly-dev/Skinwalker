@@ -5,7 +5,7 @@
  */
 import { Player, type Track } from './player/Player'
 import { SKINS } from './skins/index'
-import { applySkinShape, installShapeResize } from './windowShape'
+import { installShapeResize } from './windowShape'
 import { installSkinDrag } from './skinDrag'
 import { openLocalFiles } from './openFiles'
 import './style.css'
@@ -26,8 +26,8 @@ const DEMO_TRACKS: Track[] = [
 const player = new Player()
 player.loadPlaylist(DEMO_TRACKS)
 
+player.setSkins(SKINS)
 player.mountSkin(SKINS[0])
-void applySkinShape(SKINS[0].shapeImage)
 installSkinDrag()
 installShapeResize()
 

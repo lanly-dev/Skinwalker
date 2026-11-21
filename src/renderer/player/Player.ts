@@ -4,6 +4,7 @@
  */
 import { AudioEngine } from '../audio/AudioEngine'
 import type { Skin } from '../skins/Skin'
+import { applySkinShape } from '../windowShape'
 
 export interface Track {
   title: string
@@ -16,6 +17,8 @@ export class Player {
   private tracks: Track[] = []
   private currentIndex = 0
   private activeSkin: Skin | null = null
+  /** Registry the tool row can cycle through; set once at boot. */
+  private skins: readonly Skin[] = []
   /** Last volume set (0–1). Skins initialise their slider from this so a
    *  mid-playback skin swap never resets the volume. */
   private volumeLevel = 0.8
@@ -94,8 +97,9 @@ export class Player {
     this.activeSkin?.unmount()
     this.activeSkin = skin
     skin.mount(this)
-    // The skin owns the window shape (all skins are portrait 480x720)
+    // The skin owns the window size and shape
     window.skinwalker?.setWindowSize(skin.windowSize ?? { width: 480, height: 720 })
+    void applySkinShape(skin.shapeImage)
     // Re-notify the fresh skin of the current track so its title, artist
     // and playlist highlight survive a mid-playback swap (the callback is
     // assigned by the skin during mount).
@@ -103,6 +107,20 @@ export class Player {
     if (track && this.onTrackChange) {
       this.onTrackChange(track, this.currentIndex)
     }
+  }
+
+  /** Tell the player which skins exist, so a skin can ask for the next one. */
+  setSkins(skins: readonly Skin[]): void {
+    this.skins = skins
+  }
+
+  /** Mount the next registered skin (the tool row's mask ornament). */
+  nextSkin(): void {
+    const current = this.activeSkin
+    if (!current || this.skins.length < 2) return
+    const at = this.skins.findIndex((skin) => skin.id === current.id)
+    const next = this.skins[(at + 1) % this.skins.length]
+    if (next && next.id !== current.id) this.mountSkin(next)
   }
 
   /** Append tracks from the native file picker and notify the active skin */

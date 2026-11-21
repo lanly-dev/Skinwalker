@@ -528,6 +528,7 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-tool-close    { grid-column: 1 / span 2; grid-row: 1; background-position: 1.875% 50%; }
 .dracula-skin .dr-tool-minimize { grid-column: 3 / span 2; grid-row: 1; background-position: 26.25% 50%; }
 .dracula-skin .dr-tool-folder   { grid-column: 5 / span 2; grid-row: 1; background-position: 50.625% 50%; }
+.dracula-skin .dr-tool-skin     { grid-column: 2 / span 2; grid-row: 2; background-position: 74.375% 50%; }
 .dracula-skin .dr-tool-bat      { grid-column: 4 / span 2; grid-row: 2; background-position: 98.125% 50%; }
 .dracula-skin .dr-tool:hover,
 .dracula-skin .dr-tool:focus-visible {

@@ -184,8 +184,9 @@ and the robe dissolves into speckles. Live geometry is the web build's own: titl
 46×5.5, seek 27.2%/49.6% 45.6×5.2, medallion 44%/34.1% 12×7, spectrum zone 19%/55% 62×17,
 hands 13%/57% at 72% 30×11, tracklist 36%/88% 28×5.7, eyes 42.5%/16.3% 5.8×1.8; all sizes run
 in `cqw` so the UI scales with the window as it does on the web. New controls: the hover tool
-row (close, minimize, add files, mini bat — the web's dead "change skin" stub is not rendered,
-same rule as the Skeleton icons) and the mini bat, which shrinks the window to 380×380 and
+row (close, minimize, add files, next skin, mini bat — the web's dead "change skin" stub is wired
+to a real registry cycle instead, same rule as the Skeleton icons: no visible control is a no-op)
+and the mini bat, which shrinks the window to 380×380 and
 re-shapes the OS region to the bat; `window:set-size` now accepts an optional minimum size,
 because main's portrait floor (380×560) would otherwise clamp the square bat. Volume keeps its
 web-build position on the painted speakers, with a gold level bar under each. Dracula is
