@@ -340,7 +340,9 @@ export class DraculaSkin implements Skin {
     this.container.classList.add('mini-mode')
     this.els?.zone.classList.remove('revealed')
     window.skinwalker?.setWindowSize?.(MINI_SIZE)
-    void applySkinShape(draculaBatUrl)
+    // Shape after the OS resize lands: the plate is square and the bat rects
+    // sampled at the old (stage) size would be clipped into horizontal bands.
+    window.setTimeout(() => void applySkinShape(draculaBatUrl), 60)
   }
 
   private exitMini(): void {
@@ -348,7 +350,7 @@ export class DraculaSkin implements Skin {
     this.mini = false
     this.container.classList.remove('mini-mode')
     window.skinwalker?.setWindowSize?.(STAGE_SIZE)
-    void applySkinShape(draculaFrameUrl)
+    window.setTimeout(() => void applySkinShape(draculaFrameUrl), 60)
   }
 
   // ── Playlist ─────────────────────────────────────────────────────────────────

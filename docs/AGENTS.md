@@ -241,6 +241,17 @@ translucent) and smearing the nearest fur colour into the pockets (it read as a 
 mini window is now solid: 0 enclosed transparent pixels, 30.7% opaque. `reference/dracula-web/
 fix-bat.py` reproduces it and `dracula-bat-original.webp` keeps the pre-repair plate.
 
+Shape the silhouette at the size the window is *becoming* (2026-11-21): the mini player showed the
+bat's crown and bottom ornament with the desktop between them. The plate was fine — the OS region
+was not. `enterMini()` sent `setWindowSize` and called `applySkinShape` in the same tick, so the
+rects were sampled from the 480×720 stage viewport and sent while the window was still that size;
+by the time Windows applied them the window was 380×380, so every wide row (the wings) fell
+outside the window and was clipped, while the narrow head and tail rects survived — horizontal
+bands. The mini/restore path now reshapes after the resize has landed, and `applySkinShape`
+resamples (at most twice) when `innerWidth`/`innerHeight` changed while the mask was being
+sampled. Verified on the real window: renderer 382×380, region bbox 0,30–382,328 — inside the
+window, no bands.
+
 ## Recent Improvements (2026-11-08)
 - **Blood effects (CORRECTED 2026-11-20):** an earlier entry here claimed blood-drip elements. Only the 21-drip curtain (`DRIP_X` and `buildDrips()` in `src/renderer/skins/DraculaSkin.ts`) exists in committed code; `git log -S` finds no splatter or trail code in any commit.
 - **Complete Kiro infrastructure:** Full `.kiro/` folder created with specs (3 files incl. submission-readiness), steering files (7 files including auto-load guides), hooks (3), workflows (1 template), and comprehensive documentation explaining all Kiro concepts.

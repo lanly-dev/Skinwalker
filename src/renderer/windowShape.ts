@@ -57,8 +57,10 @@ export function isOnSkin(clientX: number, clientY: number): boolean {
   return mask[y * maskW + x] > SHARP_ALPHA
 }
 
-/** Load the skin's plate, cache its alpha, and reshape the OS window. */
-export async function applySkinShape(url?: string): Promise<void> {
+/** Load the skin's plate, cache its alpha, and reshape the OS window.
+ *  `attempt` guards the resample loop below against a window that keeps
+ *  changing size while the mask is sampled. */
+export async function applySkinShape(url?: string, attempt = 0): Promise<void> {
   source = url ?? null
   if (!url || typeof window.skinwalker?.setWindowShape !== 'function') {
     mask = null
@@ -123,6 +125,14 @@ export async function applySkinShape(url?: string): Promise<void> {
     mask = null
     send([])
     return
+  }
+
+  // Entering mini mode resizes and reshapes together, so the viewport can
+  // change while this mask is being sampled. Rects built for the old size
+  // are clipped by the OS against the new window, which cuts whole bands
+  // (the wide wing rows) out of the silhouette — resample for the new size.
+  if (attempt < 2 && (Math.abs(window.innerWidth - viewW) > 1 || Math.abs(window.innerHeight - viewH) > 1)) {
+    return applySkinShape(url, attempt + 1)
   }
 
   maskW = w
