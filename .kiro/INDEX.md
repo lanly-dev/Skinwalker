@@ -10,7 +10,8 @@ Timestamps come from `git log` (commit time, Pacific). Re-check with
 |------|--------------|--------|-------------|
 | `dracula-blood-effects.md` | `ba0284e`, 2026-11-11 01:16 | Partially implemented | Committed after the drip code (`662ba10`, 2026-11-10 11:31). Describes splatter and trails that were never committed. Retrospective. |
 | `code-optimization.md` | `0d5711b`, 2026-11-11 01:21 | Complete | Committed in the same commit as its first change (a 10-line CSS edit). |
-| `submission-readiness.md` | 2026-11-20 | In progress | Spec for the audit and submission drafts. Docs only. |
+| `submission-readiness.md` | 2026-11-20 | Complete | Spec for the audit and submission drafts. Docs only. |
+| `skin-required-controls.md` | 2026-11-21 | Draft | Audit of the 10 required controls per skin and the work to close gaps. Written before any implementation. |
 
 ## Steering (`.kiro/steering/`)
 
@@ -20,7 +21,7 @@ Timestamps come from `git log` (commit time, Pacific). Re-check with
 | `css-conventions.md` | auto | CSS naming and structure for skins. |
 | `audio-guide.md` | auto | Web Audio API and AnalyserNode patterns. |
 | `electron-conventions.md` | auto | Main/preload/renderer and IPC conventions. |
-| `skin-required-controls.md` | auto | The 10 controls every skin must provide (playback, volume, seek, track board, 5 window buttons). Target state; not all skins comply yet. |
+| `skin-required-controls.md` | auto | The 10 controls every skin must provide (playback, volume, seek, track board, 5 window buttons). Target state; only Dracula complies today. |
 | `spec-template.md` | manual | Template for new specs. |
 | `testing-guide.md` | manual | Pre-completion checklist. |
 | `understanding-kiro.md` | manual | Explainer on specs, steering, hooks, workflows. |

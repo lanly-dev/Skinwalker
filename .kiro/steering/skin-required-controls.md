@@ -42,6 +42,7 @@ part or painted element, never a generic widget stuck on top.
 - [ ] close, minimize, switch skin, mini version, open folder
 - [ ] `npm run typecheck` and `npm run build` pass
 
-## Known conflicts (2026-11-20)
-- `docs/AGENTS.md` and `.kiro/steering/skinwalker-project.md` say mid-playback skin switching is out of scope and there is no switcher. This rule requires a switch-skin button, so those two files must be updated when the switcher is built. Until the maintainer approves the scope change, treat this rule as the target, not as a description of current code.
-- Not every skin has all ten controls today. Dracula has a tool row with close, minimize, add files and mini bat, and no switch-skin button. Other skins have not been audited against this list. A spec is needed before the missing controls are implemented.
+## Current state (2026-11-21)
+Audit and gap list: `.kiro/specs/skin-required-controls.md`. Dracula has all ten controls. Frankenstein and Skeleton have the playback, volume, seek and track board controls, but only generic global buttons for the window functions, and no switch-skin or mini version.
+
+`docs/AGENTS.md` and `.kiro/steering/skinwalker-project.md` still say skin switching is out of scope. Switching exists in code (`Player.nextSkin()`), so those two files are stale.

@@ -1,0 +1,71 @@
+# Skin Required Controls Specification
+
+**Status:** Draft. Audit complete (2026-11-21). No implementation yet.
+**Created:** 2026-11-21
+**Owner:** Maintainer
+**Implementation:** Kiro, after the open decisions below are answered
+
+## Overview
+Every skin must provide the ten controls in `.kiro/steering/skin-required-controls.md`:
+play/pause, previous, next, seek, volume, track board, and the five window
+buttons (close, minimize, switch skin, mini version, open folder). This spec
+records which skins have which controls today and defines the work to close the gaps.
+
+## Audit (from source, 2026-11-21, `HEAD` = `da004d3`)
+Checked by reading `src/renderer/skins/*.ts` and `src/renderer/main.ts`. Not run in the app.
+
+| Control | Dracula | Frankenstein | Skeleton |
+|---------|---------|--------------|----------|
+| Play / pause | yes (`dr-medallion`) | yes (`fr-eyes`) | yes (`sk-pendant`) |
+| Previous / next | yes | yes | yes |
+| Seek bar | yes | yes | yes |
+| Volume | yes (speaker buttons, wheel, keys) | yes (dial: drag, wheel, keys) | yes (vertical slider) |
+| Track board | yes (`dr-playlist`) | yes (`fr-playlist`) | yes (`sk-board`) |
+| Close | yes (tool row) | global bar only | global bar only |
+| Minimize | yes (tool row) | global bar only | global bar only |
+| Switch skin | yes (`Player.nextSkin()`, commit `4598551`) | no | no |
+| Mini version | yes (bat, 380x380) | no | no |
+| Open folder | yes (tool row) | global "+ Add files" button | global "+ Add files" button |
+
+"Global" means `renderWindowControls()` and `renderOpenButton()` in
+`src/renderer/main.ts`. The title bar there is `aria-hidden`, is a generic
+36px strip (`style.css`), and has a maximize button that is not on the list.
+The "+ Add files" button is hidden only for Dracula (`style.css`, `body:has(.dracula-skin)`).
+Dracula is the only skin that meets the rule.
+
+## Requirements
+### Functional
+- [ ] R1: Frankenstein and Skeleton each provide close, minimize, switch skin, mini version and open folder as painted anatomy, inside the plate silhouette.
+- [ ] R2: Each button works through `window.skinwalker` and `Player`, as Dracula's does.
+- [ ] R3: Each button is keyboard-reachable, has an accessible label, and does not start a window drag.
+- [ ] R4: Each skin has a mini version that the user can leave again.
+- [ ] R5: The generic global title bar and "+ Add files" button do not show on a skin that provides its own.
+
+### Technical
+- [ ] Shapes: the window shape is re-applied after a skin swap and after entering or leaving mini (see lesson on shape timing in `docs/AGENTS.md` and commit `da004d3`).
+- [ ] Volume and playback state survive a skin swap (`Player` owns them).
+- [ ] No `any`. `npm run typecheck` and `npm run build` pass.
+
+## Open decisions (maintainer)
+1. **Art.** Each new button and each mini plate needs painted art matching the skin. Who makes it, and is generating it acceptable (see disclosure risks in `docs/submission/AUDIT.md`)?
+2. **Mini version for Frankenstein and Skeleton.** Design per skin (like Dracula's bat), or one shared compact player? A shared one is cheaper but less on theme.
+3. **Shared code.** Put the five buttons in one helper module that each skin positions with CSS, or copy Dracula's tool row into each skin?
+4. **Maximize.** Drop it from the global bar, or keep it?
+5. **Scope.** `docs/AGENTS.md` and `.kiro/steering/skinwalker-project.md` still say mid-playback skin switching is out of scope. Switching already exists in code. Update those files to match.
+
+## Tasks (do not start until open decisions 1 to 3 are answered)
+- [ ] T1: Resolve open decisions and update this spec's design section.
+- [ ] T2: Shared helper for the five window buttons (if decision 3 says so).
+- [ ] T3: Frankenstein: five buttons and mini version.
+- [ ] T4: Skeleton: five buttons and mini version.
+- [ ] T5: Hide the global bar and "+ Add files" for skins that provide their own.
+- [ ] T6: Update `docs/AGENTS.md` scope text and `README.md` skin table.
+
+## Acceptance Criteria
+- In the running app, on each skin: all ten controls are present and work. Record the check in this spec's Implementation Notes with the date.
+- Switching skins through all three and back keeps the playing track, position and volume.
+- Window shape matches the plate after every swap and every mini toggle.
+- `npm run typecheck` and `npm run build` pass.
+
+## Implementation Notes
+2026-11-21: audit only. The steering file first said Dracula lacked a switch-skin button. That was wrong: `nextSkin()` landed in commit `4598551` before the steering file was written. The steering file is corrected in the same commit as this spec.
