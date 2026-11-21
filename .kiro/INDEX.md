@@ -20,6 +20,7 @@ Timestamps come from `git log` (commit time, Pacific). Re-check with
 | `css-conventions.md` | auto | CSS naming and structure for skins. |
 | `audio-guide.md` | auto | Web Audio API and AnalyserNode patterns. |
 | `electron-conventions.md` | auto | Main/preload/renderer and IPC conventions. |
+| `skin-required-controls.md` | auto | The 10 controls every skin must provide (playback, volume, seek, track board, 5 window buttons). Target state; not all skins comply yet. |
 | `spec-template.md` | manual | Template for new specs. |
 | `testing-guide.md` | manual | Pre-completion checklist. |
 | `understanding-kiro.md` | manual | Explainer on specs, steering, hooks, workflows. |
