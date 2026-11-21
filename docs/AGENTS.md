@@ -190,7 +190,31 @@ and the mini bat, which shrinks the window to 380×380 and
 re-shapes the OS region to the bat; `window:set-size` now accepts an optional minimum size,
 because main's portrait floor (380×560) would otherwise clamp the square bat. Volume keeps its
 web-build position on the painted speakers, with a gold level bar under each. Dracula is
-`SKINS[0]` again so the updated skin actually launches; there is still no switcher.
+`SKINS[0]` again so the updated skin actually launches; there is still no switcher. Tool
+hover lights the ornament itself, never a button box: the 500% sprite is an opaque black tile, so
+an outline, box-shadow or drop-shadow on the button paints its square — instead the icon
+brightens in place and a screened, blurred copy of the same slice fades in behind it (black
+screens to nothing), so only the icon's own gold haloes; keyboard focus adds a hairline ring on
+top of that glow. The crossed hands follow the same rule: hover brightens the plate itself through
+`dracula-hand-glow-left.webp` / `dracula-hand-glow-right.webp`, each hand's feathered silhouette
+used as an alpha mask (not painted on top: a second gold hand read as a pasted layer, slightly off
+the art). The copy is exactly the hotspot box, with the plate re-laid to stage size (31% × 3.2258 =
+100%, 12% × 8.3333 = 100%), so the light is the painting's own pixels, in register by construction.
+The hotspots were re-centred on the measured paint, nails included (left 15.0–44.0% × 72.3–83.0%,
+right 54.2–83.1% × 74.5–83.1%): prev 14%/71.7%, next 53.2%/72.8%, both 31% × 12% — the old 13% /
+57% boxes clipped the right hand's wrist and hovered empty robe. **The hit area is the hand, not
+the box (2026-11-21):** a rectangle over a crossed, diagonal hand always keeps a band of robe —
+10–15px a side at 480×720, roughly two thirds of the box — where hover lights the hand and a click
+changes track from empty cloth. That dead band is what read as a mis-offset hotspot. The buttons
+themselves carry `clip-path: polygon(...)`, traced from the same alpha mask (per-row extents,
+dilated 2px): the hit shape is 36% / 33% of each box, and all four corners of the old rectangle now
+report `.dr-stage` under `elementFromPoint`, so hover, cursor and click can only land on painted
+hand. Hover does not travel through a `pointer-events: none` box (a pseudo-element hit reported
+`auto` but left `:hover` false), so the button keeps its own events and the clip does the shaping;
+a frame recorder in the harness saw `:hover` true and the glow reach 0.85 from a click on the
+hand. The focus outline is clipped to the same silhouette, so keyboard focus shows as the hand at
+full glow instead of a rectangle.
+The two masks are cut per side; they are lit differently and are not mirrors.
 
 ## Recent Improvements (2026-11-08)
 - **Blood effects (CORRECTED 2026-11-20):** an earlier entry here claimed blood-drip elements. Only the 21-drip curtain (`DRIP_X` and `buildDrips()` in `src/renderer/skins/DraculaSkin.ts`) exists in committed code; `git log -S` finds no splatter or trail code in any commit.

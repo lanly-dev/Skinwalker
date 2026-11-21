@@ -515,6 +515,7 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-zone.revealed .dr-tools { opacity: 1; visibility: visible; }
 .dracula-skin .dr-zone:focus-visible { outline: 1px dashed rgba(229, 200, 140, 0.8); }
 .dracula-skin .dr-tool {
+  position: relative;
   width: 8.5cqw; height: 10cqw;
   border: 0;
   padding: 0;
@@ -525,6 +526,21 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   transition: filter 0.2s, transform 0.15s;
 }
+/* Hover lights the ornament, never a button-shaped box. The sprite is an
+   opaque black tile, so an outline or drop-shadow on the button paints that
+   square; instead a screened, blurred copy of the same slice haloes the
+   icon's own gold (black screens to nothing) while the icon brightens. */
+.dracula-skin .dr-tool::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  mix-blend-mode: screen;
+  filter: blur(0.5cqw) brightness(1.85) saturate(1.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
 .dracula-skin .dr-tool-close    { grid-column: 1 / span 2; grid-row: 1; background-position: 1.875% 50%; }
 .dracula-skin .dr-tool-minimize { grid-column: 3 / span 2; grid-row: 1; background-position: 26.25% 50%; }
 .dracula-skin .dr-tool-folder   { grid-column: 5 / span 2; grid-row: 1; background-position: 50.625% 50%; }
@@ -532,35 +548,77 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-tool-bat      { grid-column: 4 / span 2; grid-row: 2; background-position: 98.125% 50%; }
 .dracula-skin .dr-tool:hover,
 .dracula-skin .dr-tool:focus-visible {
-  outline: 1px solid #e7ca8c;
-  outline-offset: 1px;
-  filter: brightness(1.35) drop-shadow(0 0 0.5cqw rgba(231, 166, 82, 0.6));
+  filter: brightness(1.4) saturate(1.1);
   transform: scale(1.06);
 }
-.dracula-skin .dr-tool:active { transform: scale(0.97); filter: brightness(1.55); }
+.dracula-skin .dr-tool:hover::after,
+.dracula-skin .dr-tool:focus-visible::after { opacity: 0.8; }
+/* Keyboard focus keeps a hairline ring on top of the glow; pointer hover
+   shows the image highlight alone. */
+.dracula-skin .dr-tool:focus-visible {
+  outline: 1px solid rgba(231, 202, 140, 0.55);
+  outline-offset: 1px;
+}
+.dracula-skin .dr-tool:active { transform: scale(0.97); filter: brightness(1.7) saturate(1.2); }
 
-/* Crossed hands = prev / next */
+/* Crossed hands = prev / next. The hands are diagonal, so a rectangle over
+   them always leaves a band of robe that hovers and clicks the hand from
+   nowhere. Each button is clipped to the hand's own outline instead, traced
+   from the same alpha mask that drives the glow (mask boxes: left
+   14–45% × 71.7–83.7%, right 53.2–84.2% × 72.8–84.8% of the stage), so
+   hover, cursor and click can only land on painted hand — the four corners of
+   the old 31% × 12% box now hit the stage. */
 .dracula-skin .dr-prev,
 .dracula-skin .dr-next {
-  top: 72%;
-  width: 30%; height: 11%;
+  width: 31%; height: 12%;
   padding: 0;
   border: 0;
   background: transparent;
-  border-radius: 25%;
   cursor: pointer;
   z-index: 3;
-  transition: box-shadow 0.2s;
 }
-.dracula-skin .dr-prev { left: 13%; }
-.dracula-skin .dr-next { right: 13%; }
-.dracula-skin .dr-prev:hover,
-.dracula-skin .dr-next:hover,
-.dracula-skin .dr-prev:focus-visible,
-.dracula-skin .dr-next:focus-visible {
-  outline: 2px solid #eac77b;
-  box-shadow: 0 0 2cqw rgba(231, 190, 128, 0.45);
+.dracula-skin .dr-prev { left: 14%; top: 71.7%; clip-path: polygon(45.3% 13.2%, 44.7% 17.6%, 45.3% 21.4%, 7.2% 25.1%, 3.1% 28.9%, 5.7% 32.7%, 35.8% 36.5%, 42.5% 40.3%, 37.4% 44.1%, 29.9% 47.8%, 28.3% 52.2%, 28.0% 55.9%, 27.4% 59.7%, 26.7% 63.5%, 26.7% 67.3%, 31.8% 71.1%, 33.0% 74.9%, 37.7% 78.6%, 37.4% 82.4%, 68.6% 86.8%, 84.3% 90.5%, 90.6% 90.5%, 91.5% 86.8%, 92.5% 82.4%, 93.1% 78.6%, 93.4% 74.9%, 96.9% 71.1%, 93.1% 67.3%, 92.5% 63.5%, 90.6% 59.7%, 86.5% 55.9%, 82.7% 52.2%, 79.9% 47.8%, 77.0% 44.1%, 73.9% 40.3%, 71.7% 36.5%, 69.2% 32.7%, 67.0% 28.9%, 59.7% 25.1%, 54.7% 21.4%, 50.0% 17.6%, 46.5% 13.2%); }
+.dracula-skin .dr-next { left: 53.2%; top: 72.8%; clip-path: polygon(65.6% 13.2%, 40.4% 17.6%, 35.3% 21.4%, 32.2% 25.1%, 29.3% 28.9%, 25.9% 32.7%, 22.7% 36.5%, 18.9% 40.3%, 14.8% 44.1%, 10.1% 47.8%, 6.0% 52.2%, 4.4% 55.9%, 3.8% 59.7%, 3.5% 63.5%, 3.5% 67.3%, 3.8% 71.1%, 4.1% 74.9%, 5.0% 78.6%, 6.3% 82.4%, 8.8% 82.4%, 14.2% 78.6%, 58.7% 74.9%, 59.0% 71.1%, 56.5% 67.3%, 69.1% 63.5%, 70.0% 59.7%, 69.7% 55.9%, 68.5% 52.2%, 67.5% 47.8%, 67.5% 44.1%, 66.6% 40.3%, 61.2% 36.5%, 54.9% 32.7%, 57.7% 28.9%, 85.8% 25.1%, 90.5% 21.4%, 92.4% 17.6%, 67.8% 13.2%); }
+/* Hover lights the painted hand itself: a copy of the plate, brightened and
+   masked by that hand's own feathered silhouette, so the light is the
+   painting's own pixels and can never sit off-register. The copy is exactly
+   the hotspot box, with the plate re-laid to stage size (31% × 3.2258 = 100%,
+   12% × 8.3333 = 100%) and positioned so the box shows its own region. */
+.dracula-skin .dr-prev::after,
+.dracula-skin .dr-next::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--dr-frame-url);
+  background-size: 322.58% 833.33%;
+  background-repeat: no-repeat;
+  filter: brightness(1.7) sepia(0.26) saturate(1.18);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
 }
+.dracula-skin .dr-prev::after {
+  background-position: 20.29% 81.477%;
+  -webkit-mask-image: var(--dr-hand-left-url);
+  mask-image: var(--dr-hand-left-url);
+}
+.dracula-skin .dr-next::after {
+  background-position: 77.101% 82.727%;
+  -webkit-mask-image: var(--dr-hand-right-url);
+  mask-image: var(--dr-hand-right-url);
+}
+.dracula-skin .dr-prev:hover::after,
+.dracula-skin .dr-next:hover::after,
+.dracula-skin .dr-prev:focus-visible::after,
+.dracula-skin .dr-next:focus-visible::after { opacity: 0.85; }
+/* Keyboard focus: the outline is clipped to the same silhouette, so focus
+   shows as the hand at full glow rather than as a rectangle. */
+.dracula-skin .dr-prev:focus-visible::after,
+.dracula-skin .dr-next:focus-visible::after { opacity: 1; }
 
 /* Tracklist = playlist, covering the baked rows */
 .dracula-skin .dr-playlist {
