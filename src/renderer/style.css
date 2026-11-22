@@ -473,12 +473,13 @@ input[type="range"]::-moz-range-thumb {
 }
 .dracula-skin .dr-seek:focus-visible { outline: 2px solid #f4d58b; }
 
-/* Volume = the two painted speakers. The gold bar under each glyph is the
-   level; wheel / arrow keys / click step it. */
+/* Volume = the two jeweled crosses ending the blood line: the wide minus
+   lowers, the tall plus raises. Wheel / arrow keys / click step it; the
+   value is announced in the tooltip and aria-label. */
 .dracula-skin .dr-vol {
   position: absolute;
-  top: 50%;
-  width: 4.2cqw; height: 2.4cqw;
+  top: calc(50% - 1.05cqw);
+  width: 4.2cqw; height: 4.6cqw;
   padding: 0;
   border: none;
   background: transparent;
@@ -488,24 +489,29 @@ input[type="range"]::-moz-range-thumb {
   transition: filter 0.12s;
   z-index: 5;
 }
-.dracula-skin .dr-vol::after {
-  content: '';
+.dracula-skin .dr-vol-glyph {
   position: absolute;
-  left: 12%;
-  bottom: -0.25cqw;
-  height: 0.22cqw;
-  width: calc(var(--vol, 0.8) * 76%);
-  border-radius: 1px;
-  background: linear-gradient(90deg, #8a5a1f, #f6d68b);
-  box-shadow: 0 0 0.4cqw rgba(240, 200, 120, 0.6);
+  left: 50%;
+  top: calc(50% - 0.55cqw);
+  width: 4.2cqw;
+  aspect-ratio: 240 / 67;
+  background: var(--dr-vol-minus-url) center / contain no-repeat;
+  filter: drop-shadow(0 0 0.45cqw rgba(250, 198, 100, 0.6));
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.dracula-skin .dr-vol-up .dr-vol-glyph {
+  width: 3.4cqw;
+  aspect-ratio: 1;
+  background-image: var(--dr-vol-plus-url);
 }
 .dracula-skin .dr-vol-down { left: 0; }
 .dracula-skin .dr-vol-up   { right: 0; }
 .dracula-skin .dr-vol:hover,
 .dracula-skin .dr-vol:focus-visible {
-  filter: drop-shadow(0 0 0.5cqw rgba(255, 110, 90, 0.95)) brightness(1.25);
+  filter: drop-shadow(0 0 0.55cqw rgba(255, 200, 96, 1)) brightness(1.08);
 }
-.dracula-skin .dr-vol:focus-visible { outline: 1px solid rgba(248, 220, 142, 0.85); }
+.dracula-skin .dr-vol:focus-visible { outline: 1px solid rgba(248, 220, 142, 0.85); outline-offset: 0.15cqw; }
 
 .dracula-skin .dr-times {
   position: relative;

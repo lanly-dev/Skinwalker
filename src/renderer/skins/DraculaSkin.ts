@@ -11,7 +11,7 @@
  *   Medallion ──────── play / pause (a pause glyph covers the baked triangle)
  *   Title panel ────── live title + artist
  *   Blood line ─────── seek: live fill, drip curtain, elapsed / remaining
- *   Speakers ───────── volume at the painted speakers ending the line
+ *   Jeweled crosses ── volume: wide minus / tall plus at the line's ends
  *   Cape interior ──── mirrored spectrum (dims while the tool row is up)
  *   Crossed hands ──── prev / next
  *   Tracklist ──────── playlist rows with probed durations
@@ -26,6 +26,8 @@ import draculaToolsUrl from '../assets/dracula-tools.jpg'
 import draculaHandLeftUrl from '../assets/dracula-hand-glow-left.webp'
 import draculaHandRightUrl from '../assets/dracula-hand-glow-right.webp'
 import draculaMedallionFaceUrl from '../assets/dracula-medallion-face.webp'
+import draculaVolMinusUrl from '../assets/dracula-vol-minus.webp'
+import draculaVolPlusUrl from '../assets/dracula-vol-plus.webp'
 import { applySkinShape } from '../windowShape'
 import { openLocalFiles } from '../openFiles'
 import type { Skin } from './Skin'
@@ -97,6 +99,8 @@ export class DraculaSkin implements Skin {
     this.container.style.setProperty('--dr-hand-left-url', `url("${draculaHandLeftUrl}")`)
     this.container.style.setProperty('--dr-hand-right-url', `url("${draculaHandRightUrl}")`)
     this.container.style.setProperty('--dr-medallion-face-url', `url("${draculaMedallionFaceUrl}")`)
+    this.container.style.setProperty('--dr-vol-minus-url', `url("${draculaVolMinusUrl}")`)
+    this.container.style.setProperty('--dr-vol-plus-url', `url("${draculaVolPlusUrl}")`)
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
@@ -155,15 +159,19 @@ export class DraculaSkin implements Skin {
             <span class="dr-pause-glyph" aria-hidden="true"></span>
           </button>
 
-          <!-- Blood line = seek, bracketed by the painted speakers -->
+          <!-- Blood line = seek, bracketed by the jeweled volume crosses -->
           <div class="dr-seek-region" role="group" aria-label="Seek">
             <div class="dr-seek-top">
               <span class="dr-trackline" aria-hidden="true"></span>
               <div class="dr-blood" aria-hidden="true"></div>
-              <button class="dr-vol dr-vol-down" aria-label="Volume down" title="Volume down"></button>
+              <button class="dr-vol dr-vol-down" aria-label="Volume down" title="Volume down">
+                <span class="dr-vol-glyph" aria-hidden="true"></span>
+              </button>
               <input class="dr-seek" type="range" min="0" max="1000" value="0"
                      aria-label="Seek through track" step="1" />
-              <button class="dr-vol dr-vol-up" aria-label="Volume up" title="Volume up"></button>
+              <button class="dr-vol dr-vol-up" aria-label="Volume up" title="Volume up">
+                <span class="dr-vol-glyph" aria-hidden="true"></span>
+              </button>
             </div>
             <div class="dr-times">
               <span class="dr-elapsed">00:00</span>
@@ -257,7 +265,7 @@ export class DraculaSkin implements Skin {
       this.seeking = false
     })
 
-    // Volume → the painted speakers at the ends of the blood line
+    // Volume → the jeweled minus / plus at the ends of the blood line
     const applyVolume = (v: number): void => {
       const vol = Math.min(1, Math.max(0, v))
       p.setVolume(vol)

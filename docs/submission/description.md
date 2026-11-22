@@ -18,7 +18,7 @@ Skinwalker is a Windows desktop media player where the skin is a monster and its
 
 | Skin | Anatomy to control |
 |------|--------------------|
-| Dracula | medallion: play/pause. Cape: visualizer. Blood line: seek, painted from the plate art with six animated drops. Painted speakers: volume. Crossed hands: previous/next. Hover tool row: close, minimize, add files, next skin, mini bat. |
+| Dracula | medallion: play/pause. Cape: visualizer. Blood line: seek, painted from the plate art with six animated drops. Jeweled minus/plus: volume. Crossed hands: previous/next. Hover tool row: close, minimize, add files, next skin, mini bat. |
 | Frankenstein | skull flat-top: visualizer. Eyes: play/pause. Neck bolts: previous/next. Chest scar: seek. Hand dial: volume. |
 | Skeleton | pendant: play/pause. Jaw: visualizer. Bone board: playlist. Blood line: seek. Left bone column: volume. Bone plaques: previous/next. |
 
