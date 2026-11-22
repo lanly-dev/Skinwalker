@@ -53,9 +53,16 @@ function setGenericChromeHidden(hidden: boolean): void {
  * region a frame behind a programmatic move, which makes the plate slide
  * against its own outline; a plain rectangle moves as one piece.
  */
-export function clearShapeForDrag(): void {
+export function clearShapeForDrag(): Promise<void> {
+  // Hide first and let two frames paint, so the rectangle that appears when
+  // the region is lifted never contains the buttons.
   setGenericChromeHidden(true)
-  if (lastRects.length) window.skinwalker?.setWindowShape?.([], lastFrom ?? undefined)
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (lastRects.length) window.skinwalker?.setWindowShape?.([], lastFrom ?? undefined)
+      resolve()
+    }))
+  })
 }
 
 /** Put the silhouette back once the drag ends. */

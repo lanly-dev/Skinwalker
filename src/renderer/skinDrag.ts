@@ -40,26 +40,32 @@ export function installSkinDrag(): void {
       dy = 0
     }
 
-    // One window move per painted frame: sending a move per pointer event
-    // queued them faster than the window could follow.
     // A click that never moves must not touch the window: lifting the shape
     // exposes the whole rectangle for a frame. Start the drag after a few px.
     const START_PX = 4
     const startX = e.screenX
     const startY = e.screenY
     let started = false
+    let ready: Promise<void> = Promise.resolve()
+    let isReady = false
+    // One window move per painted frame: sending a move per pointer event
+    // queued them faster than the window could follow.
     const onMove = (ev: PointerEvent): void => {
       if (!started) {
         if (Math.hypot(ev.screenX - startX, ev.screenY - startY) < START_PX) return
         started = true
-        clearShapeForDrag()
-        api.beginWindowDrag?.()
+        // The window starts moving only after the buttons are hidden and the
+        // shape is lifted; pointer movement meanwhile is accumulated below.
+        ready = clearShapeForDrag().then(() => {
+          api.beginWindowDrag?.()
+          isReady = true
+        })
       }
       dx += Math.round(ev.screenX - lastX)
       dy += Math.round(ev.screenY - lastY)
       lastX = ev.screenX
       lastY = ev.screenY
-      if (frame) return
+      if (!isReady || frame) return
       frame = requestAnimationFrame(() => {
         frame = 0
         flush()
@@ -70,9 +76,11 @@ export function installSkinDrag(): void {
       window.removeEventListener('pointerup', onUp)
       window.removeEventListener('pointercancel', onUp)
       if (!started) return
-      flush()
-      api.endWindowDrag?.()
-      restoreShape()
+      void ready.then(() => {
+        flush()
+        api.endWindowDrag?.()
+        restoreShape()
+      })
     }
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerup', onUp)
