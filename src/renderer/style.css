@@ -315,72 +315,111 @@ input[type="range"]::-moz-range-thumb {
   50% { box-shadow: 0 0 4cqw 1.4cqw rgba(239, 154, 58, 0.55), inset 0 0 1.5cqw rgba(255, 179, 79, 0.32); }
 }
 
-/* Blood line = seek, bracketed by the volume speakers painted into the plate */
+/* Blood line = seek: a strip cut from the plate's own painted line (see
+   reference/dracula-web/blood-line.py). It lies dim under the bar; a bright
+   copy clipped to --progress fills as the track plays, and painted drops hang
+   from the lowest points of the crop. */
 .dracula-skin .dr-seek-region {
   left: 27.2%; top: 49.6%;
   width: 45.6%; height: 5.2%;
+  background: #0c080e;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: #0c080e;
   z-index: 3;
 }
 .dracula-skin .dr-seek-top {
   position: relative;
-  height: 2cqw;
-  margin-top: 0.1cqw;
+  width: 100%;
+  height: 4cqw;
+  margin: 0;
+}
+.dracula-skin .dr-trackline {
+  position: absolute;
+  left: 4.6cqw; right: 4.6cqw;
+  top: 4%; height: 6%;
+  border-radius: 5px;
+  background: linear-gradient(#df6b5a, #8d2326 50%, #5c191b);
+  box-shadow: 0 0 0.45cqw #e4402e;
+  pointer-events: none;
 }
 .dracula-skin .dr-blood {
   position: absolute;
-  inset: 0;
+  left: 4.6cqw; right: 4.6cqw;
+  top: 0; bottom: 0;
   pointer-events: none;
   z-index: 2;
 }
-.dracula-skin .dr-drip {
-  position: absolute;
-  top: 0.95cqw;
-  left: var(--x);
-  width: var(--w);
-  height: var(--h);
-  border-radius: 0 0 55% 55%;
-  background: linear-gradient(90deg, #8c1824, #d83c3b 60%, #ab2229);
-  transform-origin: top center;
-  animation: dr-drip var(--speed) ease-in-out var(--delay) infinite;
-  filter: drop-shadow(0 0 0.2cqw rgba(181, 34, 41, 0.9));
-}
-.dracula-skin .dr-drip::after {
+.dracula-skin .dr-blood::before,
+.dracula-skin .dr-blood::after {
   content: '';
   position: absolute;
-  bottom: -0.05cqw;
-  left: 50%;
-  width: 1.55em; height: 1.55em;
-  border-radius: 50%;
-  background: #d7403e;
-  transform: translateX(-50%);
-  animation: dr-bead var(--speed) ease-in var(--delay) infinite;
+  inset: 0;
+  background: url('./assets/dracula-blood-line.png') center / 100% 100% no-repeat;
+  pointer-events: none;
 }
-.dracula-skin .dr-drip:nth-child(3n)::after { animation-name: dr-fall; }
-@keyframes dr-drip {
-  0%, 100% { transform: scaleY(0.65); }
-  45%      { transform: scaleY(1.18); }
-  68%      { transform: scaleY(0.9); }
+.dracula-skin .dr-blood::before { filter: brightness(0.48) saturate(0.85); }
+.dracula-skin .dr-blood::after {
+  clip-path: inset(0 calc(100% - var(--progress, 0%)) 0 0);
+  filter: brightness(1.1) saturate(1.2);
 }
-@keyframes dr-bead {
-  0%, 100% { opacity: 0.75; transform: translateX(-50%) scale(0.75); }
-  60%      { opacity: 1;    transform: translateX(-50%) scale(1); }
+/* Each painted drip tip is an anchor: ::before is the thread that stretches
+   down from the bar and snaps, ::after is the bead that swells at its tip and
+   falls. */
+.dracula-skin .dr-blood-drop {
+  position: absolute;
+  width: 0; height: 0;
+  pointer-events: none;
 }
-@keyframes dr-fall {
-  0%, 58% { opacity: 1;   transform: translate(-50%, 0) scale(0.8); }
-  80%     { opacity: 0.8; transform: translate(-50%, 0.8cqw) scale(0.65); }
-  100%    { opacity: 0;   transform: translate(-50%, 1.4cqw) scale(0.35); }
+.dracula-skin .dr-blood-drop::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  width: 0.14cqw; height: 1.3cqw;
+  margin-left: -0.07cqw;
+  border-radius: 45% 45% 30% 30% / 8% 8% 22% 22%;
+  background: linear-gradient(#8f0d16, #d0302a 55%, #ff8564 88%, #ffd9b4);
+  filter: drop-shadow(0 0 0.12cqw #c22026cc);
+  transform-origin: 50% 0;
+  animation: dr-thread-stretch var(--duration) cubic-bezier(0.35, 0, 0.55, 1) var(--delay) infinite;
+  will-change: transform, opacity;
+}
+.dracula-skin .dr-blood-drop::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  width: var(--dw); height: var(--dh);
+  margin-left: calc(var(--dw) / -2);
+  border-radius: 50% 50% 50% 50% / 58% 58% 42% 42%;
+  background: radial-gradient(ellipse at 34% 26%, #ffe0bd 0%, #ff9268 16%, #d63b30 48%, #8c1016 82%, #3c0607 100%);
+  box-shadow: 0 0 0.2cqw #d33a2f99;
+  animation: dr-painted-fall var(--duration) linear var(--delay) infinite;
+  will-change: transform, opacity;
+}
+@keyframes dr-thread-stretch {
+  0%, 28%   { opacity: 0;    transform: scaleY(0.04); }
+  36%       { opacity: 0.85; transform: scaleY(0.62); }
+  46%       { opacity: 1;    transform: scaleY(1); }
+  51%       { opacity: 0.95; transform: scaleY(0.96); }
+  56%       { opacity: 0.7;  transform: scaleY(0.2); }
+  60%, 100% { opacity: 0;    transform: scaleY(0.04); }
+}
+@keyframes dr-painted-fall {
+  0%, 43%   { opacity: 0;    transform: translateY(0.5cqw) scale(0.35, 0.35); }
+  47%       { opacity: 0.95; transform: translateY(1.2cqw) scale(0.95, 1.05); }
+  52%       { opacity: 0.95; transform: translateY(1.3cqw) scale(0.92, 1.14); }
+  57%       { opacity: 0.9;  transform: translateY(1.55cqw) scale(0.9, 1.16); }
+  66%       { opacity: 0.8;  transform: translateY(2.3cqw) scale(0.86, 1.12); }
+  78%       { opacity: 0.45; transform: translateY(3.2cqw) scale(0.78, 1); }
+  88%, 100% { opacity: 0;    transform: translateY(3.65cqw) scale(0.58, 0.8); }
 }
 
 .dracula-skin .dr-seek {
   position: absolute;
   left: 4.6cqw; right: 4.6cqw;
-  top: 0;
+  top: -25%;
   width: auto;
-  height: 2cqw;
+  height: 75%;
   margin: 0;
   background: transparent;
   appearance: none;
@@ -389,39 +428,29 @@ input[type="range"]::-moz-range-thumb {
   z-index: 3;
 }
 .dracula-skin .dr-seek::-webkit-slider-runnable-track {
-  height: 0.38cqw;
-  border-radius: 5px;
-  background: linear-gradient(
-    to right,
-    #e13b40 0 var(--progress, 0%),
-    #88434b var(--progress, 0%) 100%
-  );
+  height: 0.35cqw;
+  background: transparent;
 }
 .dracula-skin .dr-seek::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 1.65cqw; height: 1.65cqw;
-  margin-top: -0.63cqw;
+  margin-top: -0.65cqw;
   border-radius: 50%;
-  background: #ee817e;
-  box-shadow: 0 0 0.8cqw #ff4752;
+  background: radial-gradient(circle at 35% 30%, #ffd8c6, #ed8a70 47%, #a9403a 75%, #65221f);
+  box-shadow: 0 0 0.6cqw #ff684b99;
   cursor: pointer;
 }
-.dracula-skin .dr-seek::-moz-range-track {
-  height: 0.38cqw;
-  border-radius: 5px;
-  background: #88434b;
-}
+.dracula-skin .dr-seek::-moz-range-track,
 .dracula-skin .dr-seek::-moz-range-progress {
-  height: 0.38cqw;
-  border-radius: 5px;
-  background: #e13b40;
+  height: 0.35cqw;
+  background: transparent;
 }
 .dracula-skin .dr-seek::-moz-range-thumb {
   width: 1.65cqw; height: 1.65cqw;
   border: 0;
   border-radius: 50%;
-  background: #ee817e;
-  box-shadow: 0 0 0.8cqw #ff4752;
+  background: radial-gradient(circle at 35% 30%, #ffd8c6, #ed8a70 47%, #a9403a 75%, #65221f);
+  box-shadow: 0 0 0.6cqw #ff684b99;
 }
 .dracula-skin .dr-seek:focus-visible { outline: 2px solid #f4d58b; }
 
@@ -460,16 +489,16 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-vol:focus-visible { outline: 1px solid rgba(248, 220, 142, 0.85); }
 
 .dracula-skin .dr-times {
+  position: relative;
+  width: 100%;
+  margin: 0.35cqw 0 0;
+  padding: 0 0.4cqw;
   display: flex;
   justify-content: space-between;
-  padding: 0 0.4cqw;
-  margin-top: 0.15cqw;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(8px, 1.8cqw, 18px);
+  color: #ed573e;
+  font: clamp(8px, 1.8cqw, 18px)/1 Georgia, 'Times New Roman', serif;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  color: #eb7477;
-  text-shadow: 0 1px 3px #150817;
+  text-shadow: 0 0 0.5cqw #7d160c;
   z-index: 4;
 }
 

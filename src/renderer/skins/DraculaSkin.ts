@@ -32,8 +32,9 @@ import type { Player } from '../player/Player'
 
 /** Spectrum resolution (same as the web version) */
 const BAR_COUNT = 48
-/** Irregular drip curtain positions along the blood line, % of the seek width */
-const DRIP_X = [4, 8, 12, 17, 21, 25, 29, 34, 39, 43, 48, 52, 57, 62, 67, 72, 77, 82, 87, 91, 96]
+/** Painted drop anchors on the blood strip, % of the seek width / height */
+const DROP_X = [22.0, 30.2, 43.3, 57.0, 67.4, 77.0]
+const DROP_Y = [34, 80, 46, 40, 50, 42]
 
 /** The 2:3 stage, and the square bat the window shrinks to. */
 const STAGE_SIZE = { width: 480, height: 720, minWidth: 380, minHeight: 560 }
@@ -46,6 +47,7 @@ interface DraculaEls {
   eyeRight: HTMLElement
   canvas: HTMLCanvasElement
   seek: HTMLInputElement
+  blood: HTMLElement
   elapsed: HTMLElement
   remaining: HTMLElement
   medallion: HTMLButtonElement
@@ -154,8 +156,9 @@ export class DraculaSkin implements Skin {
           <!-- Blood line = seek, bracketed by the painted speakers -->
           <div class="dr-seek-region" role="group" aria-label="Seek">
             <div class="dr-seek-top">
-              <button class="dr-vol dr-vol-down" aria-label="Volume down" title="Volume down"></button>
+              <span class="dr-trackline" aria-hidden="true"></span>
               <div class="dr-blood" aria-hidden="true"></div>
+              <button class="dr-vol dr-vol-down" aria-label="Volume down" title="Volume down"></button>
               <input class="dr-seek" type="range" min="0" max="1000" value="0"
                      aria-label="Seek through track" step="1" />
               <button class="dr-vol dr-vol-up" aria-label="Volume up" title="Volume up"></button>
@@ -214,6 +217,7 @@ export class DraculaSkin implements Skin {
       eyeRight: c.querySelector('.dr-eye-right')!,
       canvas: c.querySelector('.dr-viz')!,
       seek: c.querySelector('.dr-seek')!,
+      blood: c.querySelector('.dr-blood')!,
       elapsed: c.querySelector('.dr-elapsed')!,
       remaining: c.querySelector('.dr-remaining')!,
       medallion: c.querySelector('.dr-medallion')!,
@@ -225,7 +229,7 @@ export class DraculaSkin implements Skin {
     }
     this.els = els
 
-    this.buildDrips()
+    this.buildDrops()
 
     // Medallion + mini bat play = play / pause
     const toggle = (): void => {
@@ -242,6 +246,7 @@ export class DraculaSkin implements Skin {
       const dur = p.audio.duration
       const cur = dur * (Number(els.seek.value) / 1000)
       els.seek.style.setProperty('--progress', `${Number(els.seek.value) / 10}%`)
+      els.blood.style.setProperty('--progress', `${Number(els.seek.value) / 10}%`)
       els.elapsed.textContent = fmt(cur)
       els.remaining.textContent = `-${fmt(Math.max(0, dur - cur))}`
     })
@@ -355,20 +360,20 @@ export class DraculaSkin implements Skin {
 
   // ── Playlist ─────────────────────────────────────────────────────────────────
 
-  private buildDrips(): void {
+  private buildDrops(): void {
     const host = this.container?.querySelector('.dr-blood')
     if (!host) return
     host.replaceChildren()
-    DRIP_X.forEach((x, i) => {
-      const drip = document.createElement('span')
-      drip.className = 'dr-drip'
-      drip.style.setProperty('--x', `${x}%`)
-      drip.style.setProperty('--w', `${0.16 + (i % 3) * 0.08}cqw`)
-      drip.style.setProperty('--h', `${0.55 + ((i * 7) % 10) * 0.13}cqw`)
-      drip.style.setProperty('--speed', `${1.7 + (i % 6) * 0.41}s`)
-      drip.style.setProperty('--delay', `${-(i * 0.31)}s`)
-      drip.style.fontSize = `${0.12 + (i % 3) * 0.04}cqw`
-      host.appendChild(drip)
+    DROP_X.forEach((x, i) => {
+      const drop = document.createElement('span')
+      drop.className = 'dr-blood-drop'
+      drop.style.left = `${x}%`
+      drop.style.top = `${DROP_Y[i]}%`
+      drop.style.setProperty('--dw', `${0.38 + (i % 3) * 0.08}cqw`)
+      drop.style.setProperty('--dh', `${0.62 + (i % 3) * 0.12}cqw`)
+      drop.style.setProperty('--duration', `${3 + (i % 4) * 0.45}s`)
+      drop.style.setProperty('--delay', `${-i * 0.71}s`)
+      host.appendChild(drop)
     })
   }
 
@@ -595,6 +600,7 @@ export class DraculaSkin implements Skin {
       if (els.seek.value !== value) els.seek.value = value
     }
     els.seek.style.setProperty('--progress', `${Number(els.seek.value) / 10}%`)
+    els.blood.style.setProperty('--progress', `${Number(els.seek.value) / 10}%`)
 
     const elapsedText = fmt(cur)
     if (els.elapsed.textContent !== elapsedText) els.elapsed.textContent = elapsedText

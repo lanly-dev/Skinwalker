@@ -258,6 +258,14 @@ restoring built the stage's 163-rect region. GDI `CopyFromScreen`/`BitBlt` canno
 per-pixel-alpha layered windows on Win11, so verify the region with `GetWindowRgn`/
 `GetRegionData`, not a desktop grab.
 
+The seekbar is the plate's own painted blood line (2026-11-22): the web build cuts a 323x50
+crop at (282,794) into a 460x50 strip, keeps only red pixels as alpha, then paints it twice —
+dim for the unplayed track and a bright copy clipped to `--progress` — with six painted drops
+at the lowest drips. The Electron skin uses the same recipe
+(`reference/dracula-web/blood-line.py` -> `src/renderer/assets/dracula-blood-line.png`), inset
+4.6cqw between the painted speakers; the drop anchors are taken from the generator and the
+times sit just below the strip so they stay legible over its drips. Each of the six anchors also drips: a thread stretches from the painted tip and snaps (`dr-thread-stretch` on `.dr-blood-drop::before`) while the bead swells and falls (`dr-painted-fall` on `::after`), staggered per drop by duration and negative delay.
+
 ## Recent Improvements (2026-11-08)
 - **Blood effects (CORRECTED 2026-11-20):** an earlier entry here claimed blood-drip elements. Only the 21-drip curtain (`DRIP_X` and `buildDrips()` in `src/renderer/skins/DraculaSkin.ts`) exists in committed code; `git log -S` finds no splatter or trail code in any commit.
 - **Complete Kiro infrastructure:** Full `.kiro/` folder created with specs (3 files incl. submission-readiness), steering files (7 files including auto-load guides), hooks (3), workflows (1 template), and comprehensive documentation explaining all Kiro concepts.
