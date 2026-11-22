@@ -225,9 +225,21 @@ input[type="range"]::-moz-range-thumb {
   top: 16.3%;
   width: 5.8%; height: 1.8%;
   border-radius: 50%;
-  background: radial-gradient(ellipse, #ff3f35 5%, rgba(240, 24, 29, 0.53) 32%, transparent 72%);
-  filter: blur(0.3cqw);
-  opacity: 0.12;
+  background: radial-gradient(ellipse at 50% 50%,
+    #ffd9a8 0%,
+    #ff7a45 12%,
+    #ff4a36 30%,
+    rgba(255, 36, 30, 0.6) 52%,
+    rgba(200, 12, 20, 0.22) 72%,
+    transparent 82%);
+  filter: blur(0.32cqw) saturate(1.2);
+  box-shadow:
+    0 0 0.55cqw rgba(255, 54, 38, 0.5),
+    0 0 1.25cqw rgba(255, 26, 24, 0.28);
+  opacity: 0.15;
+  transform: scale(calc(1.06 + var(--eye, 0.1) * 0.14));
+  transform-origin: center;
+  transition: opacity 0.12s linear, transform 0.12s linear;
   mix-blend-mode: screen;
   pointer-events: none;
   z-index: 4;

@@ -589,12 +589,14 @@ export class DraculaSkin implements Skin {
       energy = Math.sqrt(sum / this.waveData.length)
     }
 
-    const glow = playing ? Math.min(0.95, 0.18 + energy * 5) : 0.12
+    const glow = playing ? Math.min(0.9, 0.2 + energy * 6.5) : 0.15
     const quantized = Math.round(glow * 20) / 20
     if (quantized === this.eyeLevel) return
     this.eyeLevel = quantized
-    els.eyeLeft.style.opacity = String(quantized)
-    els.eyeRight.style.opacity = String(quantized)
+    for (const eye of [els.eyeLeft, els.eyeRight]) {
+      eye.style.opacity = String(quantized)
+      eye.style.setProperty('--eye', String(quantized))
+    }
   }
 
   private paintTime(): void {
