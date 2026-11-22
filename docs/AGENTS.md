@@ -280,6 +280,24 @@ painted speakers sit above the seek band, so both survive; the whole plate is al
 plate no longer contains. Residual risk: the fill is a smear, invisible at the 2.13x downscale
 the plate renders at, but re-check `plate-panels-clean.png` after any mask-band change.
 
+The medallion is lit, not outlined, and its pause state is the same medallion (2026-11-22): the pointer
+used to draw a 2px gold outline and a box-shadow halo around the throat jewel, and while playing a dark
+disc with an inset gold ring covered the baked play triangle -- both read as a second button stuck on
+the painting. Hover now uses the tool row's technique: `.dr-medallion::after` lays the whole plate
+against the 12% x 7% button (833.333% x 1428.571%, offset -366.667% / -487.143%), brightens it
+(`brightness(1.55) saturate(1.1)`) and feather-masks it to an oval around the throat, so only the
+medallion's own gold lights up; pointer hover has no outline, and keyboard focus keeps the shared 1px
+hairline. Playing breathes the same light (opacity 0.1-0.3) instead of the old red box-shadow pulse.
+The pause state is the medallion itself: `reference/dracula-web/medallion-face.py` crops the 122x107
+button box from the plate, isolates the baked triangle as the bright blob containing the face centre
+(threshold 82, 9px dilation, TELEA radius 5), inpaints it, and writes
+`src/renderer/assets/dracula-medallion-face.webp`; CSS shows that crop over the face behind a feathered
+ellipse and draws the two bars in the triangle's sampled material (#e3a362, #f7d7a0 highlight), centred on
+the painted face (button fractions 47.4% x 48.3%, measured from the face's inner ring) rather than on the
+button box, which sits a couple of pixels right and low of the face. The mini bat keeps the dark disc glyph, because a plate crop would be wrong
+over the bat. Verified on the running renderer in paused / hover / playing-hover / playing-rest captures.
+
+
 ## Recent Improvements (2026-11-08)
 - **Blood effects (CORRECTED 2026-11-20, updated 2026-11-21):** an earlier entry here claimed 101+ blood elements. Only a 21-drip curtain ever existed in committed code, and `git log -S` finds no splatter or trail code in any commit. Commit `2b0aef7` (2026-11-21) replaced the curtain with a painted blood line (`src/renderer/assets/dracula-blood-line.png`) and six animated drops (`DROP_X`, `buildDrops()` in `src/renderer/skins/DraculaSkin.ts`).
 - **Complete Kiro infrastructure:** Full `.kiro/` folder created with specs (4 files as of 2026-11-21), steering files (8 files including auto-load guides), hooks (3), workflows (1 template), and comprehensive documentation explaining all Kiro concepts.

@@ -276,8 +276,49 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 50%;
   cursor: pointer;
   z-index: 5;
-  transition: box-shadow 0.3s;
 }
+/* Hover lights the painting, never a button-shaped box. The copy is the whole
+   plate laid out against this button (100/12 x 100/7 of its box, offset by its
+   stage position) and feather-masked to an oval around the throat, so only the
+   medallion's own gold brightens -- the same trick as the hands. */
+.dracula-skin .dr-medallion::after {
+  content: '';
+  position: absolute;
+  left: -366.667%;
+  top: -487.143%;
+  width: 833.333%;
+  height: 1428.571%;
+  background: var(--dr-frame-url) center / 100% 100% no-repeat;
+  filter: brightness(1.55) saturate(1.1);
+  -webkit-mask-image: radial-gradient(ellipse 9cqw 8.4cqw at 50% 37.6%, #000 85%, transparent 100%);
+  mask-image: radial-gradient(ellipse 9cqw 8.4cqw at 50% 37.6%, #000 85%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s;
+  z-index: -1;
+}
+/* While playing the same light breathes instead of drawing a ring or disc. */
+.dracula-skin .dr-medallion.playing::after {
+  animation: dr-medallion-glow 2.6s ease-in-out infinite;
+}
+@keyframes dr-medallion-glow {
+  0%, 100% { opacity: 0.1; }
+  50%      { opacity: 0.3; }
+}
+.dracula-skin .dr-medallion:hover::after,
+.dracula-skin .dr-medallion:focus-visible::after {
+  opacity: 0.85;
+  animation: none;
+}
+/* Keyboard focus keeps the shared hairline; pointer hover is the glow alone. */
+.dracula-skin .dr-medallion:focus-visible {
+  outline: 1px solid rgba(231, 202, 140, 0.55);
+  outline-offset: 1px;
+}
+/* The base glyph is the miniature bat's dark disc. The medallion's pause is
+   the medallion itself: an inpainted crop of its face (built by
+   reference/dracula-web/medallion-face.py) feathered over the baked triangle,
+   with two bars in the triangle's sampled gold. */
 .dracula-skin .dr-pause-glyph {
   display: none;
   position: absolute;
@@ -302,19 +343,28 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-pause-glyph::before { left: 33%; }
 .dracula-skin .dr-pause-glyph::after  { right: 33%; }
 .dracula-skin .playing .dr-pause-glyph { display: block; }
-.dracula-skin .dr-medallion:hover,
-.dracula-skin .dr-medallion:focus-visible {
-  outline: 2px solid rgba(248, 220, 142, 0.85);
-  outline-offset: 3px;
-  box-shadow: 0 0 2.5cqw 1cqw rgba(223, 155, 60, 0.5);
+.dracula-skin .dr-medallion .dr-pause-glyph {
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  border-radius: 0;
+  background: var(--dr-medallion-face-url) center / 100% 100% no-repeat;
+  box-shadow: none;
+  -webkit-mask-image: radial-gradient(ellipse 5.3cqw 4.85cqw at 50% 51%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 5.3cqw 4.85cqw at 50% 51%, #000 62%, transparent 100%);
+  z-index: 1;
 }
-.dracula-skin .dr-medallion.playing {
-  box-shadow: 0 0 2.6cqw 1.1cqw rgba(228, 73, 56, 0.45), inset 0 0 2cqw rgba(255, 179, 79, 0.2);
-  animation: dr-medallion-pulse 2s ease-in-out infinite;
+.dracula-skin .dr-medallion .dr-pause-glyph::before,
+.dracula-skin .dr-medallion .dr-pause-glyph::after {
+  top: 26.8%;
+  height: 43%;
+  width: 10%;
+  right: auto;
+  border-radius: 0.14cqw;
+  background: linear-gradient(180deg, #f7d7a0 0%, #e3a362 40%, #c6843f 76%, #9d6024 100%);
+  box-shadow: 0 0 0.45cqw rgba(255, 183, 91, 0.55), inset 0 0 0.12cqw rgba(255, 241, 209, 0.55);
 }
-@keyframes dr-medallion-pulse {
-  50% { box-shadow: 0 0 4cqw 1.4cqw rgba(239, 154, 58, 0.55), inset 0 0 1.5cqw rgba(255, 179, 79, 0.32); }
-}
+.dracula-skin .dr-medallion .dr-pause-glyph::before { left: 35.4%; }
+.dracula-skin .dr-medallion .dr-pause-glyph::after  { left: 49.4%; }
 
 /* Blood line = seek: a strip cut from the plate's own painted line (see
    reference/dracula-web/blood-line.py). It lies dim under the bar; a bright

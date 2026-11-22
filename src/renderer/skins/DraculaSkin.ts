@@ -25,6 +25,7 @@ import draculaBatUrl from '../assets/dracula-bat.webp'
 import draculaToolsUrl from '../assets/dracula-tools.jpg'
 import draculaHandLeftUrl from '../assets/dracula-hand-glow-left.webp'
 import draculaHandRightUrl from '../assets/dracula-hand-glow-right.webp'
+import draculaMedallionFaceUrl from '../assets/dracula-medallion-face.webp'
 import { applySkinShape } from '../windowShape'
 import { openLocalFiles } from '../openFiles'
 import type { Skin } from './Skin'
@@ -95,6 +96,7 @@ export class DraculaSkin implements Skin {
     this.container.style.setProperty('--dr-tools-url', `url("${draculaToolsUrl}")`)
     this.container.style.setProperty('--dr-hand-left-url', `url("${draculaHandLeftUrl}")`)
     this.container.style.setProperty('--dr-hand-right-url', `url("${draculaHandRightUrl}")`)
+    this.container.style.setProperty('--dr-medallion-face-url', `url("${draculaMedallionFaceUrl}")`)
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
