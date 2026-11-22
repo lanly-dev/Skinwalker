@@ -578,8 +578,8 @@ input[type="range"]::-moz-range-thumb {
   position: absolute;
   inset: 0;
   display: grid;
-  grid-template-columns: repeat(6, 4.25cqw);
-  grid-template-rows: repeat(2, 10cqw);
+  grid-template-columns: repeat(6, 5.27cqw);
+  grid-template-rows: repeat(2, 12.2cqw);
   column-gap: 0.55cqw;
   row-gap: 0.4cqw;
   align-content: center;
@@ -595,7 +595,7 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-zone:focus-visible { outline: 1px dashed rgba(229, 200, 140, 0.8); }
 .dracula-skin .dr-tool {
   position: relative;
-  width: 8.5cqw; height: 10cqw;
+  width: 10.55cqw; height: 12.2cqw;
   border: 0;
   padding: 0;
   background-color: transparent;
@@ -620,9 +620,9 @@ input[type="range"]::-moz-range-thumb {
   pointer-events: none;
   transition: opacity 0.2s;
 }
-.dracula-skin .dr-tool-close    { grid-column: 1 / span 2; grid-row: 1; background-position: 1.875% 50%; }
+.dracula-skin .dr-tool-close    { grid-column: 5 / span 2; grid-row: 1; background-position: 1.875% 50%; }
 .dracula-skin .dr-tool-minimize { grid-column: 3 / span 2; grid-row: 1; background-position: 26.25% 50%; }
-.dracula-skin .dr-tool-folder   { grid-column: 5 / span 2; grid-row: 1; background-position: 50.625% 50%; }
+.dracula-skin .dr-tool-folder   { grid-column: 1 / span 2; grid-row: 1; background-position: 50.625% 50%; }
 .dracula-skin .dr-tool-skin     { grid-column: 2 / span 2; grid-row: 2; background-position: 74.375% 50%; }
 .dracula-skin .dr-tool-bat      { grid-column: 4 / span 2; grid-row: 2; background-position: 98.125% 50%; }
 .dracula-skin .dr-tool:hover,

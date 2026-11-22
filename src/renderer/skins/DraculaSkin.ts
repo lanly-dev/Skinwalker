@@ -176,9 +176,9 @@ export class DraculaSkin implements Skin {
                aria-label="Player controls; hover, focus or click to reveal">
             <canvas class="dr-viz" aria-hidden="true"></canvas>
             <div class="dr-tools">
-              <button class="dr-tool dr-tool-close" aria-label="Close player" title="Close player"></button>
-              <button class="dr-tool dr-tool-minimize" aria-label="Minimize" title="Minimize"></button>
               <button class="dr-tool dr-tool-folder" aria-label="Add audio files" title="Add audio files"></button>
+              <button class="dr-tool dr-tool-minimize" aria-label="Minimize" title="Minimize"></button>
+              <button class="dr-tool dr-tool-close" aria-label="Close player" title="Close player"></button>
               <button class="dr-tool dr-tool-skin" aria-label="Next skin" title="Next skin"></button>
               <button class="dr-tool dr-tool-bat" aria-label="Mini bat player" title="Mini bat player"></button>
             </div>
