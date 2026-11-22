@@ -73,3 +73,5 @@ Dracula is the only skin that meets the rule.
 2026-11-21: audit only. The steering file first said Dracula lacked a switch-skin button. That was wrong: `nextSkin()` landed in commit `4598551` before the steering file was written. The steering file is corrected in the same commit as this spec.
 
 T0 (2026-11-21): `clearShapeForDrag()` in `src/renderer/windowShape.ts` now hides `#titlebar` and `#open-files`, and `restoreShape()` shows them again. `npm run typecheck` and `npm run build` pass. Not checked visually. [MAINTAINER: drag each skin and confirm the corner buttons stay hidden, then tick R6.]
+
+T0 follow-up (2026-11-21): a plain click on the skin still flashed the generic buttons. Cause: `pointerdown` lifted the OS shape at once, so a click with no movement exposed the full rectangle for a frame, and `restoreShape()` made the bar visible again before the OS region was back. Plan: (1) do not lift the shape or start the window drag until the pointer has moved at least 4 px, so a click changes nothing; (2) after a real drag, show the generic bar again only after the shape has been restored (150 ms). Status updated in the commit that implements it.
