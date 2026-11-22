@@ -213,7 +213,9 @@ input[type="range"]::-moz-range-thumb {
     drop-shadow(0 0 8px rgba(150, 20, 30, 0.55));
 }
 
-/* Title panel = live title + subtitle over the baked pair */
+/* Title panel = live title + subtitle only: the baked pair (and the seekbar's
+   baked line, drips and times) is painted out of the plate in
+   reference/dracula-web/hem-natural.py, so nothing needs covering here. */
 .dracula-skin .dr-track-info {
   left: 27%; top: 43.5%;
   width: 46%; height: 5.5%;
@@ -223,7 +225,6 @@ input[type="range"]::-moz-range-thumb {
   align-items: center;
   gap: 0.1cqw;
   overflow: hidden;
-  background: linear-gradient(90deg, transparent, #0c080e 7%, #0c080e 93%, transparent);
   text-shadow: 0 1px 4px #000;
   z-index: 3;
 }
@@ -322,7 +323,6 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-seek-region {
   left: 27.2%; top: 49.6%;
   width: 45.6%; height: 5.2%;
-  background: #0c080e;
   display: flex;
   flex-direction: column;
   justify-content: center;

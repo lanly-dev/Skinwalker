@@ -266,6 +266,20 @@ at the lowest drips. The Electron skin uses the same recipe
 4.6cqw between the painted speakers; the drop anchors are taken from the generator and the
 times sit just below the strip so they stay legible over its drips. Each of the six anchors also drips: a thread stretches from the painted tip and snaps (`dr-thread-stretch` on `.dr-blood-drop::before`) while the bead swells and falls (`dr-painted-fall` on `::after`), staggered per drop by duration and negative delay.
 
+The title and seek panels are transparent (2026-11-22): both used to paint an opaque `#0c080e`
+box (the web build's own panel) because the artwork has the title, artist, blood line, drips,
+playhead and both time readouts baked into it. `reference/dracula-web/hem-natural.py` now paints
+those baked pixels out before the hem, then `.dr-track-info` and `.dr-seek-region` render on bare
+cloth, so the cape shows straight through. Mask recipe: local contrast (luminance minus a sigma-9
+blur) inside the title band (x 316-708, y 680-731) and the artist band (x 372-644, y 726-760);
+`r - max(g, b) > 45` plus bright local contrast inside the seek band (x 274-754, y 788-842);
+dilate 5x5 and TELEA at radius 4. The gold cape trim stays under the saturation threshold and the
+painted speakers sit above the seek band, so both survive; the whole plate is also saved as
+`reference/dracula-web/dracula-frame-clean.png` for inspection. Keep `blood-line.py` reading
+`dracula-frame-original.webp`: the strip is cut from the art's own painted line, which the cleaned
+plate no longer contains. Residual risk: the fill is a smear, invisible at the 2.13x downscale
+the plate renders at, but re-check `plate-panels-clean.png` after any mask-band change.
+
 ## Recent Improvements (2026-11-08)
 - **Blood effects (CORRECTED 2026-11-20):** an earlier entry here claimed blood-drip elements. Only the 21-drip curtain (`DRIP_X` and `buildDrips()` in `src/renderer/skins/DraculaSkin.ts`) exists in committed code; `git log -S` finds no splatter or trail code in any commit.
 - **Complete Kiro infrastructure:** Full `.kiro/` folder created with specs (3 files incl. submission-readiness), steering files (7 files including auto-load guides), hooks (3), workflows (1 template), and comprehensive documentation explaining all Kiro concepts.
