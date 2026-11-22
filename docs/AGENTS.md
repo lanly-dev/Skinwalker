@@ -383,5 +383,5 @@ git diff origin/main <changed-file>  # For every file
 ```
 Stale local state can revert recent work. Verify every changed file against remote main at push time.
 
-### Docs that cite files outside the repo (2026-11-21)
-Some entries above cite eference/dracula-web/* scripts and images (lood-line.py, hem-natural.py, dracula-frame-clean.png, ix-bat.py, dracula-frame-original.webp). eference/** is gitignored, so those files are not in the public repo. The shipped plates in src/renderer/assets/ are the results; the scripts that produced them are local only. A judge cannot reproduce the art pipeline from the repo. [MAINTAINER: either commit the scripts (if their sources and licenses are clean) or keep this note.]
+### Docs that cite files outside the repo (2026-11-21, updated 2026-11-22)
+Some entries above cite `reference/dracula-web/*` scripts and images (`blood-line.py`, `hem-natural.py`, `medallion-face.py`, `fix-bat.py`, `dracula-frame-clean.png`, `dracula-frame-original.webp`). `reference/**` is gitignored, so those files are not in the public repo. The shipped plates in `src/renderer/assets/` are the results; the scripts that produced them are local only. A judge cannot reproduce the art pipeline from the repo. [MAINTAINER: either commit the scripts (if their sources and licenses are clean) or keep this note.]

@@ -63,4 +63,4 @@ is superseded by `docs/submission/AUDIT.md`.
 - Dependency upgrade (documented in `.kiro/docs/dependency-upgrade.md`, no spec).
 
 Only the Dracula blood effects (since reworked) and one CSS-variable change have a spec, and
-both specs were written at or after the code. Later Dracula work (painted blood line, hand glow masks, mini bat repair, window-shape scaling, skin cycling, file picker fixes, commits `4598551` to `02da3de`) has no spec; it is recorded only in `docs/AGENTS.md`.
+both specs were written at or after the code. Later Dracula work (painted blood line, hand glow masks, mini bat repair, medallion pause face, playlist restyle, window-shape scaling, skin cycling, file picker fixes, commits `4598551` to `9c67d6d`) has no spec; it is recorded only in `docs/AGENTS.md`.
