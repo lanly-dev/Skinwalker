@@ -62,5 +62,5 @@ is superseded by `docs/submission/AUDIT.md`.
 - App icon (2026-11-11 and 2026-11-12, after the specs).
 - Dependency upgrade (documented in `.kiro/docs/dependency-upgrade.md`, no spec).
 
-Only the 21-drip blood curtain and one CSS-variable change have a spec, and
-both specs were written at or after the code.
+Only the Dracula blood effects (since reworked) and one CSS-variable change have a spec, and
+both specs were written at or after the code. Later Dracula work (painted blood line, hand glow masks, mini bat repair, window-shape scaling, skin cycling, file picker fixes, commits `4598551` to `02da3de`) has no spec; it is recorded only in `docs/AGENTS.md`.

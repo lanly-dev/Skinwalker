@@ -3,7 +3,7 @@
 A Halloween-themed media player where the monster's anatomy IS the interface — Kiroween 2026 Costume Contest entry.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Electron](https://img.shields.io/badge/Electron-45.3.0-47848F.svg)
+![Electron](https://img.shields.io/badge/Electron-45.4.1-47848F.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-7.0.2-3178C6.svg)
 
 ## What Is This?
@@ -11,21 +11,24 @@ A Halloween-themed media player where the monster's anatomy IS the interface —
 Skinwalker is an Electron desktop media player where **the skin is a living Halloween monster**. Every body part is a working control:
 
 - 🌀 **Cape / jaw / skull** → Audio visualizer (varies by skin; see `docs/README.md` for the per-skin anatomy table)
-- 🩸 **Blood line** → Seek bar (Dracula adds a 21-drip animated curtain)
+- 🩸 **Blood line** → Seek bar (Dracula paints the line from the plate artwork, with six animated drops)
 - ❤️ **Medallion** → Play/pause
 - 🦴 **Hands / bones / bolts** → Previous/Next track
 - 🧛 **Monster body** → Window chrome (frameless, transparent)
 
 ## Features
 
-- **3 Monster Skins:** Dracula (flagship), Frankenstein, Skeleton
+- **3 Monster Skins:** Dracula (flagship), Skeleton, Frankenstein. Only Dracula has a "next skin" button (hover tool row). Skeleton and Frankenstein have none, so there is no way back from them in the running app yet; see `.kiro/specs/skin-required-controls.md`.
 - **Audio:** local MP3/WAV playback through the Web Audio API. The three bundled WAV demo tracks were synthesized offline by `npm run generate-tracks`; the app itself does not synthesize audio at runtime.
 - **Real-Time Visualizer:** Driven by Web Audio API AnalyserNode
-- **Animated blood drips:** Dracula's blood line has a 21-drip CSS-animated curtain.
+- **Animated blood drops:** Dracula's blood line has six painted drops that stretch, snap and fall (CSS animation).
 - **Shaped Window:** the window is clipped to the monster silhouette with `setShape` (code path runs on Windows and Linux, skipped on macOS). Checked on Windows only that the packaged app launches; the clipped shape and Linux are UNVERIFIED.
 - **Bundled Tracks:** 6 demo tracks: 3 synthesized WAVs and 3 Kevin MacLeod MP3s (CC BY 4.0)
 
 ## Quick Start
+
+If `npm run dev` fails with "Electron uninstall", the Electron binary was not downloaded. Run `node node_modules/electron/install.js` once, then `npm run dev` again.
+
 
 ```bash
 # Install dependencies
@@ -60,7 +63,7 @@ skinwalker/
 
 ## Tech Stack
 
-- **Electron 45.3.0** — Desktop app framework
+- **Electron 45.4.1** — Desktop app framework
 - **TypeScript 7.0.2** — Type-safe development
 - **Vite 8** (via electron-vite 6.0) — Fast builds and HMR
 - **Web Audio API** — Audio playback and visualizer

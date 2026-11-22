@@ -95,7 +95,7 @@ Sources: the hackathon overview, the Official Rules, and the Resources tab at ki
 ## Scope v1
 - **Electron desktop app**; local audio files via native OS file picker + bundled royalty-free demo tracks.
 - Core player: play / pause / seek / volume, playlist, next / prev.
-- **Three monster skins** (Dracula flagship, Skeleton, Frankenstein; registry order in `src/renderer/skins/index.ts`) — no skin switcher, the app boots Dracula.
+- **Three monster skins** (Dracula flagship, Skeleton, Frankenstein; registry order in `src/renderer/skins/index.ts`) — the app boots `SKINS[0]` (Dracula). **Updated 2026-11-21:** Dracula's hover tool row has a "next skin" button (`Player.nextSkin()`, commit `4598551`) that cycles the registry. Skeleton and Frankenstein have no switch button, so there is no way back from them in the running app. `.kiro/specs/skin-required-controls.md` plans the fix.
 - Per skin, functional anatomy: e.g. mouth or eyes as the live visualizer (Web Audio AnalyserNode), claw / tongue / vine as the seek bar, skin-themed play/pause and volume organs.
 - One skin is the design flagship (Dracula) — polish it hardest; Frankenstein can be simpler but must be a fully functional skin, not a color swap.
 - Frameless, transparent window — the monster body IS the window chrome. No OS titlebar.
@@ -190,7 +190,7 @@ and the mini bat, which shrinks the window to 380×380 and
 re-shapes the OS region to the bat; `window:set-size` now accepts an optional minimum size,
 because main's portrait floor (380×560) would otherwise clamp the square bat. Volume keeps its
 web-build position on the painted speakers, with a gold level bar under each. Dracula is
-`SKINS[0]` again so the updated skin actually launches; there is still no switcher. Tool
+`SKINS[0]` again so the updated skin actually launches; there was still no switcher at that time (see the 2026-11-21 update in Scope v1). Tool
 hover lights the ornament itself, never a button box: the 500% sprite is an opaque black tile, so
 an outline, box-shadow or drop-shadow on the button paints its square — instead the icon
 brightens in place and a screened, blurred copy of the same slice fades in behind it (black
@@ -281,8 +281,8 @@ plate no longer contains. Residual risk: the fill is a smear, invisible at the 2
 the plate renders at, but re-check `plate-panels-clean.png` after any mask-band change.
 
 ## Recent Improvements (2026-11-08)
-- **Blood effects (CORRECTED 2026-11-20):** an earlier entry here claimed blood-drip elements. Only the 21-drip curtain (`DRIP_X` and `buildDrips()` in `src/renderer/skins/DraculaSkin.ts`) exists in committed code; `git log -S` finds no splatter or trail code in any commit.
-- **Complete Kiro infrastructure:** Full `.kiro/` folder created with specs (3 files incl. submission-readiness), steering files (7 files including auto-load guides), hooks (3), workflows (1 template), and comprehensive documentation explaining all Kiro concepts.
+- **Blood effects (CORRECTED 2026-11-20, updated 2026-11-21):** an earlier entry here claimed 101+ blood elements. Only a 21-drip curtain ever existed in committed code, and `git log -S` finds no splatter or trail code in any commit. Commit `2b0aef7` (2026-11-21) replaced the curtain with a painted blood line (`src/renderer/assets/dracula-blood-line.png`) and six animated drops (`DROP_X`, `buildDrops()` in `src/renderer/skins/DraculaSkin.ts`).
+- **Complete Kiro infrastructure:** Full `.kiro/` folder created with specs (4 files as of 2026-11-21), steering files (8 files including auto-load guides), hooks (3), workflows (1 template), and comprehensive documentation explaining all Kiro concepts.
 - **Code optimization:** Removed 5 unused Dracula assets (eye-left/right, fang-left/right, medallion), added CSS variables for blood colors to `:root`, verified all code is in active use. CSS: 35.74 KB, TypeScript: 0 errors.
 - **Dependencies upgraded:** Electron 33→45.3.0, TypeScript 5→7.0.2, Vite 2→8.3.8, electron-vite 2→6.0.0, electron-builder 24→26.18.0, @electron-toolkit packages to latest. Build output: -116 packages (-25%), 343 total packages, all builds passing.
 - **File structure reorganization:** Created `docs/` folder for documentation, moved AGENTS.md there, created professional README.md at root, PROJECT-STRUCTURE.md guide, organized .kiro/ with separate docs/ and specs/ subfolders.
@@ -363,3 +363,6 @@ git pull --rebase
 git diff origin/main <changed-file>  # For every file
 ```
 Stale local state can revert recent work. Verify every changed file against remote main at push time.
+
+### Docs that cite files outside the repo (2026-11-21)
+Some entries above cite eference/dracula-web/* scripts and images (lood-line.py, hem-natural.py, dracula-frame-clean.png, ix-bat.py, dracula-frame-original.webp). eference/** is gitignored, so those files are not in the public repo. The shipped plates in src/renderer/assets/ are the results; the scripts that produced them are local only. A judge cannot reproduce the art pipeline from the repo. [MAINTAINER: either commit the scripts (if their sources and licenses are clean) or keep this note.]

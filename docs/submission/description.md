@@ -18,11 +18,11 @@ Skinwalker is a Windows desktop media player where the skin is a monster and its
 
 | Skin | Anatomy to control |
 |------|--------------------|
-| Dracula | medallion: play/pause. Cape: visualizer. Blood line: seek, with a 21-drip animated curtain. Painted speakers: volume. Crossed hands: previous/next. Hover tool row: close, minimize, add files, mini bat. |
+| Dracula | medallion: play/pause. Cape: visualizer. Blood line: seek, painted from the plate art with six animated drops. Painted speakers: volume. Crossed hands: previous/next. Hover tool row: close, minimize, add files, next skin, mini bat. |
 | Frankenstein | skull flat-top: visualizer. Eyes: play/pause. Neck bolts: previous/next. Chest scar: seek. Hand dial: volume. |
 | Skeleton | pendant: play/pause. Jaw: visualizer. Bone board: playlist. Blood line: seek. Left bone column: volume. Bone plaques: previous/next. |
 
-There is no in-app skin switcher. The first skin in `src/renderer/skins/index.ts` launches. [MAINTAINER: say which skins you show in the video.]
+The first skin in `src/renderer/skins/index.ts` (Dracula) launches. Dracula's "next skin" button cycles Skeleton, then Frankenstein, then back to Dracula. Skeleton and Frankenstein have no switch button, so you cannot return from them without restarting. [MAINTAINER: fix before recording, or avoid showing the switch.]
 
 ### Platform
 Built and tested on Windows. [MAINTAINER: Linux and macOS are untested; say so or leave them out.]

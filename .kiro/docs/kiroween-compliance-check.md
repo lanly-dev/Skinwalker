@@ -75,7 +75,7 @@ Must use **one or more** of: Vibe coding, Hooks, Steering, MCP, Specs
 **Our Implementation:**
 - ✅ Monster anatomy IS the interface (not decoration)
 - ✅ Polished character designs (Dracula, Skeleton)
-- ✅ Unforgettable: animated blood-drip curtain, window shaping
+- ✅ Unforgettable: animated blood drops, window shaping
 - ✅ Hauntingly beautiful: transparent window, visualizer
 
 ## Action Items Before Submission

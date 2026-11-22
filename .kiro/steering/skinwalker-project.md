@@ -75,7 +75,7 @@ This is the Skinwalker media player — a Kiroween 2026 **Costume Contest** entr
 - ✅ Local audio playback (file picker + bundled demo tracks)
 - ✅ Core controls: play/pause, seek, volume, next/prev, playlist
 - ✅ Real-time visualizer driven by audio signal
-- ✅ Dracula skin (flagship with a 21-drip blood curtain)
+- ✅ Dracula skin (flagship; painted blood line with six animated drops)
 - ✅ Frankenstein + Skeleton skins (simpler but fully functional)
 - ✅ Frameless transparent window shaped to character silhouette
 
@@ -83,7 +83,7 @@ This is the Skinwalker media player — a Kiroween 2026 **Costume Contest** entr
 - ❌ Spectrogram/analysis features (that's SpectreGram, the sibling entry)
 - ❌ Streaming services, accounts, backends, uploads
 - ❌ Auto-updater, in-app store, telemetry
-- ❌ Mid-playback skin switching (removed from scope)
+- ⚠️ Skin switching: `Player.nextSkin()` exists and Dracula's tool row calls it (commit `4598551`). The earlier "removed from scope" note is superseded; the required-controls steering file now lists a switch-skin button for every skin. [MAINTAINER: confirm this is in scope.]
 
 ## Skin Anatomy Pattern
 

@@ -46,7 +46,7 @@ npm run package
 - [ ] Drag seekbar → position updates continuously
 - [ ] Blood drips animate independently
 - [ ] Hover shows time tooltip (if implemented)
-- [ ] Dracula blood-drip curtain (21 drips) visible and animating
+- [ ] Dracula blood line shows the painted drops and they animate
 
 ### Playlist
 - [ ] Click track in playlist → switches to that track

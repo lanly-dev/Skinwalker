@@ -1,6 +1,6 @@
 # Submission Audit
 
-Audited 2026-11-20 at the repo root on branch `main`. Rules source:
+Audited 2026-11-20 at the repo root on branch `main`. Rows 18, 19 and 29 re-checked 2026-11-21 at `02da3de`; other rows were not re-run. Rules source:
 https://kiroween.devpost.com/rules (fetched 2026-11-20; checklist in `docs/AGENTS.md`).
 Submission closes Fri 2026-12-04 2:00 PM PT.
 
@@ -28,8 +28,8 @@ UNVERIFIED = could not be checked here.
 | 15 | Synthetic track artist label | UNVERIFIED (risk) | `src/renderer/main.ts` labels a track "Bathory • Eternal Night". Bathory is a real band. The tracks README says it is "fictional styling". Cheapest fix: rename the label. |
 | 16 | Art and image provenance | UNVERIFIED | No license or source for the five plate/layer images in `src/renderer/assets/`. [MAINTAINER: state source and tool.] |
 | 17 | Fonts | UNVERIFIED | `src/renderer/style.css` names `'Cinzel Decorative'` with no `@font-face` and no font file in the repo. It falls back to system fonts on machines without it. |
-| 18 | Typecheck passes | PASS | `npm run typecheck` exit 0. |
-| 19 | Build passes | PASS | `npm run build` exit 0. |
+| 18 | Typecheck passes | PASS | `npm run typecheck` exit 0 (re-run 2026-11-21 at `02da3de`). |
+| 19 | Build passes | PASS | `npm run build` exit 0 (re-run 2026-11-21 at `02da3de`). |
 | 20 | Tests pass | N/A | The repo has no test script and no tests. |
 | 21 | App runs | PASS (partial) | `dist/win-unpacked/skinwalker.exe` stayed running 8 s after launch on Windows 11. No UI was seen. Playback, controls and window shape were not exercised. |
 | 22 | Installer builds | PASS | `npm run package` exit 0 on current HEAD; produced `dist/skinwalker Setup 0.1.0.exe` (174.6 MB, NSIS, unsigned). An earlier run of the same command returned exit 1 with no error text in the last 25 lines; the retry succeeded. |
@@ -39,7 +39,10 @@ UNVERIFIED = could not be checked here.
 | 26 | Demo video under 3 min on public YouTube | UNVERIFIED | Not made by this audit. Needs [YOU]. |
 | 27 | Kiro usage write-up | PASS (draft) | `docs/submission/kiro-usage.md`. Needs maintainer facts. |
 | 28 | Linux and macOS | UNVERIFIED | Only Windows was used. `setShape` is skipped on macOS by code. |
-| 29 | Local repo in sync with remote | PASS | Was 5 commits behind `origin/main`; fast-forwarded with `git pull --ff-only` before editing. Nothing pushed. |
+| 29 | Local repo in sync with remote | PASS | 2026-11-21: `HEAD` equals `origin/main` (`02da3de`). |
+| 30 | `npm run dev` from a fresh install | FAIL then fixed locally | Failed with "Electron uninstall": `node_modules/electron/path.txt` was missing because Electron's download step had not run. Fixed by running `node node_modules/electron/install.js`. A judge following the README may hit the same. README does not mention this. |
+| 31 | Docs cite files outside the repo | FAIL | `docs/AGENTS.md` cites `reference/dracula-web/*` scripts. `reference/**` is gitignored. See the note at the end of `docs/AGENTS.md`. |
+| 32 | Return from Skeleton or Frankenstein | FAIL | Only Dracula has a "next skin" button. Once on another skin, the user cannot cycle back without restarting. |
 
 ## Open Risks (need the maintainer)
 
