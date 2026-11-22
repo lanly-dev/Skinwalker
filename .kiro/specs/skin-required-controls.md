@@ -1,6 +1,6 @@
 # Skin Required Controls Specification
 
-**Status:** Draft. Audit complete (2026-11-21). No implementation yet.
+**Status:** In progress. Audit complete (2026-11-21). Skeleton's five buttons and mini version landed 2026-11-22 (T4); Frankenstein (T3) and the shared helper decision remain.
 **Created:** 2026-11-21
 **Owner:** Maintainer
 **Implementation:** Kiro, after the open decisions below are answered
@@ -60,7 +60,7 @@ Dracula is the only skin that meets the rule.
 - [ ] T1: Resolve open decisions and update this spec's design section.
 - [ ] T2: Shared helper for the five window buttons (if decision 3 says so).
 - [ ] T3: Frankenstein: five buttons and mini version.
-- [ ] T4: Skeleton: five buttons and mini version.
+- [x] T4: Skeleton: five buttons and mini version.
 - [ ] T5: Hide the global bar and "+ Add files" for skins that provide their own.
 - [ ] T6: Update `docs/AGENTS.md` scope text and `README.md` skin table.
 
@@ -80,3 +80,5 @@ T0 follow-up (2026-11-21): a plain click on the skin still flashed the generic b
 T0 follow-up 2 (2026-11-21): the buttons still showed for a moment at the start of a real drag. Likely cause (not confirmed by a capture): `clearShapeForDrag()` set `visibility: hidden` and sent the shape-lift message in the same tick. The main process lifts the region at once, but the renderer paints the hidden state a frame later, so one frame shows the full rectangle with the buttons still painted. Plan: hide the buttons first, wait two animation frames so the hidden state is on screen, then lift the shape and start moving the window. Pointer movement during that wait is accumulated and applied afterwards. Implemented 2026-11-21: `clearShapeForDrag()` in `src/renderer/windowShape.ts` returns a promise that resolves after two frames; `src/renderer/skinDrag.ts` waits on it before moving the window and before restoring the shape. `npm run typecheck` and `npm run build` pass. Not checked visually. [MAINTAINER: drag each skin and confirm no corner buttons flash at the start, middle or end.]
 
 T0b decision (2026-11-21): the maintainer asked to remove the generic title bar instead of hiding it during drags. Consequence: Skeleton and Frankenstein have no on-skin close or minimize until T3 and T4 land. The taskbar and Alt+F4 remain [MAINTAINER: confirm they work on the frameless window]. The "+ Add files" pill stays, because it is the only open-folder control on those two skins; it is still hidden during drags. Implemented 2026-11-21: removed `#titlebar` from `src/renderer/index.html`, `renderWindowControls()` and `btn()` from `src/renderer/main.ts`, and the `#titlebar` CSS block from `src/renderer/style.css`. Left in place: the `window:maximize` IPC and the `--titlebar-h` CSS variable (still used by `#app` padding and the pill). `npm run typecheck` and `npm run build` pass. Not checked visually.
+
+T4 (2026-11-22): used the Boba web build the skin came from as the design reference. The five window tools sit on the four painted rings in the skeleton's right bone column (minus → minimize, mask → change skin, list → add files, outward box → mini) and close is a neon X on the wrist knob below them. The mini version follows the web build's mini player: the window shrinks to 380×220, the shape is lifted, and the card shows a skull crop, title, play/pause, seek and restore/close. The generic "+ Add files" pill is now hidden on Skeleton as well (R5). `npm run typecheck` and `npm run build` pass; not checked visually in the running app. [MAINTAINER: exercise all five tools, the mini card and its restore/seek, and the shape after entering and leaving mini.]

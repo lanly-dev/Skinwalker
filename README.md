@@ -18,7 +18,7 @@ Skinwalker is an Electron desktop media player where **the skin is a living Hall
 
 ## Features
 
-- **3 Monster Skins:** Dracula (flagship), Skeleton, Frankenstein. Only Dracula has a "next skin" button (hover tool row). Skeleton and Frankenstein have none, so there is no way back from them in the running app yet; see `.kiro/specs/skin-required-controls.md`.
+- **3 Monster Skins:** Dracula (flagship), Skeleton, Frankenstein. Dracula and Skeleton each carry a "next skin" control (Dracula's hover tool row, Skeleton's right bone rings). Frankenstein has none, so there is no way back from it in the running app yet; see `.kiro/specs/skin-required-controls.md`.
 - **Audio:** local MP3/WAV playback through the Web Audio API. The three bundled WAV demo tracks were synthesized offline by `npm run generate-tracks`; the app itself does not synthesize audio at runtime.
 - **Real-Time Visualizer:** Driven by Web Audio API AnalyserNode
 - **Animated blood drops:** Dracula's blood line has six painted drops that stretch, snap and fall (CSS animation).

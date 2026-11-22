@@ -43,6 +43,6 @@ part or painted element, never a generic widget stuck on top.
 - [ ] `npm run typecheck` and `npm run build` pass
 
 ## Current state (2026-11-21)
-Audit and gap list: `.kiro/specs/skin-required-controls.md`. Dracula has all ten controls. Frankenstein and Skeleton have the playback, volume, seek and track board controls, but only generic global buttons for the window functions, and no switch-skin or mini version.
+Audit and gap list: `.kiro/specs/skin-required-controls.md`. Dracula and Skeleton have all ten controls (Skeleton's landed 2026-11-22). Frankenstein has the playback, volume, seek and track board controls, but only the generic global add-files button for the window functions, and no switch-skin or mini version.
 
 `docs/AGENTS.md` and `.kiro/steering/skinwalker-project.md` still say skin switching is out of scope. Switching exists in code (`Player.nextSkin()`), so those two files are stale.

@@ -76,7 +76,8 @@ html, body {
 #open-files:hover { border-color: rgba(180,20,20,0.5); color: #e05050; }
 /* Dracula carries the picker in its own tool row, so the floating pill would
    only duplicate it over the plate. */
-body:has(.dracula-skin) #open-files { display: none; }
+body:has(.dracula-skin) #open-files,
+body:has(.skeleton-skin) #open-files { display: none; }
 
 /* ── Shared range inputs ─────────────────────────────────────────────────── */
 input[type="range"] {
@@ -1258,3 +1259,166 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-next:hover { background: rgba(22, 207, 250, 0.14); }
 .skeleton-skin .sk-prev:active,
 .skeleton-skin .sk-next:active { transform: scale(0.97); }
+
+/* Right bone column = window tools. The four rings are painted on the plate,
+   so the hotspots are invisible and the art stays the control. The wrist knob
+   below the column carries close as a neon X etched on the bone. */
+.skeleton-skin .sk-tool {
+  position: absolute;
+  left: 78.9%;
+  width: 6%;
+  height: 9%;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  z-index: 5;
+}
+.skeleton-skin .sk-tool:hover,
+.skeleton-skin .sk-tool:focus-visible {
+  background: rgba(32, 220, 255, 0.14);
+  box-shadow: inset 0 0 1.2cqw rgba(0, 200, 255, 0.35);
+}
+.skeleton-skin .sk-tool:active { transform: scale(0.94); }
+.skeleton-skin .sk-tool-minimize { top: 40%; }
+.skeleton-skin .sk-tool-skin { top: 47.8%; }
+.skeleton-skin .sk-tool-folder { top: 55.6%; }
+.skeleton-skin .sk-tool-mini { top: 63.6%; }
+.skeleton-skin .sk-tool-close { top: 73.1%; }
+.skeleton-skin .sk-tool-close::before {
+  content: '✕';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #7df2ff;
+  font: clamp(14px, 2.5cqw, 26px) Georgia, serif;
+  text-shadow: 0 0 0.5cqw #00d7ff, 0 0 1.4cqw #008cff;
+  opacity: 0.85;
+  pointer-events: none;
+}
+.skeleton-skin .sk-tip {
+  position: absolute;
+  right: 112%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  padding: 0.7cqw 0.9cqw;
+  border: 1px solid #43dfff;
+  border-radius: 0.5cqw;
+  background: #03151f;
+  color: #bdf6ff;
+  font: clamp(9px, 1.15cqw, 13px) Georgia, serif;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.skeleton-skin .sk-tool:hover .sk-tip,
+.skeleton-skin .sk-tool:focus-visible .sk-tip { display: block; }
+
+/* Mini version = compact card around the skull, like the web build's mini
+   player. The window shape is lifted while it is up, so the card is a plain
+   rectangle with transparent rounded corners. */
+.skeleton-skin .sk-mini { display: none; }
+.skeleton-skin.mini-mode .sk-body { background: none; }
+.skeleton-skin.mini-mode .sk-body > :not(.sk-mini) { display: none; }
+.skeleton-skin.mini-mode .sk-mini {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 27cqw 1fr;
+  align-items: center;
+  gap: 3.2cqw;
+  padding: 4cqw;
+  background: linear-gradient(160deg, #061923, #01070c 72%);
+  border: 1px solid #36dcff;
+  border-radius: 2.4cqw;
+  box-shadow: 0 0 2.4cqw rgba(0, 184, 226, 0.35), inset 0 0 2.6cqw rgba(0, 52, 68, 0.9);
+  cursor: grab;
+}
+.skeleton-skin .sk-mini-crop {
+  width: 27cqw;
+  height: 31cqw;
+  border-radius: 1.6cqw;
+  background-image: var(--sk-frame-url);
+  background-size: 510% auto;
+  background-position: 50.3% 34%;
+  border: 1px solid #1a6274;
+  box-shadow: inset 0 0 2.4cqw #000a, 0 0 1cqw rgba(0, 207, 255, 0.25);
+}
+.skeleton-skin .sk-mini-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2cqw;
+  min-width: 0;
+}
+.skeleton-skin .sk-mini-track {
+  color: #f2dfaf;
+  font: 4.4cqw Georgia, "Times New Roman", serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 0.4cqw rgba(242, 223, 175, 0.35);
+}
+.skeleton-skin .sk-mini-artist {
+  color: #c9c6ad;
+  font: bold 2.4cqw Georgia, serif;
+  letter-spacing: 0.08cqw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.skeleton-skin .sk-mini-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.8cqw;
+  margin-top: 0.4cqw;
+}
+.skeleton-skin .sk-mini-actions button {
+  display: grid;
+  place-items: center;
+  width: 9cqw;
+  height: 9cqw;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 1px solid #2a7f95;
+  border-radius: 50%;
+  background: #031620;
+  color: #8ff6ff;
+  font: 3.6cqw Georgia, serif;
+  text-shadow: 0 0 0.5cqw #00cfff;
+  cursor: pointer;
+}
+.skeleton-skin .sk-mini-actions button:hover,
+.skeleton-skin .sk-mini-actions button:focus-visible {
+  border-color: #7df2ff;
+  background: #052a3a;
+  box-shadow: 0 0 1cqw rgba(0, 207, 255, 0.45);
+}
+.skeleton-skin .sk-mini-seek {
+  width: 100%;
+  height: 1.2cqw;
+  min-height: 4px;
+  margin: 0.4cqw 0 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  border: 1px solid #1f7f95;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2fe3ff var(--progress, 0%), #062632 var(--progress, 0%));
+  box-shadow: 0 0 0.5cqw rgba(0, 210, 255, 0.45);
+}
+.skeleton-skin .sk-mini-seek::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 3.4cqw;
+  height: 3.4cqw;
+  min-width: 12px;
+  min-height: 12px;
+  border: 1px solid #b3f7ff;
+  border-radius: 50%;
+  background: #22c9ff;
+  box-shadow: 0 0 0.7cqw #21caff;
+}

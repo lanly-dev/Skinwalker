@@ -17,14 +17,25 @@
  *   Left bone column ────────── volume (vertical)
  *   Bone plaques ────────────── prev / next
  *   Title block ─────────────── live title + artist over the painted one
+ *   Right bone column ───────── window tools, on the four painted rings:
+ *                               minus → minimize, mask → change skin,
+ *                               list → open folder, outward box → mini
+ *   Wrist knob below column ─── close, etched as a neon X on the bone
+ *   Mini card ───────────────── skull crop + title + play + seek + restore
  *
- * The four painted icons on the right bone column are artwork from the web
- * build (three of them were dead "coming soon" stubs there), so they get no
- * hotspots here — a painted detail, not a control.
+ * The mini card follows the web build's mini player: the window shrinks to a
+ * compact card around the skull, and the shape is lifted so the card is a
+ * plain rectangle while it is up.
  */
 import framePlate from '../assets/skeleton-frame.webp'
+import { applySkinShape } from '../windowShape'
+import { openLocalFiles } from '../openFiles'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
+
+/** Full 3:2 stage and the compact card the window shrinks to. */
+const STAGE_SIZE = { width: 960, height: 640, minWidth: 560, minHeight: 380 }
+const MINI_SIZE = { width: 380, height: 220, minWidth: 300, minHeight: 180 }
 
 /** Mirrored spectrum resolution — the web build draws 20 bars */
 const BAR_COUNT = 20
@@ -45,6 +56,10 @@ interface SkeletonEls {
   pendant: HTMLButtonElement
   volume: HTMLInputElement
   playlist: HTMLOListElement
+  miniPlay: HTMLButtonElement
+  miniSeek: HTMLInputElement
+  miniTrack: HTMLElement
+  miniArtist: HTMLElement
 }
 
 export class SkeletonSkin implements Skin {
@@ -65,6 +80,7 @@ export class SkeletonSkin implements Skin {
 
   private seeking = false
   private activeIndex = -1
+  private mini = false
 
   private durations = new Map<string, number>()
   private probed = new Set<string>()
@@ -109,7 +125,7 @@ export class SkeletonSkin implements Skin {
 
   private template(): string {
     return /* html */ `
-      <div class="sk-body" role="img" aria-label="Skeleton media player" style="--eye: 0.16">
+      <div class="sk-body" aria-label="Skeleton media player" style="--eye: 0.16">
 
         <!-- Raised arms hold the bone board = playlist -->
         <div class="sk-board" role="group" aria-label="Playlist">
@@ -147,6 +163,39 @@ export class SkeletonSkin implements Skin {
         <!-- Bone plaques = prev / next -->
         <button class="sk-prev" aria-label="Previous track" title="Previous track"></button>
         <button class="sk-next" aria-label="Next track" title="Next track"></button>
+
+        <!-- Right bone column = window tools, one per painted ring -->
+        <button class="sk-tool sk-tool-minimize" aria-label="Minimize" title="Minimize">
+          <span class="sk-tip" aria-hidden="true">Minimize</span>
+        </button>
+        <button class="sk-tool sk-tool-skin" aria-label="Change skin" title="Change skin">
+          <span class="sk-tip" aria-hidden="true">Change skin</span>
+        </button>
+        <button class="sk-tool sk-tool-folder" aria-label="Open audio folder" title="Open audio folder">
+          <span class="sk-tip" aria-hidden="true">Open audio folder</span>
+        </button>
+        <button class="sk-tool sk-tool-mini" aria-label="Mini version" title="Mini version">
+          <span class="sk-tip" aria-hidden="true">Mini version</span>
+        </button>
+        <button class="sk-tool sk-tool-close" aria-label="Close player" title="Close player">
+          <span class="sk-tip" aria-hidden="true">Close player</span>
+        </button>
+
+        <!-- Mini version = compact card around the skull -->
+        <div class="sk-mini">
+          <span class="sk-mini-crop" aria-hidden="true"></span>
+          <div class="sk-mini-info">
+            <span class="sk-mini-track">—</span>
+            <span class="sk-mini-artist">—</span>
+            <div class="sk-mini-actions">
+              <button class="sk-mini-play" aria-label="Play" aria-pressed="false" title="Play / Pause">▶</button>
+              <button class="sk-mini-restore" aria-label="Back to the full player" title="Back to the full player">⤢</button>
+              <button class="sk-mini-close" aria-label="Close player" title="Close player">✕</button>
+            </div>
+            <input class="sk-mini-seek" type="range" min="0" max="1000" value="0" step="1"
+                   aria-label="Seek through track" />
+          </div>
+        </div>
       </div>
     `
   }
@@ -169,6 +218,10 @@ export class SkeletonSkin implements Skin {
       pendant: c.querySelector('.sk-pendant')!,
       volume: c.querySelector('.sk-volume')!,
       playlist: c.querySelector('.sk-list')!,
+      miniPlay: c.querySelector('.sk-mini-play')!,
+      miniSeek: c.querySelector('.sk-mini-seek')!,
+      miniTrack: c.querySelector('.sk-mini-track')!,
+      miniArtist: c.querySelector('.sk-mini-artist')!,
     }
     this.els = els
 
@@ -184,9 +237,7 @@ export class SkeletonSkin implements Skin {
       this.seeking = true
       const dur = p.audio.duration
       const cur = dur * (Number(els.seek.value) / 1000)
-      els.seek.style.setProperty('--progress', `${Number(els.seek.value) / 10}%`)
-      els.elapsed.textContent = fmt(cur)
-      els.remaining.textContent = `-${fmt(Math.max(0, dur - cur))}`
+      this.paintSeekUi(els.seek.value, cur, dur)
     })
     els.seek.addEventListener('change', () => {
       p.seek(Number(els.seek.value) / 1000)
@@ -209,16 +260,66 @@ export class SkeletonSkin implements Skin {
     c.querySelector('.sk-prev')!.addEventListener('click', () => p.prev())
     c.querySelector('.sk-next')!.addEventListener('click', () => p.next())
 
+    // Window tools → the four painted rings and the wrist knob below them.
+    // The rings are the web build's dead stubs; here each one does its job.
+    c.querySelector('.sk-tool-minimize')!.addEventListener('click', () => window.skinwalker?.minimize?.())
+    c.querySelector('.sk-tool-skin')!.addEventListener('click', () => p.nextSkin())
+    c.querySelector('.sk-tool-folder')!.addEventListener('click', () => void openLocalFiles(p))
+    c.querySelector('.sk-tool-mini')!.addEventListener('click', () => this.enterMini())
+    c.querySelector('.sk-tool-close')!.addEventListener('click', () => window.skinwalker?.close?.())
+
+    // Mini card → play, restore, close, seek
+    els.miniPlay.addEventListener('click', () => {
+      p.togglePlayPause()
+      this.updatePlayState()
+    })
+    c.querySelector('.sk-mini-restore')!.addEventListener('click', () => this.exitMini())
+    c.querySelector('.sk-mini-close')!.addEventListener('click', () => window.skinwalker?.close?.())
+    els.miniSeek.addEventListener('input', () => {
+      this.seeking = true
+      const dur = p.audio.duration
+      const cur = dur * (Number(els.miniSeek.value) / 1000)
+      this.paintSeekUi(els.miniSeek.value, cur, dur)
+    })
+    els.miniSeek.addEventListener('change', () => {
+      p.seek(Number(els.miniSeek.value) / 1000)
+      this.seeking = false
+    })
+
     // Track change
     p.onTrackChange = (track, idx) => {
       els.track.textContent = track.title
       els.track.title = track.title
       this.setArtist(track.artist)
+      els.miniTrack.textContent = track.title
+      els.miniTrack.title = track.title
+      els.miniArtist.textContent = track.artist
+      els.miniArtist.title = track.artist
       this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }
 
     this.buildPlaylist()
+  }
+
+  // ── Mini version ─────────────────────────────────────────────────────────────
+
+  private enterMini(): void {
+    if (!this.container || this.mini) return
+    this.mini = true
+    this.container.classList.add('mini-mode')
+    window.skinwalker?.setWindowSize?.(MINI_SIZE)
+    // The card is a rectangle, not the skeleton silhouette. Reshape after the
+    // OS resize lands, as Dracula's bat does.
+    window.setTimeout(() => void applySkinShape(undefined), 60)
+  }
+
+  private exitMini(): void {
+    if (!this.container || !this.mini) return
+    this.mini = false
+    this.container.classList.remove('mini-mode')
+    window.skinwalker?.setWindowSize?.(STAGE_SIZE)
+    window.setTimeout(() => void applySkinShape(framePlate), 60)
   }
 
   /** Artist line with the web build's cyan bullet */
@@ -337,6 +438,12 @@ export class SkeletonSkin implements Skin {
     body.classList.toggle('playing', playing)
     pendant.setAttribute('aria-pressed', String(playing))
     pendant.setAttribute('aria-label', playing ? 'Pause' : 'Play')
+    const miniPlay = this.els?.miniPlay
+    if (miniPlay) {
+      miniPlay.textContent = playing ? 'Ⅱ' : '▶'
+      miniPlay.setAttribute('aria-pressed', String(playing))
+      miniPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play')
+    }
   }
 
   /**
@@ -396,13 +503,30 @@ export class SkeletonSkin implements Skin {
     if (!this.seeking && dur > 0) {
       const value = String(Math.round((cur / dur) * 1000))
       if (els.seek.value !== value) els.seek.value = value
+      if (els.miniSeek.value !== value) els.miniSeek.value = value
     }
-    els.seek.style.setProperty('--progress', `${Number(els.seek.value) / 10}%`)
+    this.paintSeekUi(els.seek.value, cur, dur)
 
     const elapsedText = fmt(cur)
     if (els.elapsed.textContent !== elapsedText) els.elapsed.textContent = elapsedText
     const remainingText = `-${fmt(Math.max(0, dur - cur))}`
     if (els.remaining.textContent !== remainingText) els.remaining.textContent = remainingText
+  }
+
+  /** Paint both seek bars from one value, so the full player and the mini
+   *  card never disagree while either is dragged. */
+  private paintSeekUi(value: string, cur: number, dur: number): void {
+    const els = this.els
+    if (!els) return
+    els.seek.value = value
+    els.miniSeek.value = value
+    const progress = `${Number(value) / 10}%`
+    els.seek.style.setProperty('--progress', progress)
+    els.miniSeek.style.setProperty('--progress', progress)
+    if (this.seeking) {
+      els.elapsed.textContent = fmt(cur)
+      els.remaining.textContent = `-${fmt(Math.max(0, dur - cur))}`
+    }
   }
 }
 
