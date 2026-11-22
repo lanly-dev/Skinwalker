@@ -21,8 +21,8 @@ Checked by reading `src/renderer/skins/*.ts` and `src/renderer/main.ts`. Not run
 | Seek bar | yes | yes | yes |
 | Volume | yes (speaker buttons, wheel, keys) | yes (dial: drag, wheel, keys) | yes (vertical slider) |
 | Track board | yes (`dr-playlist`) | yes (`fr-playlist`) | yes (`sk-board`) |
-| Close | yes (tool row) | global bar only | global bar only |
-| Minimize | yes (tool row) | global bar only | global bar only |
+| Close | yes (tool row) | none (global bar removed 2026-11-21) | none (global bar removed 2026-11-21) |
+| Minimize | yes (tool row) | none (global bar removed 2026-11-21) | none (global bar removed 2026-11-21) |
 | Switch skin | yes (`Player.nextSkin()`, commit `4598551`) | no | no |
 | Mini version | yes (bat, 380x380) | no | no |
 | Open folder | yes (tool row) | global "+ Add files" button | global "+ Add files" button |
@@ -56,7 +56,7 @@ Dracula is the only skin that meets the rule.
 
 ## Tasks (do not start until open decisions 1 to 3 are answered)
 - [x] T0: Hide the global bar and "+ Add files" pill during a drag (R6). Small fix, does not depend on the open decisions.
-- [ ] T0b: Remove the generic title bar (minimize, maximize, close) entirely: `#titlebar` in `src/renderer/index.html`, `renderWindowControls()` in `src/renderer/main.ts`, its CSS in `src/renderer/style.css`. Maintainer decision 2026-11-21. Answers open decision 4 (maximize is dropped).
+- [x] T0b: Remove the generic title bar (minimize, maximize, close) entirely: `#titlebar` in `src/renderer/index.html`, `renderWindowControls()` in `src/renderer/main.ts`, its CSS in `src/renderer/style.css`. Maintainer decision 2026-11-21. Answers open decision 4 (maximize is dropped).
 - [ ] T1: Resolve open decisions and update this spec's design section.
 - [ ] T2: Shared helper for the five window buttons (if decision 3 says so).
 - [ ] T3: Frankenstein: five buttons and mini version.
@@ -79,4 +79,4 @@ T0 follow-up (2026-11-21): a plain click on the skin still flashed the generic b
 
 T0 follow-up 2 (2026-11-21): the buttons still showed for a moment at the start of a real drag. Likely cause (not confirmed by a capture): `clearShapeForDrag()` set `visibility: hidden` and sent the shape-lift message in the same tick. The main process lifts the region at once, but the renderer paints the hidden state a frame later, so one frame shows the full rectangle with the buttons still painted. Plan: hide the buttons first, wait two animation frames so the hidden state is on screen, then lift the shape and start moving the window. Pointer movement during that wait is accumulated and applied afterwards. Implemented 2026-11-21: `clearShapeForDrag()` in `src/renderer/windowShape.ts` returns a promise that resolves after two frames; `src/renderer/skinDrag.ts` waits on it before moving the window and before restoring the shape. `npm run typecheck` and `npm run build` pass. Not checked visually. [MAINTAINER: drag each skin and confirm no corner buttons flash at the start, middle or end.]
 
-T0b decision (2026-11-21): the maintainer asked to remove the generic title bar instead of hiding it during drags. Consequence: Skeleton and Frankenstein have no on-skin close or minimize until T3 and T4 land. The taskbar and Alt+F4 remain [MAINTAINER: confirm they work on the frameless window]. The "+ Add files" pill stays, because it is the only open-folder control on those two skins; it is still hidden during drags. Status is updated in the commit that implements it.
+T0b decision (2026-11-21): the maintainer asked to remove the generic title bar instead of hiding it during drags. Consequence: Skeleton and Frankenstein have no on-skin close or minimize until T3 and T4 land. The taskbar and Alt+F4 remain [MAINTAINER: confirm they work on the frameless window]. The "+ Add files" pill stays, because it is the only open-folder control on those two skins; it is still hidden during drags. Implemented 2026-11-21: removed `#titlebar` from `src/renderer/index.html`, `renderWindowControls()` and `btn()` from `src/renderer/main.ts`, and the `#titlebar` CSS block from `src/renderer/style.css`. Left in place: the `window:maximize` IPC and the `--titlebar-h` CSS variable (still used by `#app` padding and the pill). `npm run typecheck` and `npm run build` pass. Not checked visually.

@@ -1,7 +1,7 @@
 import { clearShapeForDrag, isOnSkin, restoreShape } from './windowShape'
 
 /**
- * The monster's body is the titlebar.
+ * The monster's body is the window's drag handle.
  *
  * The OS shape keeps clicks outside the painted body from reaching the window,
  * but it is lifted while a drag moves it: a shaped window repaints its region

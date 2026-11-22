@@ -31,45 +31,6 @@ player.mountSkin(SKINS[0])
 installSkinDrag()
 installShapeResize()
 
-// ── Window controls (frameless) ───────────────────────────────────────────────
-function renderWindowControls(): void {
-  const bar = document.getElementById('titlebar')!
-  bar.innerHTML = ''
-
-  // Drag region — lets users move the frameless window
-  bar.addEventListener('mousedown', (e) => {
-    if ((e.target as HTMLElement).closest('button')) return
-    let lastX = e.screenX
-    let lastY = e.screenY
-    const onMove = (ev: MouseEvent) => {
-      window.skinwalker.dragWindow({ mouseX: ev.screenX - lastX, mouseY: ev.screenY - lastY })
-      lastX = ev.screenX
-      lastY = ev.screenY
-    }
-    const onUp = () => {
-      window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mouseup', onUp)
-    }
-    window.addEventListener('mousemove', onMove)
-    window.addEventListener('mouseup', onUp)
-  })
-
-  const btnMin  = btn('─', 'Minimize', () => window.skinwalker.minimize())
-  const btnMax  = btn('□', 'Maximize', () => window.skinwalker.maximize())
-  const btnClose = btn('✕', 'Close',   () => window.skinwalker.close())
-  btnClose.classList.add('close')
-  bar.append(btnMin, btnMax, btnClose)
-}
-
-function btn(label: string, ariaLabel: string, onClick: () => void): HTMLButtonElement {
-  const b = document.createElement('button')
-  b.textContent = label
-  b.setAttribute('aria-label', ariaLabel)
-  b.addEventListener('click', onClick)
-  return b
-}
-
-renderWindowControls()
 
 // ── Native file open ──────────────────────────────────────────────────────────
 function renderOpenButton(): void {

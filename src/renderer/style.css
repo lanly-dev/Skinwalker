@@ -50,42 +50,11 @@ html, body {
   outline-offset: 2px;
 }
 
-/* ── Titlebar ────────────────────────────────────────────────────────────── */
-#titlebar {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--titlebar-h);
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 4px;
-  padding: 0 8px;
-  -webkit-app-region: drag;
-  z-index: 200;
-}
-
-#titlebar button {
-  -webkit-app-region: no-drag;
-  background: none;
-  border: none;
-  color: var(--color-dim);
-  width: 28px;
-  height: 24px;
-  border-radius: 7px;
-  font-size: 11px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s, color 0.15s;
-}
-#titlebar button:hover      { background: rgba(255,255,255,0.09); color: var(--color-text); }
-#titlebar button.close:hover { background: #b3231b; color: #fff; }
 
 /* ── Skin as window chrome ────────────────────────────────────────────────────
    The skin's drag is pointer-driven (src/renderer/skinDrag.ts) so it starts
    only on painted pixels — native drag regions are rectangles and would let
-   the empty plate margins move the window. The titlebar keeps its own. */
+   the empty plate margins move the window. */
 
 /* ── Open files button ───────────────────────────────────────────────────── */
 #open-files {

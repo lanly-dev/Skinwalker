@@ -39,10 +39,10 @@ function send(rects: Rect[], from = lastFrom ?? { width: window.innerWidth, heig
   window.skinwalker?.setWindowShape?.(rects, from)
 }
 
-/** The generic window bar and the add-files pill sit outside the silhouette, so the shape
+/** The generic add-files pill can sit outside the silhouette, so the shape
  *  clips them. While the shape is lifted for a drag the whole rectangle shows, so hide them. */
 function setGenericChromeHidden(hidden: boolean): void {
-  for (const id of ['titlebar', 'open-files']) {
+  for (const id of ['open-files']) {
     const el = document.getElementById(id)
     if (el) el.style.visibility = hidden ? 'hidden' : ''
   }
