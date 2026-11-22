@@ -39,17 +39,28 @@ function send(rects: Rect[], from = lastFrom ?? { width: window.innerWidth, heig
   window.skinwalker?.setWindowShape?.(rects, from)
 }
 
+/** The generic window bar and the add-files pill sit outside the silhouette, so the shape
+ *  clips them. While the shape is lifted for a drag the whole rectangle shows, so hide them. */
+function setGenericChromeHidden(hidden: boolean): void {
+  for (const id of ['titlebar', 'open-files']) {
+    const el = document.getElementById(id)
+    if (el) el.style.visibility = hidden ? 'hidden' : ''
+  }
+}
+
 /**
  * Drop the OS region while the window moves. A shaped window can repaint its
  * region a frame behind a programmatic move, which makes the plate slide
  * against its own outline; a plain rectangle moves as one piece.
  */
 export function clearShapeForDrag(): void {
+  setGenericChromeHidden(true)
   if (lastRects.length) window.skinwalker?.setWindowShape?.([], lastFrom ?? undefined)
 }
 
 /** Put the silhouette back once the drag ends. */
 export function restoreShape(): void {
+  setGenericChromeHidden(false)
   if (lastRects.length) window.skinwalker?.setWindowShape?.(lastRects, lastFrom ?? undefined)
 }
 
