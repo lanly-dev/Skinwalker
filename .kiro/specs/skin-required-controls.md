@@ -40,6 +40,7 @@ Dracula is the only skin that meets the rule.
 - [ ] R3: Each button is keyboard-reachable, has an accessible label, and does not start a window drag.
 - [ ] R4: Each skin has a mini version that the user can leave again.
 - [ ] R5: The generic global title bar and "+ Add files" button do not show on a skin that provides its own.
+- [ ] R6 (bug, 2026-11-21): while the user drags a skin, the generic title bar (minimize, maximize, close) and the "+ Add files" pill must not appear. Cause: `clearShapeForDrag()` in `src/renderer/windowShape.ts` makes the window a full rectangle for the drag, which exposes elements that the silhouette normally clips.
 
 ### Technical
 - [ ] Shapes: the window shape is re-applied after a skin swap and after entering or leaving mini (see lesson on shape timing in `docs/AGENTS.md` and commit `da004d3`).
@@ -54,6 +55,7 @@ Dracula is the only skin that meets the rule.
 5. **Scope.** `docs/AGENTS.md` and `.kiro/steering/skinwalker-project.md` still say mid-playback skin switching is out of scope. Switching already exists in code. Update those files to match.
 
 ## Tasks (do not start until open decisions 1 to 3 are answered)
+- [ ] T0: Hide the global bar and "+ Add files" pill during a drag (R6). Small fix, does not depend on the open decisions.
 - [ ] T1: Resolve open decisions and update this spec's design section.
 - [ ] T2: Shared helper for the five window buttons (if decision 3 says so).
 - [ ] T3: Frankenstein: five buttons and mini version.
@@ -69,3 +71,5 @@ Dracula is the only skin that meets the rule.
 
 ## Implementation Notes
 2026-11-21: audit only. The steering file first said Dracula lacked a switch-skin button. That was wrong: `nextSkin()` landed in commit `4598551` before the steering file was written. The steering file is corrected in the same commit as this spec.
+
+T0 (2026-11-21, planned): `clearShapeForDrag()` will hide `#titlebar` and `#open-files`, and `restoreShape()` will show them again. Status is updated in the commit that implements it.
