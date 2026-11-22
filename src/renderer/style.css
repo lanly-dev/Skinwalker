@@ -699,20 +699,22 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-prev:focus-visible::after,
 .dracula-skin .dr-next:focus-visible::after { opacity: 1; }
 
-/* Tracklist = playlist, covering the baked rows */
+/* Tracklist = playlist, laid directly on the cape. The plate's baked three-row
+   tracklist is cleaned out of the artwork (reference/dracula-web/clean-tracklist.py),
+   so the list can be fully transparent. Five rows are visible; the scrollbar is
+   hidden, and the wheel / arrow keys still reach the rest. */
 .dracula-skin .dr-playlist {
-  left: 36%; top: 88%;
-  width: 28%; height: 5.7%;
+  left: 36%; top: 86.2%;
+  width: 28%; height: 8%;
   margin: 0;
-  padding: 0.1cqw 0.3cqw;
+  padding: 0.14cqw 0.5cqw;
   list-style: none;
   overflow-y: auto;
   text-align: left;
-  background: #0b080d;
-  scrollbar-width: thin;
-  scrollbar-color: #b28448 transparent;
+  scrollbar-width: none;
   z-index: 2;
 }
+.dracula-skin .dr-playlist::-webkit-scrollbar { display: none; }
 .dracula-skin .dr-track {
   display: flex;
   align-items: center;
@@ -726,21 +728,21 @@ input[type="range"]::-moz-range-thumb {
   line-height: 1.45;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 0.12s;
+  transition: color 0.12s, text-shadow 0.12s;
 }
-.dracula-skin .dr-track:hover,
+.dracula-skin .dr-track:hover {
+  color: #fff2bd;
+  text-shadow: 0 0 0.6cqw rgba(255, 225, 160, 0.55);
+}
 .dracula-skin .dr-track:focus-visible {
   color: #fff2bd;
   outline: 1px solid #dbba78;
+  outline-offset: -1px;
 }
-.dracula-skin .dr-track:focus-visible { outline-offset: -1px; }
 .dracula-skin .dr-track.active {
   color: #f9d98c;
   text-shadow: 0 0 0.7cqw rgba(195, 131, 35, 0.9);
 }
-.dracula-skin .dr-playlist::-webkit-scrollbar { width: 3px; }
-.dracula-skin .dr-playlist::-webkit-scrollbar-thumb { background: #b28448; border-radius: 2px; }
-.dracula-skin .dr-playlist::-webkit-scrollbar-track { background: transparent; }
 .dracula-skin .dr-track-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
 .dracula-skin .dr-track-time { white-space: nowrap; opacity: 0.9; font-variant-numeric: tabular-nums; }
 
