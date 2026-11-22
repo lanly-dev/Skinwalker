@@ -60,8 +60,10 @@ export function clearShapeForDrag(): void {
 
 /** Put the silhouette back once the drag ends. */
 export function restoreShape(): void {
-  setGenericChromeHidden(false)
   if (lastRects.length) window.skinwalker?.setWindowShape?.(lastRects, lastFrom ?? undefined)
+  // The OS applies the region a moment after the message; show the generic
+  // chrome only once the silhouette is back, or it flashes in the rectangle.
+  window.setTimeout(() => setGenericChromeHidden(false), 150)
 }
 
 /** True when the point sits on the painted body of the active skin. */
