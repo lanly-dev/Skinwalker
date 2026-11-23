@@ -774,10 +774,38 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   transition: box-shadow 0.2s;
 }
-.dracula-skin .dr-mini button:hover,
-.dracula-skin .dr-mini button:focus-visible {
-  outline: 2px solid rgba(237, 206, 122, 0.85);
-  box-shadow: 0 0 12px rgba(229, 181, 84, 0.6);
+/* No hover ring: the option lights up under the pointer instead. The glow is
+   additive, so the painted glyph stays readable while the whole hotspot
+   warms — and it doubles as the keyboard focus indicator. */
+.dracula-skin .dr-mini button::after {
+  content: '';
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(255, 233, 181, 0.62) 0%,
+    rgba(255, 178, 82, 0.4) 46%,
+    rgba(255, 120, 46, 0.18) 70%,
+    rgba(255, 120, 46, 0) 100%);
+  mix-blend-mode: plus-lighter;
+  opacity: 0;
+  transition: opacity 0.16s;
+  pointer-events: none;
+}
+.dracula-skin .dr-mini button:hover::after,
+.dracula-skin .dr-mini button:focus-visible::after { opacity: 1; }
+/* The restore hotspot sits on a painted crest, not a disc: narrow the light to
+   the crest and give it the same shield silhouette (round shoulders, tapered
+   point) so the glow reads as the button lit, not a blob behind it. */
+.dracula-skin .dr-mini button.dr-mini-restore::after {
+  inset: 2% 17% 3%;
+  border-radius: 46% 46% 50% 50% / 32% 32% 64% 64%;
+}
+/* The close hotspot sits on a pointed arch: keep the light under the arch's
+   shoulders instead of blooming over the wings below it. */
+.dracula-skin .dr-mini button.dr-mini-close::after {
+  inset: 6% 10% 16%;
+  border-radius: 48% 48% 26% 26% / 42% 42% 16% 16%;
 }
 .dracula-skin .dr-mini-close   { left: 44%; top: 17%;   width: 12%; height: 12%; }
 .dracula-skin .dr-mini-play    { left: 44%; top: 48.5%; width: 12%; height: 12%; }
