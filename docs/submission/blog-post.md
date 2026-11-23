@@ -18,7 +18,7 @@ Skinwalker is a Windows media player where the skin is a monster and each body p
 [YOU: the problems that cost you time. `docs/AGENTS.md` records a few: a filtered wrapper collapsing child plates to zero height, and the window growing on a 150% display during drags.]
 
 ## Using Kiro
-[YOU: your real experience with Kiro. Cover only what you did. Facts you can use from the repo: three hooks, eight steering files, four specs; the specs for the first two features were written after the code; no MCP, powers or tests.]
+[YOU: your real experience with Kiro. Cover only what you did. Facts you can use from the repo: three hooks, eight steering files, five specs; the specs for the first two features were written after the code; no MCP, powers or tests.]
 
 ## What I would do differently
 [YOU]

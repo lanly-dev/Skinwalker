@@ -11,7 +11,8 @@ Timestamps come from `git log` (commit time, Pacific). Re-check with
 | `dracula-blood-effects.md` | `ba0284e`, 2026-11-11 01:16 | Partially implemented | Committed after the drip code (`662ba10`, 2026-11-10 11:31). Describes splatter and trails that were never committed. Retrospective. |
 | `code-optimization.md` | `0d5711b`, 2026-11-11 01:21 | Complete | Committed in the same commit as its first change (a 10-line CSS edit). |
 | `submission-readiness.md` | 2026-11-20 | Complete | Spec for the audit and submission drafts. Docs only. |
-| `skin-required-controls.md` | 2026-11-21 | Draft | Audit of the 10 required controls per skin and the work to close gaps. Written before any implementation. |
+| `remember-last-skin.md` | 2026-11-23 (`3dedc7f`) | Implemented, runtime check pending | Committed before its code (`bd6293f`). |
+| `skin-required-controls.md` | 2026-11-21 | Implemented, one gap | Audit of the 10 required controls per skin. Written before the Skeleton and Frankenstein window tools were built. Frankenstein still lacks minimize. |
 
 ## Steering (`.kiro/steering/`)
 
@@ -21,7 +22,7 @@ Timestamps come from `git log` (commit time, Pacific). Re-check with
 | `css-conventions.md` | auto | CSS naming and structure for skins. |
 | `audio-guide.md` | auto | Web Audio API and AnalyserNode patterns. |
 | `electron-conventions.md` | auto | Main/preload/renderer and IPC conventions. |
-| `skin-required-controls.md` | auto | The 10 controls every skin must provide (playback, volume, seek, track board, 5 window buttons). Target state; only Dracula complies today. |
+| `skin-required-controls.md` | auto | The 10 controls every skin must provide (playback, volume, seek, track board, 5 window buttons). Dracula and Skeleton comply; Frankenstein lacks minimize (2026-11-23). |
 | `spec-template.md` | manual | Template for new specs. |
 | `testing-guide.md` | manual | Pre-completion checklist. |
 | `understanding-kiro.md` | manual | Explainer on specs, steering, hooks, workflows. |
@@ -63,4 +64,4 @@ is superseded by `docs/submission/AUDIT.md`.
 - Dependency upgrade (documented in `.kiro/docs/dependency-upgrade.md`, no spec).
 
 Only the Dracula blood effects (since reworked) and one CSS-variable change have a spec, and
-both specs were written at or after the code. Later Dracula work (painted blood line, hand glow masks, mini bat repair, medallion pause face, playlist restyle, window-shape scaling, skin cycling, file picker fixes, commits `4598551` to `9c67d6d`) has no spec; it is recorded only in `docs/AGENTS.md`.
+both specs were written at or after the code. Later Dracula work (painted blood line, hand glow masks, mini bat repair, medallion pause face, playlist restyle, window-shape scaling, skin cycling, file picker fixes, commits `4598551` to `9c67d6d`) has no spec; it is recorded only in `docs/AGENTS.md`. The same holds for the 2026-11-22 and 2026-11-23 skin rebuilds (Dracula volume crosses, eye bloom, cape curtain, mini hover; Skeleton tools and mini card; the Frankenstein rebuild): `skin-required-controls.md` lists the controls they had to provide, but their visual design has no spec.
