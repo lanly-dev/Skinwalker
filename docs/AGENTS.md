@@ -157,12 +157,33 @@ Sources: the hackathon overview, the Official Rules, and the Resources tab at ki
 
 - **Lineup cut — 2026-11-11 (Lan's call):** Skeleton + Skeleton Trio removed (skin files, CSS blocks, plate assets), and the skin-switcher toggle is gone too — no mid-playback swapping. Dracula is the launch skin; Frankenstein stays registered but unreachable until a selector returns. Scope is two skins, no swap.
 
+- **Skeleton re-cut on the updated web art (2026-11-23, the reference page changed):**
+the Boba page now serves a new stage JPEG — same 1534x1025 frame, glow-rimmed bones, a horizontal
+volume bar on the left arm, a five-icon row on the right arm — plus a separate 620x622 mini-card crop
+and a 1774x887 icon sprite. `skeleton-frame.webp` is re-cut from that JPEG: corner-median backdrop
+matte, holes filled, glow kept through an unpremultiplied 0.6px feather, panel rects forced opaque, and
+the painted volume bar / blood line / teeth-line EQ and the demo playlist rows scrubbed to the local tone so
+the live controls are the only ones visible. Live geometry is the page's own DOM: board 30.7%/8.3% 38.5x24 (opaque panel inset
+to 31%/8.7% 37.7x23.2 so the painted rim survives), eyes 47.2%/52% at 38.4%, jaw 47.25%/50.2% 5.8x1.3
+(24 bars, single cyan, white caps), pendant 47.6%/61.7% 5.5x7.6, volume 20%/57.3% 13.5x1.5 rotated 6
+degrees with a `--level` fill, mute 16.14%/55.27%, title 34.8%/69.8% 30.4x6.4, artist 38%/76.55%
+24x2.45, seek 34.8%/79.9% 30.7x2.2, times 34.5%/82.7% 31.5x2.2, prev/next 34.7%/56.2% at 85.4%, tools
+65.2-80.8% at 54.2-56.6% (skull -> mini, half-mask -> change skin, coffin -> add files, bar -> minimize,
+X -> close). The mini card crop is retargeted to background-size 667% / position 50% 43.5%: the old offset
+framed the baked fifth playlist row ("TOMB OF THORNS") across the crown, so the skull now fills the window
+with the board's bone edge as its top frame. The muted speaker gets a 1.5px minimum slash with a white-hot
+rim, because the 0.16cqw hairline vanished at the 560px minimum window. The painted speaker is now a real control: it mutes to 0 and restores the level it was muted
+from, with a neon slash while muted. Verified by measuring every live element against the page at
+1534x1025 (all within 0.05%) and rendering the skin's own CSS over the new plate at that size; native
+window behaviour was not exercised.
+
 - **Skeleton returns — the web build's neon plate (2026-11-11, Lan's pick):**
 the lineup cut is partly reversed: `SkeletonSkin` is back, rebuilt from the Boba
 web build (`SKINWALKER PLAYER • v1.0 SKELETON`) instead of the old portrait bust.
 The stage art was embedded as a base64 JPEG in the page; its near-black backdrop
 (0,8,15) is flood-filled to alpha with a 2px fringe pass, and the plate ships as
-`src/renderer/assets/skeleton-frame.webp` (1536×1024, 64% coverage). Every live
+`src/renderer/assets/skeleton-frame.webp` (1536×1024, 64% coverage; plate and the percentages in this
+paragraph superseded 2026-11-23 — see the entry above). Every live
 element keeps the web build's own stage percentages: bone board 30.5%/7.4%
 39×17 (playlist), pendant 45.6%/58.3% (play/pause, breathes while playing), jaw
 canvas 45.8%/43.7% 7.8×7.2 (20 mirrored bars, colour blocks of seven), seek

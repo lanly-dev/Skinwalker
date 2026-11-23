@@ -10,17 +10,16 @@
  * of its 3:2 stage, and this skin owns a 3:2 window, so the live elements land
  * on their painted counterparts):
  *   Pendant at the throat ────── play / pause (burns and breathes while playing)
- *   Jaw ─────────────────────── live visualizer: 20 mirrored bars
+ *   Teeth line in the jaw ────── live visualizer: 24 bars in the open mouth
  *   Eye sockets ─────────────── readout: the sockets bloom with the same energy
  *   Bone board overhead ─────── playlist, scrolling inside the bone frame
  *   Blood line ──────────────── seek: live fill, elapsed / remaining
- *   Left bone column ────────── volume (vertical)
+ *   Left bone arm ───────────── volume (horizontal) and the speaker = mute
  *   Bone plaques ────────────── prev / next
  *   Title block ─────────────── live title + artist over the painted one
- *   Right bone column ───────── window tools, on the four painted rings:
- *                               minus → minimize, mask → change skin,
- *                               list → open folder, outward box → mini
- *   Wrist knob below column ─── close, etched as a neon X on the bone
+ *   Right bone arm ──────────── window tools, on the painted icon row:
+ *                               skull → mini, half-mask → change skin,
+ *                               coffin → open folder, bar → minimize, X → close
  *   Mini card ───────────────── skull crop + title + play + seek + restore
  *
  * The mini card follows the web build's mini player: the window shrinks to a
@@ -37,12 +36,12 @@ import type { Player } from '../player/Player'
 const STAGE_SIZE = { width: 960, height: 640, minWidth: 560, minHeight: 380 }
 const MINI_SIZE = { width: 380, height: 220, minWidth: 300, minHeight: 180 }
 
-/** Mirrored spectrum resolution — the web build draws 20 bars */
-const BAR_COUNT = 20
-/** Bar colours, cycling every seven bars as in the web build */
-const BAR_COLORS = ['#2be5ff', '#8aff9a', '#bd79ff']
-/** Playlist skull colours, cycling per row as in the web build */
-const ROW_COLORS = ['#35dfff', '#94ea6b', '#bd80ff']
+/** Spectrum resolution — the web build's teeth line draws 24 bars */
+const BAR_COUNT = 24
+/** Bar colour, as in the web build's EQ strip */
+const BAR_COLOR = '#38e5ff'
+/** Playlist skull colours, taken from the web build's first rows */
+const ROW_COLORS = ['#35e5ff', '#b3ef32', '#c397ff']
 
 interface SkeletonEls {
   body: HTMLElement
@@ -55,6 +54,7 @@ interface SkeletonEls {
   remaining: HTMLElement
   pendant: HTMLButtonElement
   volume: HTMLInputElement
+  mute: HTMLButtonElement
   playlist: HTMLOListElement
   miniPlay: HTMLButtonElement
   miniSeek: HTMLInputElement
@@ -66,7 +66,7 @@ export class SkeletonSkin implements Skin {
   readonly id = 'skeleton'
   readonly label = 'Skeleton'
   readonly shapeImage = framePlate
-  /** 3:2, like the web build's stage — the plate is 1536×1024 */
+  /** 3:2, like the web build's stage — the plate is 1534×1025 */
   readonly windowSize = { width: 960, height: 640 }
 
   private container: HTMLElement | null = null
@@ -81,6 +81,8 @@ export class SkeletonSkin implements Skin {
   private seeking = false
   private activeIndex = -1
   private mini = false
+  private muted = false
+  private volumeBeforeMute = 0.8
 
   private durations = new Map<string, number>()
   private probed = new Set<string>()
@@ -142,9 +144,10 @@ export class SkeletonSkin implements Skin {
         <!-- Pendant at the throat = play / pause -->
         <button class="sk-pendant" aria-label="Play" aria-pressed="false" title="Play / Pause"></button>
 
-        <!-- Left bone column = volume -->
+        <!-- Left bone arm = volume, and the painted speaker beside it = mute -->
         <input class="sk-volume" type="range" min="0" max="100" step="1" value="80"
-               orient="vertical" aria-label="Volume" title="Volume" />
+               aria-label="Volume" title="Volume" />
+        <button class="sk-mute" aria-label="Mute" aria-pressed="false" title="Mute"></button>
 
         <!-- Title block = live title + artist -->
         <div class="sk-meta">
@@ -164,7 +167,7 @@ export class SkeletonSkin implements Skin {
         <button class="sk-prev" aria-label="Previous track" title="Previous track"></button>
         <button class="sk-next" aria-label="Next track" title="Next track"></button>
 
-        <!-- Right bone column = window tools, one per painted ring -->
+        <!-- Right bone arm = window tools, one per painted icon -->
         <button class="sk-tool sk-tool-minimize" aria-label="Minimize" title="Minimize">
           <span class="sk-tip" aria-hidden="true">Minimize</span>
         </button>
@@ -217,6 +220,7 @@ export class SkeletonSkin implements Skin {
       remaining: c.querySelector('.sk-remaining')!,
       pendant: c.querySelector('.sk-pendant')!,
       volume: c.querySelector('.sk-volume')!,
+      mute: c.querySelector('.sk-mute')!,
       playlist: c.querySelector('.sk-list')!,
       miniPlay: c.querySelector('.sk-mini-play')!,
       miniSeek: c.querySelector('.sk-mini-seek')!,
@@ -244,24 +248,50 @@ export class SkeletonSkin implements Skin {
       this.seeking = false
     })
 
-    // Volume: the left bone column
+    // Volume: the left bone arm's horizontal bar, and the painted speaker
+    // beside it, which mutes without losing the level it was muted from.
+    const syncMute = (): void => {
+      els.mute.classList.toggle('muted', this.muted)
+      els.mute.setAttribute('aria-pressed', String(this.muted))
+      els.mute.setAttribute('aria-label', this.muted ? 'Unmute' : 'Mute')
+      els.mute.title = this.muted ? 'Unmute' : 'Mute'
+    }
     const applyVolume = (value: number): void => {
       const vol = Math.min(1, Math.max(0, value))
       p.setVolume(vol)
       els.volume.value = String(Math.round(vol * 100))
+      els.volume.style.setProperty('--level', `${Math.round(vol * 100)}%`)
       els.volume.title = `Volume — ${Math.round(vol * 100)}%`
       els.volume.setAttribute('aria-valuetext', `${Math.round(vol * 100)}%`)
     }
-    els.volume.addEventListener('input', () => applyVolume(Number(els.volume.value) / 100))
+    els.volume.addEventListener('input', () => {
+      if (this.muted) {
+        this.muted = false
+        syncMute()
+      }
+      applyVolume(Number(els.volume.value) / 100)
+    })
+    els.mute.addEventListener('click', () => {
+      if (this.muted) {
+        this.muted = false
+        applyVolume(this.volumeBeforeMute)
+      } else {
+        this.volumeBeforeMute = Number(els.volume.value) / 100
+        this.muted = true
+        p.setVolume(0)
+      }
+      syncMute()
+    })
     // Start from the player's volume so a mid-playback swap never resets it
     applyVolume(p.currentVolume)
+    syncMute()
 
     // Bone plaques → prev / next
     c.querySelector('.sk-prev')!.addEventListener('click', () => p.prev())
     c.querySelector('.sk-next')!.addEventListener('click', () => p.next())
 
-    // Window tools → the four painted rings and the wrist knob below them.
-    // The rings are the web build's dead stubs; here each one does its job.
+    // Window tools → the five painted icons on the right arm. They are the web
+    // build's own stubs; here each one does the desktop job.
     c.querySelector('.sk-tool-minimize')!.addEventListener('click', () => window.skinwalker?.minimize?.())
     c.querySelector('.sk-tool-skin')!.addEventListener('click', () => p.nextSkin())
     c.querySelector('.sk-tool-folder')!.addEventListener('click', () => void openLocalFiles(p))
@@ -447,9 +477,9 @@ export class SkeletonSkin implements Skin {
   }
 
   /**
-   * The web build's spectrum: twenty mirrored bars, each drawn equally above
-   * and below the centre line, coloured in blocks of seven. The same energy
-   * sum drives the eye bloom through --eye.
+   * The web build's spectrum: twenty-four bars standing on the teeth line,
+   * each growing up from the bottom of its strip, capped with a white
+   * hairline. The same energy sum drives the eye bloom through --eye.
    */
   private drawVisualizer(now: number): void {
     const els = this.els
@@ -462,29 +492,39 @@ export class SkeletonSkin implements Skin {
     const playing = p.audio.isPlaying
     if (playing && this.freqData) p.audio.getFrequencyData(this.freqData)
 
-    ctx.clearRect(0, 0, 320, 200)
+    const w = 320
+    const h = 200
+    ctx.clearRect(0, 0, w, h)
+
+    // 3% bars spread edge to edge, as the web build's justify-between strip
+    const barWidth = w * 0.03
+    const step = (w - barWidth) / (BAR_COUNT - 1)
 
     let energy = 0
     for (let i = 0; i < BAR_COUNT; i++) {
       let value: number
       if (playing && this.freqData) {
-        const bin = Math.min(this.freqData.length - 1, 2 + i * 3)
+        const bin = Math.min(this.freqData.length - 1, i * 3 + 2)
         value = this.freqData[bin] / 255
       } else {
         // Idle bars keep breathing while paused
-        value = 0.06 + 0.025 * Math.sin(now / 700 + i * 0.6)
+        value = 0.12 + 0.04 * Math.sin(now / 700 + i * 0.6)
       }
       this.smooth[i] += (value - this.smooth[i]) * 0.15
       energy += this.smooth[i]
 
-      const height = 6 + this.smooth[i] * 77
-      ctx.fillStyle = BAR_COLORS[Math.floor(i / 7) % BAR_COLORS.length]
-      ctx.shadowColor = ctx.fillStyle
-      ctx.shadowBlur = 9
-      ctx.fillRect(5 + i * 15.5, 100 - height, 9, height * 2)
+      const height = (0.12 + this.smooth[i] * 0.88) * h
+      const x = i * step
+      ctx.fillStyle = BAR_COLOR
+      ctx.shadowColor = BAR_COLOR
+      ctx.shadowBlur = 6
+      ctx.fillRect(x, h - height, barWidth, height)
+      ctx.shadowBlur = 0
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(x, h - height, barWidth, 2)
     }
 
-    const eye = playing ? Math.min(1, 0.3 + (energy / BAR_COUNT) * 1.9) : 0.16
+    const eye = playing ? Math.min(1, 0.3 + (energy / BAR_COUNT) * 1.9) : 0.2
     const quantized = Math.round(eye * 20) / 20
     if (quantized !== this.eyeLevel) {
       this.eyeLevel = quantized

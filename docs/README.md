@@ -14,7 +14,7 @@ Every body part is meant to do real work. The table below lists the anatomy-to-c
 |---------|--------|---------|
 | 🧛 Dracula | flagship | medallion → play/pause · cape → visualizer · blood line → seek · jeweled minus/plus → volume · crossed hands → prev/next · tool row (on hover) → close / minimize / add files / next skin / mini bat |
 | ⚡ Frankenstein | functional | skull flat-top → visualizer · eyes → play/pause · neck bolts → prev/next · chest scar → seek · hand → volume |
-| 💀 Skeleton | functional | pendant → play/pause · jaw → visualizer · bone board → playlist · blood line → seek · left bone column → volume · bone plaques → prev/next · right bone rings → minimize / change skin / add files / mini · wrist knob → close · mini card → skull crop, play, seek, restore |
+| 💀 Skeleton | functional | pendant → play/pause · jaw → visualizer · bone board → playlist · blood line → seek · left bone arm → volume, speaker → mute · bone plaques → prev/next · right bone icons → mini / change skin / add files / minimize / close · mini card → skull crop, play, seek, restore |
 
 ---
 
