@@ -541,9 +541,9 @@ input[type="range"]::-moz-range-thumb {
   z-index: 4;
 }
 
-/* Cape interior = the bat curtain (drawn by DraculaSkin): it falls from the
-   blood line to the crossed hands. It dims while the tool row is showing,
-   exactly as the web build does. */
+/* Cape interior = the bat curtain (drawn by DraculaSkin): mirrored bars
+   spreading up and down from a centre line on the chest. It dims while the
+   tool row is showing, exactly as the web build does. */
 .dracula-skin .dr-zone {
   left: 19%; top: 55%;
   width: 62%; height: 23%;
