@@ -1664,8 +1664,8 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-tool:focus-visible .sk-tip { display: block; }
 
 /* Mini version = the web build's 620×622 face card. The window shrinks to
-   340×390: a 20px transparent margin above the 320×321 face and a title
-   strip below it. The card itself stays transparent. */
+   340×351: a 20px transparent margin above the 320×321 face and 10px below
+   it. The card itself stays transparent. */
 .skeleton-skin .sk-mini { display: none; }
 .skeleton-skin.mini-mode .sk-body { background: none; }
 .skeleton-skin.mini-mode .sk-body > :not(.sk-mini) { display: none; }
@@ -1770,28 +1770,3 @@ input[type="range"]::-moz-range-thumb {
 }
 .skeleton-skin .sk-mini-restore { left: 63%; top: 51.6%; width: 20%; height: 20%; }
 .skeleton-skin .sk-mini-close { left: 18.6%; top: 69%; width: 16%; height: 16%; }
-.skeleton-skin .sk-mini-info {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  top: 341px;
-  bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-  pointer-events: none;
-}
-.skeleton-skin .sk-mini-track {
-  display: block;
-  max-width: 100%;
-  color: #f2fbff;
-  font: bold 4cqw Georgia, "Times New Roman", serif;
-  letter-spacing: 0.04em;
-  text-align: center;
-  -webkit-text-stroke: 0.35px #000;
-  text-shadow: 0 0 2px #000, 0 0 3px #000, 0 1px 3px #000, 0 0 2.1875cqw #1ddfff88;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
