@@ -1,25 +1,116 @@
 /**
- * FrankensteinSkin — skin #2, IMAGE-FRAME pass.
+ * FrankensteinSkin — rebuilt on the reference web build (2026-11-23).
  *
- * The approved character artwork IS the frame: the transparent plate
- * (assets/frankenstein-frame.webp) fills the frameless window and the
- * painted elements are the controls. Separated layers (extracted from
- * the plate by color segmentation, full-canvas so they stack
- * pixel-exact): the glowing eyes and the brass dial the hand holds.
+ * The plate is a flat illustrated bust: the forehead is a block equalizer,
+ * the monster's left eye follows the pointer, the right eye is play/pause,
+ * the neck bolts change tracks, the stitched scar across the chest is the
+ * seek line, the gold watch in the hand is volume, and five brass jacket
+ * pins are the window tools. The board behind the ☰ pin holds the playlist.
  *
- * Anatomy → controls mapping:
- *   Forehead EQ blocks ─────── live visualizer (AnalyserNode)
- *   Eyes (glow layers) ─────── play/pause toggle (layers pulse while playing)
- *   Neck bolts (L/R) ───────── prev / next track
- *   Chest scar line ────────── seek bar (transparent track over the scar)
- *   Brass dial in hand ─────── volume (drag / wheel / arrows; layer rotates)
+ * Anatomy → control / readout. Every position in style.css is the reference
+ * build's own percentage of its 2:3 stage, and this skin's window is 2:3, so
+ * each live element lands on its painted counterpart:
+ *   Forehead EQ ────── visualizer: 9 × 5 blocks, lit from the bottom
+ *   Left eye ───────── readout: the iris follows the pointer, blinks, drifts
+ *   Right eye ──────── play / pause (the glow holds while playing)
+ *   Neck bolts ─────── previous / next
+ *   Stitched scar ──── seek: the bead rides the scar, progress fills it
+ *   Gold watch ─────── volume: drag in a circle, wheel, arrows; tap = mute
+ *   Jacket pins ────── open folder, close, ☰ Tracks, mini, next skin
+ *   ☰ Tracks ───────── the board: playlist, open folder, restore
  */
+import framePlate from '../assets/frankenstein-frame.webp'
+import knobPlate from '../assets/frankenstein-knob-plate.webp'
+import knobFace from '../assets/frankenstein-knob-face.webp'
+import { applySkinShape, liftShape, restoreShape } from '../windowShape'
+import { openLocalFiles } from '../openFiles'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
-import framePlate from '../assets/frankenstein-frame.webp'
-import eyeLeftLayer from '../assets/frankenstein-eye-left.png'
-import eyeRightLayer from '../assets/frankenstein-eye-right.png'
-import dialLayer from '../assets/frankenstein-dial.png'
+
+/** The reference build's 2:3 stage — this skin's window matches it exactly. */
+const STAGE_SIZE = { width: 480, height: 720, minWidth: 380, minHeight: 560 }
+/** Mini keeps the whole figure, as the reference does — just smaller. */
+const MINI_SIZE = { width: 320, height: 480, minWidth: 240, minHeight: 360 }
+
+/** Forehead equalizer: the reference build's 9 × 5 block grid. */
+const EQ_COLS = 9
+const EQ_ROWS = 5
+const EQ_CELL_W = 50
+const EQ_CELL_H = 29
+const EQ_BLOCK_W = 38
+const EQ_BLOCK_H = 22
+/** What the blocks show while paused, column by column. */
+const EQ_IDLE = [4, 3, 5, 3, 5, 3, 5, 3, 4]
+
+/** Stitched scar, in the plate's own 1280×1920 coordinates. */
+const SCAR_PATH = 'M358 1174 C540 1134 751 1139 924 1090'
+
+/** Jacket pin motifs, traced from the reference build's SVGs. */
+const PIN_MOTIFS = {
+  folder:
+    'M16 29l5-10h13l5 6h16l-4 28H18z M17 33l7-7h29 M38 34v12q-7-3-8 2t8 1v-9l9-3v8q-6-2-6 2t6 1V33z',
+  close: 'M24 18l29 29-6 6-29-29z M47 18l6 6-29 29-6-6z M23 23h1 M49 49h1 M49 23h1 M23 49h1',
+  tracks: 'M19 24h11m5 0h18 M19 36h24m5 0h5 M19 48h8m5 0h21 M16 20v32 M56 20v32',
+  mini: 'M19 19h34v33H19z M23 24h26 M39 32v6m-5 9v-7h10v7 M36 29h6 M25 30v15m-3-3 3 4 3-4',
+  restore:
+    'M19 19h34v33H19z M23 24h26 M30 31h12v16H30z M23 38v-8h8 M23 30l7 7 M49 39v9h-8 M49 48l-7-7',
+  skin: 'M23 22l27 4-4 27-27-4z M28 17l27 4-1 23 M26 32q4-4 8 1m4 0q4-4 8 1 M28 42q7 6 14 0',
+}
+
+/** One brass pin: plate, engraved motif, sheen, green stud, hover label. */
+function pinSvg(id: string, motif: string, label: string): string {
+  return /* html */ `
+    <svg viewBox="0 0 72 72" aria-hidden="true">
+      <defs>
+        <linearGradient id="fr-metal-${id}" x1="0" y1="0" x2="1" y2="1">
+          <stop stop-color="#fff2c0"/><stop offset=".18" stop-color="#d7b463"/>
+          <stop offset=".36" stop-color="#99702f"/><stop offset=".48" stop-color="#f7d887"/>
+          <stop offset=".67" stop-color="#b58636"/><stop offset="1" stop-color="#503617"/>
+        </linearGradient>
+      </defs>
+      <path d="M6 24L18 8 53 7 66 24 64 55 50 66 18 63 7 49z" fill="#354c38"
+            stroke="#b8aa7b" stroke-dasharray="3 4" stroke-width="2"/>
+      <circle cx="36" cy="36" r="28" fill="url(#fr-metal-${id})" stroke="#604419" stroke-width="2"/>
+      <circle cx="36" cy="36" r="23" fill="url(#fr-metal-${id})" stroke="#725322"/>
+      <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="${motif}" stroke="#59401f" stroke-width="2.5" transform="translate(.7 .9)"/>
+        <path d="${motif}" stroke="#fff0b4" stroke-width="2.5"/>
+      </g>
+      <path d="M13 35A24 24 0 0 1 40 12 M18 25A21 21 0 0 1 33 16" fill="none"
+            stroke="#fff2bd" stroke-width="1.4" opacity=".8"/>
+      <path d="M14 48A26 26 0 0 0 59 36" fill="none" stroke="#4e351b" stroke-width="1.4"/>
+      <circle cx="36" cy="60" r="3" fill="#8df879" stroke="#3c6f35"/>
+    </svg>
+    <span class="fr-pin-tip" aria-hidden="true">${label}</span>`
+}
+
+interface FrEls {
+  body: HTMLElement
+  canvas: HTMLCanvasElement
+  eye: HTMLElement
+  iris: HTMLElement
+  play: HTMLButtonElement
+  eyebrow: HTMLElement
+  title: HTMLElement
+  subtitle: HTMLElement
+  seek: HTMLInputElement
+  scarSvg: SVGSVGElement
+  scarHit: SVGPathElement
+  progress: SVGPathElement
+  thumb: SVGCircleElement
+  elapsed: HTMLElement
+  remaining: HTMLElement
+  dial: HTMLElement
+  mute: HTMLButtonElement
+  vol: HTMLOutputElement
+  playlist: HTMLOListElement
+  board: HTMLElement
+  boardClose: HTMLButtonElement
+  boardLoad: HTMLButtonElement
+  boardRestore: HTMLButtonElement
+  tracksPin: HTMLButtonElement
+  miniPin: HTMLButtonElement
+}
 
 export class FrankensteinSkin implements Skin {
   readonly id = 'frankenstein'
@@ -27,41 +118,78 @@ export class FrankensteinSkin implements Skin {
   readonly shapeImage = framePlate
 
   private container: HTMLElement | null = null
-  private rafId = 0
-  private freqData: Uint8Array<ArrayBuffer> | null = null
   private player: Player | null = null
+  private els: FrEls | null = null
+  private rafId = 0
+  private eyeRaf = 0
+  private mini = false
+  private boardOpen = false
+
+  private freqData: Uint8Array<ArrayBuffer> | null = null
+
+  /** Seek: painted while dragging, committed on release — restarting the
+   *  buffer on every pointer move stutters, as the other skins found. */
+  private seeking = false
+  private pendingSeek = 0
+  private route: SVGPathElement | null = null
+  private routeLength = 0
+  private samples: Array<{ x: number; y: number }> = []
+
+  private eyeX = 0
+  private eyeY = 0
+  private eyeLast = 0
+  private pointerX = 0
+  private pointerY = 0
+  private pointerAt = 0
+
+  private volumeBeforeMute = 0.8
+
+  private activeIndex = -1
+  private durations = new Map<string, number>()
+  private probed = new Set<string>()
 
   mount(player: Player): void {
     this.player = player
+    this.mini = false
+    this.boardOpen = false
     const app = document.getElementById('app')!
     document.documentElement.dataset.skin = this.id
 
     this.container = document.createElement('div')
     this.container.className = 'skin frankenstein-skin'
-    this.container.style.setProperty('--fr-frame-url', `url(${framePlate})`)
-    this.container.style.setProperty('--fr-eye-left-url', `url(${eyeLeftLayer})`)
-    this.container.style.setProperty('--fr-eye-right-url', `url(${eyeRightLayer})`)
-    this.container.style.setProperty('--fr-dial-url', `url(${dialLayer})`)
+    this.container.style.setProperty('--fr-frame-url', `url("${framePlate}")`)
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
 
     this.freqData = new Uint8Array(player.audio.analyser.frequencyBinCount) as Uint8Array<ArrayBuffer>
+
     this.bindEvents()
-    this.loop()
+    this.buildScar()
+    this.rafId = requestAnimationFrame(this.loop)
+    this.eyeRaf = requestAnimationFrame(this.look)
   }
 
   unmount(): void {
     cancelAnimationFrame(this.rafId)
+    cancelAnimationFrame(this.eyeRaf)
+    document.removeEventListener('pointermove', this.onPointerAim)
+    document.removeEventListener('pointerdown', this.onPointerAim)
+    document.removeEventListener('pointerdown', this.onDocPointerDown)
+    document.removeEventListener('keydown', this.onKeyDown)
+    if (this.player) this.player.onTrackChange = null
     this.container?.remove()
     this.container = null
+    this.els = null
     this.player = null
+    this.route = null
+    this.samples = []
   }
 
   onPlaylistUpdate(): void {
     this.buildPlaylist()
     // Added rows land at the bottom of the board; show them.
-    const list = this.container?.querySelector<HTMLOListElement>('.fr-playlist')
+    const list = this.els?.playlist
     if (list) list.scrollTop = list.scrollHeight
   }
 
@@ -69,43 +197,88 @@ export class FrankensteinSkin implements Skin {
 
   private template(): string {
     return /* html */ `
-      <div class="fr-body" role="img" aria-label="Frankenstein media player">
-        <img class="fr-layer fr-eye-layer left" alt="" draggable="false" />
-        <img class="fr-layer fr-eye-layer right" alt="" draggable="false" />
-        <img class="fr-layer fr-dial-layer" alt="" draggable="false" />
-
-        <!-- Eyes = play/pause -->
-        <button class="fr-eyes" aria-label="Play / Pause" title="Play / Pause"></button>
-        <div class="fr-eye-glow" aria-hidden="true"></div>
-
-        <!-- Track info over the upper chest -->
-        <div class="fr-track-info">
-          <span class="fr-title">—</span>
-          <span class="fr-artist">—</span>
-        </div>
+      <div class="fr-body" role="group" aria-label="Frankenstein media player">
+        <span class="fr-plate" aria-hidden="true"></span>
 
         <!-- Forehead = visualizer -->
-        <div class="fr-viz-panel" aria-hidden="true">
-          <canvas class="fr-viz" width="352" height="176"></canvas>
+        <div class="fr-eq" aria-hidden="true">
+          <canvas class="fr-viz" width="450" height="150"></canvas>
         </div>
 
-        <!-- Bolts = prev / next -->
-        <button class="fr-prev" aria-label="Previous track" title="Previous track"></button>
-        <button class="fr-next" aria-label="Next track" title="Next track"></button>
+        <!-- Left eye = living readout; right eye = play / pause -->
+        <div class="fr-eye" aria-hidden="true"><span class="fr-iris"></span></div>
+        <button class="fr-play" type="button" aria-label="Play track" aria-pressed="false"
+                title="Play / pause">
+          <span class="fr-play-symbol" aria-hidden="true"></span>
+          <span class="fr-pause-symbol" aria-hidden="true"></span>
+        </button>
 
-        <!-- Chest scar = seek -->
-        <div class="fr-seek-region" role="group" aria-label="Seek">
-          <input class="fr-seek" type="range" min="0" max="1000" value="0"
-                 aria-label="Seek" step="1" />
-          <span class="fr-time">0:00 / 0:00</span>
+        <!-- Neck bolts = prev / next -->
+        <button class="fr-bolt fr-prev" type="button" aria-label="Previous track"
+                title="Previous track"></button>
+        <button class="fr-bolt fr-next" type="button" aria-label="Next track"
+                title="Next track"></button>
+
+        <!-- Chest readout = live title + artist -->
+        <div class="fr-readout">
+          <small class="fr-eyebrow">REANIMATED AUDIO / 001</small>
+          <strong class="fr-title">—</strong>
+          <span class="fr-subtitle">—</span>
         </div>
 
-        <!-- Brass dial = volume (drag rotates the dial layer) -->
-        <div class="fr-dial" role="slider" tabindex="0"
-             aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80"></div>
+        <!-- Stitched scar = seek -->
+        <div class="fr-scar">
+          <svg class="fr-scar-svg" viewBox="0 0 1280 1920" aria-hidden="true">
+            <path class="fr-scar-route" d="${SCAR_PATH}"/>
+            <path class="fr-scar-progress" d="${SCAR_PATH}" pathLength="1000"/>
+            <circle class="fr-scar-thumb" r="15"/>
+            <path class="fr-scar-hit" d="${SCAR_PATH}"/>
+          </svg>
+          <input class="fr-seek" type="range" min="0" max="1000" value="0" step="1"
+                 aria-label="Seek through track" />
+          <div class="fr-times">
+            <span class="fr-elapsed">00:00</span>
+            <span class="fr-remaining">-00:00</span>
+          </div>
+        </div>
 
-        <!-- Playlist -->
-        <ol class="fr-playlist" aria-label="Playlist"></ol>
+        <!-- Gold watch = volume; the dial face turns, a tap mutes -->
+        <div class="fr-watch">
+          <div class="fr-dial" role="slider" tabindex="0"
+               aria-label="Volume dial: drag in a circle, scroll, or use arrow keys"
+               aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
+            <img class="fr-knob-plate" src="${knobPlate}" alt="" draggable="false" />
+            <img class="fr-knob-face" src="${knobFace}" alt="" draggable="false" />
+          </div>
+          <button class="fr-mute" type="button" aria-label="Mute" aria-pressed="false"
+                  title="Mute / unmute">ϟ</button>
+          <output class="fr-vol">80%</output>
+        </div>
+
+        <!-- Brass jacket pins = window tools -->
+        <button class="fr-pin fr-pin-folder" type="button" aria-label="Open folder"
+                title="Open folder">${pinSvg('folder', PIN_MOTIFS.folder, 'OPEN FOLDER')}</button>
+        <button class="fr-pin fr-pin-close" type="button" aria-label="Close player"
+                title="Close player">${pinSvg('close', PIN_MOTIFS.close, 'Close player')}</button>
+        <button class="fr-pin fr-pin-tracks" type="button" aria-label="Tracks"
+                aria-haspopup="dialog" aria-controls="fr-board" aria-expanded="false"
+                title="Tracks">${pinSvg('tracks', PIN_MOTIFS.tracks, '☰ Tracks')}</button>
+        <button class="fr-pin fr-pin-mini" type="button" aria-label="Mini mode"
+                aria-pressed="false" title="Mini mode">${pinSvg('mini', PIN_MOTIFS.mini, 'Mini mode')}</button>
+        <button class="fr-pin fr-pin-skin" type="button" aria-label="Next skin"
+                title="Next skin">${pinSvg('skin', PIN_MOTIFS.skin, 'Next skin')}</button>
+
+        <!-- ☰ Tracks = the board -->
+        <div class="fr-board" id="fr-board" role="dialog" aria-modal="true"
+             aria-labelledby="fr-board-title" hidden>
+          <button class="fr-board-close" type="button" aria-label="Close tracks">✕ Close</button>
+          <p class="fr-eyebrow">HIGH VOLTAGE / AUDIO ARCHIVE</p>
+          <h1 id="fr-board-title">THE LABORATORY</h1>
+          <p class="fr-board-sub">STITCHED TOGETHER. BROUGHT TO LIFE.</p>
+          <ol class="fr-playlist" aria-label="Tracklist"></ol>
+          <button class="fr-board-load" type="button">▱ OPEN AUDIO FOLDER</button>
+          <button class="fr-board-restore" type="button">↗ Restore full player</button>
+        </div>
       </div>
     `
   }
@@ -116,136 +289,562 @@ export class FrankensteinSkin implements Skin {
     const c = this.container!
     const p = this.player!
 
-    c.querySelector('.fr-eyes')!.addEventListener('click', () => {
+    const els: FrEls = {
+      body: c.querySelector('.fr-body')!,
+      canvas: c.querySelector('.fr-viz')!,
+      eye: c.querySelector('.fr-eye')!,
+      iris: c.querySelector('.fr-iris')!,
+      play: c.querySelector('.fr-play')!,
+      eyebrow: c.querySelector('.fr-eyebrow')!,
+      title: c.querySelector('.fr-title')!,
+      subtitle: c.querySelector('.fr-subtitle')!,
+      seek: c.querySelector('.fr-seek')!,
+      scarSvg: c.querySelector('.fr-scar-svg')!,
+      scarHit: c.querySelector('.fr-scar-hit')!,
+      progress: c.querySelector('.fr-scar-progress')!,
+      thumb: c.querySelector('.fr-scar-thumb')!,
+      elapsed: c.querySelector('.fr-elapsed')!,
+      remaining: c.querySelector('.fr-remaining')!,
+      dial: c.querySelector('.fr-dial')!,
+      mute: c.querySelector('.fr-mute')!,
+      vol: c.querySelector('.fr-vol')!,
+      playlist: c.querySelector('.fr-playlist')!,
+      board: c.querySelector('.fr-board')!,
+      boardClose: c.querySelector('.fr-board-close')!,
+      boardLoad: c.querySelector('.fr-board-load')!,
+      boardRestore: c.querySelector('.fr-board-restore')!,
+      tracksPin: c.querySelector('.fr-pin-tracks')!,
+      miniPin: c.querySelector('.fr-pin-mini')!,
+    }
+    this.els = els
+
+    // Right eye = play / pause
+    els.play.addEventListener('click', () => {
       p.togglePlayPause()
       this.updatePlayState()
     })
 
-    const seekEl = c.querySelector<HTMLInputElement>('.fr-seek')!
-    seekEl.addEventListener('input', () => p.seek(Number(seekEl.value) / 1000))
-
-    // Volume: the brass dial. Drag horizontally, wheel, or arrow keys.
-    const dialEl = c.querySelector<HTMLElement>('.fr-dial')!
-    const dialLayerEl = c.querySelector<HTMLElement>('.fr-dial-layer')!
-    let vol = p.currentVolume
-    const applyVolume = (v: number): void => {
-      vol = Math.min(1, Math.max(0, v))
-      p.setVolume(vol)
-      dialLayerEl.style.transform = `rotate(${-135 + vol * 270}deg)`
-      dialEl.setAttribute('aria-valuenow', String(Math.round(vol * 100)))
-    }
-    applyVolume(vol)
-
-    let dragging = false
-    let startX = 0
-    let startVol = 0
-    dialEl.addEventListener('pointerdown', (e) => {
-      dragging = true
-      startX = e.clientX
-      startVol = vol
-      dialEl.setPointerCapture(e.pointerId)
-    })
-    dialEl.addEventListener('pointermove', (e) => {
-      if (dragging) applyVolume(startVol + (e.clientX - startX) / 140)
-    })
-    dialEl.addEventListener('pointerup', () => { dragging = false })
-    dialEl.addEventListener('wheel', (e) => {
-      e.preventDefault()
-      applyVolume(vol + (e.deltaY < 0 ? 0.05 : -0.05))
-    }, { passive: false })
-    dialEl.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { applyVolume(vol + 0.05); e.preventDefault() }
-      if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { applyVolume(vol - 0.05); e.preventDefault() }
-    })
-
+    // Neck bolts = prev / next
     c.querySelector('.fr-prev')!.addEventListener('click', () => p.prev())
     c.querySelector('.fr-next')!.addEventListener('click', () => p.next())
 
+    this.bindSeek(els)
+    this.bindVolume(els)
+
+    // Jacket pins
+    c.querySelector('.fr-pin-folder')!.addEventListener('click', () => void openLocalFiles(p))
+    c.querySelector('.fr-pin-close')!.addEventListener('click', () => window.skinwalker?.close?.())
+    els.tracksPin.addEventListener('click', () => {
+      if (this.boardOpen) this.closeBoard()
+      else this.openBoard()
+    })
+    els.miniPin.addEventListener('click', () => {
+      if (this.mini) this.exitMini()
+      else this.enterMini()
+    })
+    c.querySelector('.fr-pin-skin')!.addEventListener('click', () => p.nextSkin())
+
+    // Board
+    els.boardClose.addEventListener('click', () => this.closeBoard())
+    els.boardLoad.addEventListener('click', () => void openLocalFiles(p))
+    els.boardRestore.addEventListener('click', () => {
+      this.closeBoard()
+      this.exitMini()
+    })
+
+    // The eye follows the pointer anywhere over the window
+    document.addEventListener('pointermove', this.onPointerAim, { passive: true })
+    document.addEventListener('pointerdown', this.onPointerAim, { passive: true })
+    document.addEventListener('pointerdown', this.onDocPointerDown)
+    document.addEventListener('keydown', this.onKeyDown)
+
+    // Track change
     p.onTrackChange = (track, idx) => {
-      const titleEl = c.querySelector<HTMLElement>('.fr-title')
-      const artistEl = c.querySelector<HTMLElement>('.fr-artist')
-      if (titleEl) titleEl.textContent = track.title
-      if (artistEl) artistEl.textContent = track.artist
+      els.eyebrow.textContent = `REANIMATED AUDIO / ${String(idx + 1).padStart(3, '0')}`
+      els.title.textContent = track.title
+      els.title.title = track.title
+      els.subtitle.textContent = track.artist
+      els.subtitle.title = track.artist
+      this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }
 
     this.buildPlaylist()
+    this.applyVolume(p.currentVolume)
   }
 
-  private buildPlaylist(): void {
+  private bindSeek(els: FrEls): void {
     const p = this.player!
-    const ol = this.container!.querySelector<HTMLOListElement>('.fr-playlist')!
-    ol.innerHTML = ''
-    p.playlist.forEach((track, i) => {
-      const li = document.createElement('li')
-      li.dataset.index = String(i)
-      li.textContent = track.title
-      li.setAttribute('role', 'button')
-      li.setAttribute('tabindex', '0')
-      li.setAttribute('aria-label', `Play ${track.title}`)
-      li.addEventListener('click', () => void p.playIndex(i))
-      li.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') void p.playIndex(i)
-      })
-      ol.appendChild(li)
+    const hit = els.scarHit
+
+    hit.addEventListener('pointerdown', (e) => {
+      if (e.button > 0) return
+      e.preventDefault()
+      this.seeking = true
+      try {
+        hit.setPointerCapture(e.pointerId)
+      } catch {
+        /* capture is a nicety; the window listeners still see the move */
+      }
+      els.seek.focus({ preventScroll: true })
+      this.seekFromPointer(e)
+    })
+    hit.addEventListener('pointermove', (e) => {
+      if (this.seeking) this.seekFromPointer(e)
+    })
+    const end = (): void => {
+      if (!this.seeking) return
+      this.seeking = false
+      p.seek(this.pendingSeek)
+    }
+    hit.addEventListener('pointerup', end)
+    hit.addEventListener('pointercancel', end)
+
+    // Keyboard / assistive path: the range input is invisible but focusable.
+    els.seek.addEventListener('input', () => {
+      this.seeking = true
+      const value = Number(els.seek.value)
+      this.pendingSeek = value / 1000
+      this.paintSeek(value)
+      const dur = p.audio.duration
+      const cur = dur * (value / 1000)
+      els.elapsed.textContent = fmt(cur)
+      els.remaining.textContent = `-${fmt(Math.max(0, dur - cur))}`
+    })
+    els.seek.addEventListener('change', () => {
+      this.seeking = false
+      p.seek(Number(els.seek.value) / 1000)
     })
   }
 
-  private highlightPlaylistItem(idx: number): void {
-    const ol = this.container?.querySelector('.fr-playlist')
-    if (!ol) return
-    ol.querySelectorAll('li').forEach((li, i) => {
-      li.classList.toggle('active', i === idx)
-      li.setAttribute('aria-current', i === idx ? 'true' : 'false')
+  private bindVolume(els: FrEls): void {
+    const p = this.player!
+    const dial = els.dial
+
+    let pointer: number | null = null
+    let lastAngle = 0
+    let travel = 0
+
+    dial.addEventListener('pointerdown', (e) => {
+      if (e.button > 0) return
+      e.preventDefault()
+      pointer = e.pointerId
+      lastAngle = this.dialAngle(e)
+      travel = 0
+      dial.focus({ preventScroll: true })
+      try {
+        dial.setPointerCapture(pointer)
+      } catch {
+        /* pointer capture is optional here */
+      }
     })
+    dial.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== pointer) return
+      const angle = this.dialAngle(e)
+      let delta = angle - lastAngle
+      if (delta > 180) delta -= 360
+      if (delta < -180) delta += 360
+      lastAngle = angle
+      travel += Math.abs(delta)
+      this.applyVolume(p.currentVolume + delta / 2.7)
+    })
+    const endDial = (e: PointerEvent): void => {
+      if (e.pointerId !== pointer) return
+      pointer = null
+      try {
+        dial.releasePointerCapture(e.pointerId)
+      } catch {
+        /* already released */
+      }
+      // A tap on the watch mutes, as in the reference build.
+      if (travel < 3) this.toggleMute()
+    }
+    dial.addEventListener('pointerup', endDial)
+    dial.addEventListener('pointercancel', (e) => {
+      if (e.pointerId === pointer) pointer = null
+    })
+    dial.addEventListener('wheel', (e) => {
+      e.preventDefault()
+      const delta = e.deltaY || e.deltaX
+      this.applyVolume(p.currentVolume - (delta * (e.deltaMode === 1 ? 2 : 0.15)) / 100)
+    }, { passive: false })
+    dial.addEventListener('keydown', (e) => {
+      let value = p.currentVolume * 100
+      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') value += 2
+      else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') value -= 2
+      else if (e.key === 'Home') value = 0
+      else if (e.key === 'End') value = 100
+      else if (e.key === 'm' || e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault()
+        this.toggleMute()
+        return
+      } else return
+      e.preventDefault()
+      this.applyVolume(value / 100)
+    })
+
+    els.mute.addEventListener('click', () => this.toggleMute())
   }
 
-  private updatePlayState(): void {
-    const eyes = this.container?.querySelector('.fr-eyes')
-    if (!eyes) return
-    eyes.classList.toggle('playing', this.player?.audio.isPlaying ?? false)
+  // ── Volume ───────────────────────────────────────────────────────────────────
+
+  /** Pointer angle around the dial, in degrees, 0 at the top. */
+  private dialAngle(e: PointerEvent): number {
+    const rect = this.els!.dial.getBoundingClientRect()
+    return (
+      (Math.atan2(
+        e.clientY - (rect.top + rect.height * 0.48),
+        e.clientX - (rect.left + rect.width * 0.489),
+      ) *
+        180) /
+        Math.PI +
+      90
+    )
   }
 
-  // ── RAF loop ──────────────────────────────────────────────────────────────────
-
-  private loop(): void {
-    this.rafId = requestAnimationFrame(() => this.loop())
-    this.drawVisualizer()
-    this.updateSeek()
-    this.updatePlayState()
+  private applyVolume(value: number): void {
+    const p = this.player
+    const els = this.els
+    if (!p || !els) return
+    const vol = Math.min(1, Math.max(0, value))
+    p.setVolume(vol)
+    const pct = Math.round(vol * 100)
+    els.dial.style.setProperty('--angle', `${-135 + vol * 270}deg`)
+    els.dial.setAttribute('aria-valuenow', String(pct))
+    els.dial.setAttribute('aria-valuetext', vol ? `${pct} percent` : 'Muted')
+    els.dial.classList.toggle('muted', !vol)
+    els.mute.classList.toggle('muted', !vol)
+    els.mute.setAttribute('aria-pressed', String(!vol))
+    els.mute.setAttribute('aria-label', vol ? 'Mute' : 'Unmute')
+    els.mute.title = vol ? 'Mute / unmute' : 'Unmute'
+    els.vol.textContent = `${pct}%`
   }
 
-  private drawVisualizer(): void {
-    if (!this.freqData || !this.player) return
-    const canvas = this.container?.querySelector<HTMLCanvasElement>('.fr-viz')
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')!
-    this.player.audio.getFrequencyData(this.freqData)
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    const bars = 24
-    const barW = canvas.width / bars
-    for (let i = 0; i < bars; i++) {
-      const v = this.freqData[Math.floor((i / bars) * this.freqData.length)] / 255
-      const h = Math.max(4, v * canvas.height)
-      ctx.fillStyle = `hsl(130, 90%, ${38 + v * 30}%)`
-      ctx.fillRect(i * barW + 1.5, canvas.height - h, barW - 3, h)
+  private toggleMute(): void {
+    const p = this.player
+    if (!p) return
+    if (p.currentVolume > 0) {
+      this.volumeBeforeMute = p.currentVolume
+      this.applyVolume(0)
+    } else {
+      this.applyVolume(this.volumeBeforeMute || 0.7)
     }
   }
 
-  private updateSeek(): void {
-    if (!this.player || !this.container) return
-    const seek = this.container.querySelector<HTMLInputElement>('.fr-seek')
-    const timeEl = this.container.querySelector<HTMLElement>('.fr-time')
-    const dur = this.player.audio.duration
-    const cur = this.player.audio.currentTime
-    if (seek && dur > 0) seek.value = String(Math.round((cur / dur) * 1000))
-    if (timeEl) timeEl.textContent = `${fmt(cur)} / ${fmt(dur)}`
+  // ── Seek ─────────────────────────────────────────────────────────────────────
+
+  private buildScar(): void {
+    const route = this.container?.querySelector<SVGPathElement>('.fr-scar-route')
+    if (!route) return
+    this.route = route
+    this.routeLength = route.getTotalLength()
+    this.samples = []
+    for (let i = 0; i <= 200; i++) {
+      this.samples.push(route.getPointAtLength((this.routeLength * i) / 200))
+    }
+    this.paintSeek(0)
+  }
+
+  /** Nearest point on the scar to the pointer, as a 0–1000 value. */
+  private seekFromPointer(e: PointerEvent): void {
+    const els = this.els
+    if (!els || !this.samples.length) return
+    const ctm = els.scarSvg.getScreenCTM()
+    if (!ctm) return
+    const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse())
+    let best = 0
+    let distance = Infinity
+    this.samples.forEach((q, i) => {
+      const d = (point.x - q.x) ** 2 + (point.y - q.y) ** 2
+      if (d < distance) {
+        distance = d
+        best = i
+      }
+    })
+    const value = (best / (this.samples.length - 1)) * 1000
+    this.pendingSeek = value / 1000
+    this.paintSeek(value)
+    const dur = this.player?.audio.duration ?? 0
+    const cur = dur * (value / 1000)
+    els.elapsed.textContent = fmt(cur)
+    els.remaining.textContent = `-${fmt(Math.max(0, dur - cur))}`
+  }
+
+  private paintSeek(value: number): void {
+    const els = this.els
+    if (!els || !this.route) return
+    const v = Math.max(0, Math.min(1000, value))
+    els.seek.value = String(Math.round(v))
+    els.progress.setAttribute('stroke-dasharray', `${v} ${1000 - v}`)
+    const point = this.route.getPointAtLength((this.routeLength * v) / 1000)
+    els.thumb.setAttribute('cx', String(point.x))
+    els.thumb.setAttribute('cy', String(point.y))
+  }
+
+  // ── Board ────────────────────────────────────────────────────────────────────
+
+  private openBoard(): void {
+    const els = this.els
+    if (!els || this.boardOpen) return
+    this.boardOpen = true
+    els.board.hidden = false
+    els.tracksPin.setAttribute('aria-expanded', 'true')
+    // The board is wider than the silhouette, so the OS region is lifted
+    // while it is up and put back on close.
+    void liftShape()
+    els.boardClose.focus({ preventScroll: true })
+  }
+
+  private closeBoard(): void {
+    const els = this.els
+    if (!els || !this.boardOpen) return
+    this.boardOpen = false
+    els.board.hidden = true
+    els.tracksPin.setAttribute('aria-expanded', 'false')
+    restoreShape()
+    els.tracksPin.focus({ preventScroll: true })
+  }
+
+  private onDocPointerDown = (e: PointerEvent): void => {
+    if (!this.boardOpen) return
+    const target = e.target as HTMLElement | null
+    if (!target) return
+    if (target.closest('.fr-board') || target.closest('.fr-pin-tracks')) return
+    this.closeBoard()
+  }
+
+  private onKeyDown = (e: KeyboardEvent): void => {
+    if (e.key !== 'Escape' || !this.boardOpen) return
+    e.preventDefault()
+    this.closeBoard()
+  }
+
+  // ── Mini ─────────────────────────────────────────────────────────────────────
+
+  private enterMini(): void {
+    if (!this.container || this.mini) return
+    if (this.boardOpen) this.closeBoard()
+    this.mini = true
+    this.container.classList.add('mini')
+    window.skinwalker?.setWindowSize?.(MINI_SIZE)
+    this.renderMiniPin()
+    // Shape after the resize lands, as Dracula's bat does.
+    window.setTimeout(() => void applySkinShape(framePlate), 60)
+  }
+
+  private exitMini(): void {
+    if (!this.container || !this.mini) return
+    this.mini = false
+    this.container.classList.remove('mini')
+    window.skinwalker?.setWindowSize?.(STAGE_SIZE)
+    this.renderMiniPin()
+    window.setTimeout(() => void applySkinShape(framePlate), 60)
+  }
+
+  private renderMiniPin(): void {
+    const pin = this.els?.miniPin
+    if (!pin) return
+    const label = this.mini ? 'Restore full player' : 'Mini mode'
+    pin.innerHTML = pinSvg('mini', this.mini ? PIN_MOTIFS.restore : PIN_MOTIFS.mini, label)
+    pin.setAttribute('aria-label', label)
+    pin.setAttribute('aria-pressed', String(this.mini))
+    pin.title = label
+  }
+
+  // ── Playlist ─────────────────────────────────────────────────────────────────
+
+  private buildPlaylist(): void {
+    const p = this.player
+    const els = this.els
+    if (!p || !els) return
+    const ol = els.playlist
+    ol.replaceChildren()
+
+    p.playlist.forEach((track, i) => {
+      const li = document.createElement('li')
+      li.className = 'fr-track'
+      li.dataset.index = String(i)
+      li.setAttribute('role', 'button')
+      li.setAttribute('tabindex', '0')
+      li.setAttribute('aria-label', `Play ${track.title}`)
+
+      const num = document.createElement('span')
+      num.className = 'fr-track-num'
+      num.textContent = String(i + 1).padStart(2, '0')
+
+      const name = document.createElement('span')
+      name.className = 'fr-track-name'
+      name.textContent = track.title
+
+      const time = document.createElement('span')
+      time.className = 'fr-track-time'
+      time.textContent = this.trackDuration(track.url)
+
+      li.append(num, name, time)
+      li.addEventListener('click', () => void p.playIndex(i).catch(logPlayError))
+      li.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return
+        e.preventDefault()
+        void p.playIndex(i).catch(logPlayError)
+      })
+      ol.appendChild(li)
+    })
+
+    this.highlightPlaylistItem(this.activeIndex)
+    this.probeDurations()
+  }
+
+  private highlightPlaylistItem(idx: number): void {
+    const ol = this.els?.playlist
+    if (!ol || idx < 0) return
+    ol.querySelectorAll<HTMLElement>('.fr-track').forEach((row, i) => {
+      row.classList.toggle('active', i === idx)
+      row.setAttribute('aria-current', i === idx ? 'true' : 'false')
+    })
+  }
+
+  /** Read each track's duration with a throwaway <audio> so the board can
+   *  show a time before the engine has ever decoded that track. */
+  private probeDurations(): void {
+    const p = this.player
+    if (!p) return
+    p.playlist.forEach((track) => {
+      if (this.probed.has(track.url)) return
+      this.probed.add(track.url)
+      const probe = new Audio()
+      probe.preload = 'metadata'
+      probe.addEventListener('loadedmetadata', () => {
+        if (Number.isFinite(probe.duration) && probe.duration > 0) {
+          this.durations.set(track.url, probe.duration)
+          this.buildPlaylist()
+        }
+        probe.src = ''
+      }, { once: true })
+      probe.addEventListener('error', () => { probe.src = '' }, { once: true })
+      probe.src = track.url
+    })
+  }
+
+  private trackDuration(url: string): string {
+    const seconds = this.durations.get(url)
+    return seconds ? fmt(seconds) : '--:--'
+  }
+
+  // ── RAF loops ────────────────────────────────────────────────────────────────
+
+  private loop = (): void => {
+    this.rafId = requestAnimationFrame(this.loop)
+    if (!this.player || !this.els) return
+    this.drawVisualizer()
+    this.paintTime()
+    this.updatePlayState()
+  }
+
+  /** The iris follows the pointer and drifts on its own after a while. */
+  private look = (now: number): void => {
+    this.eyeRaf = requestAnimationFrame(this.look)
+    const els = this.els
+    if (!els) return
+    const rect = els.eye.getBoundingClientRect()
+    if (rect.width === 0) return
+
+    let tx: number
+    let ty: number
+    if (now - this.pointerAt > 4500) {
+      tx = Math.sin(now * 0.00043) * rect.width * 0.09
+      ty = Math.sin(now * 0.00061) * rect.height * 0.07
+    } else {
+      const dx = this.pointerX - rect.left - rect.width / 2
+      const dy = this.pointerY - rect.top - rect.height / 2
+      const n = Math.max(80, Math.hypot(dx, dy))
+      tx = (dx / n) * rect.width * 0.17
+      ty = (dy / n) * rect.height * 0.15
+    }
+    const dt = Math.min(50, now - (this.eyeLast || now - 16))
+    this.eyeLast = now
+    const ease = 1 - Math.exp(-dt / 85)
+    this.eyeX += (tx - this.eyeX) * ease
+    this.eyeY += (ty - this.eyeY) * ease
+    els.iris.style.transform = `translate(${this.eyeX.toFixed(2)}px, ${this.eyeY.toFixed(2)}px)`
+  }
+
+  private onPointerAim = (e: PointerEvent): void => {
+    this.pointerX = e.clientX
+    this.pointerY = e.clientY
+    this.pointerAt = performance.now()
+  }
+
+  private updatePlayState(): void {
+    const els = this.els
+    const p = this.player
+    if (!els || !p) return
+    const playing = p.audio.isPlaying
+    if (els.body.classList.contains('playing') === playing) return
+    els.body.classList.toggle('playing', playing)
+    els.play.setAttribute('aria-pressed', String(playing))
+    els.play.setAttribute('aria-label', playing ? 'Pause track' : 'Play track')
+    els.play.title = playing ? 'Pause track' : 'Play track'
+  }
+
+  /** The reference build's forehead equalizer: nine columns of five blocks,
+   *  lit from the bottom by the real spectrum. */
+  private drawVisualizer(): void {
+    const els = this.els
+    const p = this.player
+    if (!els || !p) return
+    const canvas = els.canvas
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    if (canvas.width !== 450 || canvas.height !== 150) {
+      canvas.width = 450
+      canvas.height = 150
+    }
+    ctx.clearRect(0, 0, 450, 150)
+
+    const playing = p.audio.isPlaying
+    if (playing && this.freqData) p.audio.getFrequencyData(this.freqData)
+
+    for (let i = 0; i < EQ_COLS; i++) {
+      let lit = EQ_IDLE[i]
+      if (playing && this.freqData) {
+        const bin = Math.min(this.freqData.length - 1, 1 + i * 3)
+        lit = Math.max(1, Math.round((this.freqData[bin] / 255) * EQ_ROWS))
+      }
+      for (let j = 0; j < EQ_ROWS; j++) {
+        const on = j < lit
+        ctx.fillStyle = on ? '#85ff72' : '#84ff7220'
+        ctx.shadowColor = '#65ff50'
+        ctx.shadowBlur = on ? 7 : 0
+        ctx.beginPath()
+        ctx.roundRect(i * EQ_CELL_W + 4, 150 - (j + 1) * EQ_CELL_H, EQ_BLOCK_W, EQ_BLOCK_H, 5)
+        ctx.fill()
+      }
+    }
+    ctx.shadowBlur = 0
+  }
+
+  private paintTime(): void {
+    const els = this.els
+    const p = this.player
+    if (!els || !p) return
+
+    const dur = p.audio.duration
+    const cur = Math.min(p.audio.currentTime, dur || 0)
+    if (!this.seeking) this.paintSeek(dur > 0 ? (cur / dur) * 1000 : 0)
+
+    const elapsedText = fmt(cur)
+    if (els.elapsed.textContent !== elapsedText) els.elapsed.textContent = elapsedText
+    const remainingText = `-${fmt(Math.max(0, dur - cur))}`
+    if (els.remaining.textContent !== remainingText) els.remaining.textContent = remainingText
   }
 }
 
-function fmt(s: number): string {
-  const m = Math.floor(s / 60)
-  const sec = Math.floor(s % 60)
-  return `${m}:${sec.toString().padStart(2, '0')}`
+function fmt(seconds: number): string {
+  if (!Number.isFinite(seconds)) return '--:--'
+  const s = Math.max(0, Math.floor(seconds))
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+}
+
+function logPlayError(err: unknown): void {
+  console.error('skinwalker: could not play track', err)
 }

@@ -1,6 +1,6 @@
 # Skin Required Controls Specification
 
-**Status:** In progress. Audit complete (2026-11-21). Skeleton's five buttons and mini version landed 2026-11-22 (T4); Frankenstein (T3) and the shared helper decision remain.
+**Status:** Complete for the shipped skins. Audit complete (2026-11-21). Skeleton's five buttons and mini landed 2026-11-22 (T4); Frankenstein was rebuilt on its reference web build 2026-11-23 (T3), which also closed T5. The shared-helper decision is moot: each skin carries its own controls.
 **Created:** 2026-11-21
 **Owner:** Maintainer
 **Implementation:** Kiro, after the open decisions below are answered
@@ -21,17 +21,16 @@ Checked by reading `src/renderer/skins/*.ts` and `src/renderer/main.ts`. Not run
 | Seek bar | yes | yes | yes |
 | Volume | yes (speaker buttons, wheel, keys) | yes (dial: drag, wheel, keys) | yes (slider + speaker mute) |
 | Track board | yes (`dr-playlist`) | yes (`fr-playlist`) | yes (`sk-board`) |
-| Close | yes (tool row) | none (global bar removed 2026-11-21) | none (global bar removed 2026-11-21) |
-| Minimize | yes (tool row) | none (global bar removed 2026-11-21) | none (global bar removed 2026-11-21) |
-| Switch skin | yes (`Player.nextSkin()`, commit `4598551`) | no | no |
-| Mini version | yes (bat, 380x380) | no | no |
-| Open folder | yes (tool row) | global "+ Add files" button | global "+ Add files" button |
+| Close | yes (tool row) | yes (jacket pin, 2026-11-23) | yes (bone plaque) |
+| Minimize | yes (tool row) | yes (jacket pin, 2026-11-23) | yes (bone plaque) |
+| Switch skin | yes (`Player.nextSkin()`, commit `4598551`) | yes (jacket pin, 2026-11-23) | yes (bone plaque) |
+| Mini version | yes (bat, 380x380) | yes (window 320x480, 2026-11-23) | yes (card 380x220) |
+| Open folder | yes (tool row) | yes (jacket pin, 2026-11-23) | yes (bone plaque) |
 
-"Global" means `renderWindowControls()` and `renderOpenButton()` in
-`src/renderer/main.ts`. The title bar there is `aria-hidden`, is a generic
-36px strip (`style.css`), and has a maximize button that is not on the list.
-The "+ Add files" button is hidden only for Dracula (`style.css`, `body:has(.dracula-skin)`).
-Dracula is the only skin that meets the rule.
+The generic title bar was removed on 2026-11-21 (T0b), and the floating
+"+ Add files" pill is now hidden for all three skins (`style.css`,
+`body:has(...)`), because each skin carries its own folder control. All
+three skins provide the ten controls as of 2026-11-23.
 
 ## Requirements
 ### Functional
@@ -58,11 +57,11 @@ Dracula is the only skin that meets the rule.
 - [x] T0: Hide the global bar and "+ Add files" pill during a drag (R6). Small fix, does not depend on the open decisions.
 - [x] T0b: Remove the generic title bar (minimize, maximize, close) entirely: `#titlebar` in `src/renderer/index.html`, `renderWindowControls()` in `src/renderer/main.ts`, its CSS in `src/renderer/style.css`. Maintainer decision 2026-11-21. Answers open decision 4 (maximize is dropped).
 - [ ] T1: Resolve open decisions and update this spec's design section.
-- [ ] T2: Shared helper for the five window buttons (if decision 3 says so).
-- [ ] T3: Frankenstein: five buttons and mini version.
+- [ ] T2: Shared helper for the five window buttons — moot: each skin carries its own.
+- [x] T3: Frankenstein: five buttons and mini version.
 - [x] T4: Skeleton: five buttons and mini version.
-- [ ] T5: Hide the global bar and "+ Add files" for skins that provide their own.
-- [ ] T6: Update `docs/AGENTS.md` scope text and `README.md` skin table.
+- [x] T5: Hide the global bar and "+ Add files" for skins that provide their own.
+- [x] T6: Update `docs/AGENTS.md` scope text and `README.md` skin table.
 
 ## Acceptance Criteria
 - In the running app, on each skin: all ten controls are present and work. Record the check in this spec's Implementation Notes with the date.
@@ -82,3 +81,5 @@ T0 follow-up 2 (2026-11-21): the buttons still showed for a moment at the start 
 T0b decision (2026-11-21): the maintainer asked to remove the generic title bar instead of hiding it during drags. Consequence: Skeleton and Frankenstein have no on-skin close or minimize until T3 and T4 land. The taskbar and Alt+F4 remain [MAINTAINER: confirm they work on the frameless window]. The "+ Add files" pill stays, because it is the only open-folder control on those two skins; it is still hidden during drags. Implemented 2026-11-21: removed `#titlebar` from `src/renderer/index.html`, `renderWindowControls()` and `btn()` from `src/renderer/main.ts`, and the `#titlebar` CSS block from `src/renderer/style.css`. Left in place: the `window:maximize` IPC and the `--titlebar-h` CSS variable (still used by `#app` padding and the pill). `npm run typecheck` and `npm run build` pass. Not checked visually.
 
 T4 (2026-11-22): used the Boba web build the skin came from as the design reference. The five window tools sit on the skeleton's painted icon row, left to right: skull → mini, half-mask → change skin, coffin → add files, bar → minimize, X → close; the painted speaker beside the volume bar mutes and restores the level. The mini version follows the web build's mini player: the window shrinks to 380×220, the shape is lifted, and the card shows a skull crop, title, play/pause, seek and restore/close. The generic "+ Add files" pill is now hidden on Skeleton as well (R5). `npm run typecheck` and `npm run build` pass; not checked visually in the running app. [MAINTAINER: exercise all five tools, the mini card and its restore/seek, and the shape after entering and leaving mini.]
+
+T3 + T5 (2026-11-23): Frankenstein rebuilt on its reference web build, the same treatment Dracula and Skeleton had. The plate, the dial crop and every live position come from that build: forehead 9×5 block equalizer, a cursor-tracking left eye with idle drift and an 8 s blink, the right eye as play/pause, neck bolts, a stitched scar seek drawn on the reference's SVG path (painted while dragging, committed on release), a gold watch dial with mute, and the five brass jacket pins. Mini is a 320×480 window of the same figure. The ☰ Tracks board lifts the OS window region while open (`liftShape()` / `restoreShape()` in `src/renderer/windowShape.ts`) so the panel is not clipped by the silhouette, and `src/renderer/skinDrag.ts` ignores pointerdowns while a dialog is open. `role="img"` on the body became `role="group"`; the old role had hidden every control from assistive tech. The floating "+ Add files" pill is now hidden on Frankenstein too (T5), so all three skins carry their own controls. Verified by rendering the skin's own CSS over the plate at 480×720 in Chromium and measuring every control against the reference percentages (all within 0.1%); `npm run typecheck` and `npm run build` pass. The Electron window, audio, shape and mini paths were not exercised.

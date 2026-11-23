@@ -77,7 +77,8 @@ html, body {
 /* Dracula carries the picker in its own tool row, so the floating pill would
    only duplicate it over the plate. */
 body:has(.dracula-skin) #open-files,
-body:has(.skeleton-skin) #open-files { display: none; }
+body:has(.skeleton-skin) #open-files,
+body:has(.frankenstein-skin) #open-files { display: none; }
 
 /* ── Shared range inputs ─────────────────────────────────────────────────── */
 input[type="range"] {
@@ -131,7 +132,7 @@ input[type="range"]::-moz-range-thumb {
    FRANKENSTEIN SKIN
    ════════════════════════════════════════════════════════════════════════════ */
 [data-skin="frankenstein"] {
-  --color-accent: #5ecf5e;
+  --color-accent: #87ff73;
 }
 
 
@@ -767,251 +768,495 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-mini-play .dr-pause-glyph { left: 0; top: 0; width: 100%; height: 100%; }
 
 /* ════════════════════════════════════════════════════════════════════
-   FRANKENSTEIN — IMAGE FRAME (2026-11-09)
-   Same treatment as Dracula: the transparent character plate fills the
-   window; painted elements are the controls; eyes + brass dial are
-   separated layers. Geometry measured from the plate.
+   FRANKENSTEIN — WEB PLATE (2026-11-23)
+   Rebuilt from the reference web build: a flat illustrated bust whose
+   forehead is the equalizer, whose left eye follows the pointer and whose
+   right eye is play/pause, with neck bolts, a stitched scar seek line, a
+   gold watch for volume and brass jacket pins for the window tools.
+   Every position below is the reference build's own percentage of its 2:3
+   stage (1280×1920), and this skin's window is 2:3, so each live element
+   lands on its painted counterpart. cqw units keep the UI proportional as
+   the window resizes.
    ════════════════════════════════════════════════════════════════════ */
-.frankenstein-skin {
-  /* No filter here: a filtered ancestor becomes the containing block for its
-     positioned children, and this wrapper has no height of its own — the body
-     would resolve inset:0 against a zero-height box. The shadow lives on the
-     plate instead, exactly as Dracula's layers do. */
-  filter: none;
-}
+.frankenstein-skin { filter: none; }
 .frankenstein-skin .fr-body {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   margin: 0;
-  filter: drop-shadow(0 18px 44px rgba(0, 0, 0, 0.55));
-  display: block;
   padding: 0;
-  background: var(--fr-frame-url) center / 100% 100% no-repeat;
+  background: none;
   border: none;
-  border-radius: 0;
-  box-shadow: none;
-  overflow: visible;
+  filter: none;
+  overflow: hidden;
+  container-type: inline-size;
 }
-.frankenstein-skin .fr-layer {
+.frankenstein-skin .fr-plate {
+  position: absolute;
+  inset: 0;
+  background: var(--fr-frame-url) center / 100% 100% no-repeat;
+  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.55));
+  pointer-events: none;
+}
+
+/* ── Forehead equalizer ───────────────────────────────────────────────── */
+.frankenstein-skin .fr-eq {
+  position: absolute;
+  left: 29.7%;
+  top: 12.6%;
+  width: 41%;
+  height: 9.1%;
+  background: #709b73;
+  border-radius: 3%;
+  z-index: 1;
+}
+.frankenstein-skin .fr-viz { width: 100%; height: 100%; display: block; }
+
+/* ── Eyes: left = living readout, right = play / pause ────────────────── */
+.frankenstein-skin .fr-eye {
+  position: absolute;
+  left: 34.2%;
+  top: 28.1%;
+  width: 10.9%;
+  height: 5.7%;
+  background: radial-gradient(ellipse at 45% 38%, #edf0cf, #c9c99b 75%);
+  border: 0.75cqw solid #284b31;
+  border-radius: 46% 48% 48% 50%;
+  overflow: hidden;
+  box-shadow: inset 0 0.5cqw 1cqw #536a3a;
+  pointer-events: none;
+  z-index: 3;
+}
+.frankenstein-skin .fr-iris {
+  position: absolute;
+  left: 25%;
+  top: 17%;
+  width: 50%;
+  height: 66%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #07170e 0 29%, #23492c 31% 36%, #63a651 39%, #397544 65%, #183b26 68%);
+  box-shadow: 0 0 2px #183820;
+  will-change: transform;
+}
+.frankenstein-skin .fr-iris::after {
+  content: '';
+  position: absolute;
+  left: 24%;
+  top: 16%;
+  width: 20%;
+  height: 18%;
+  border-radius: 50%;
+  background: #f5ffdbb0;
+}
+.frankenstein-skin .fr-eye::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: #416943;
+  transform: scaleY(0);
+  transform-origin: top;
+  animation: fr-blink 8s infinite;
+  pointer-events: none;
+}
+@keyframes fr-blink {
+  0%, 93%, 98%, 100% { transform: scaleY(0); }
+  95% { transform: scaleY(1); }
+}
+.frankenstein-skin .fr-play {
+  position: absolute;
+  left: 56.2%;
+  top: 28.2%;
+  width: 9.7%;
+  height: 5.5%;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: #00de26;
+  border: 0.7cqw solid #244630;
+  border-radius: 50%;
+  box-shadow: 0 0 2cqw #64ff7040;
+  cursor: pointer;
+  transition: box-shadow 0.2s, filter 0.2s;
+  z-index: 4;
+}
+.frankenstein-skin .fr-play:hover,
+.frankenstein-skin .fr-play:focus-visible {
+  box-shadow: 0 0 2.8cqw #8bff9a80;
+  filter: brightness(1.12);
+}
+.frankenstein-skin .fr-play-symbol {
+  width: 0;
+  height: 0;
+  border-top: 1.5cqw solid transparent;
+  border-bottom: 1.5cqw solid transparent;
+  border-left: 2.3cqw solid #b3ff94;
+  margin-left: 0.5cqw;
+}
+.frankenstein-skin .fr-pause-symbol {
+  display: none;
+  width: 2.5cqw;
+  height: 3cqw;
+  border-left: 0.8cqw solid #b3ff94;
+  border-right: 0.8cqw solid #b3ff94;
+}
+.frankenstein-skin .fr-body.playing .fr-play-symbol { display: none; }
+.frankenstein-skin .fr-body.playing .fr-pause-symbol { display: block; }
+
+/* ── Neck bolts = prev / next ─────────────────────────────────────────── */
+.frankenstein-skin .fr-bolt {
+  position: absolute;
+  top: 36.1%;
+  width: 7%;
+  height: 9.3%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 24%;
+  cursor: pointer;
+  z-index: 4;
+}
+.frankenstein-skin .fr-prev { left: 16.6%; }
+.frankenstein-skin .fr-next { right: 16%; }
+.frankenstein-skin .fr-bolt:hover,
+.frankenstein-skin .fr-bolt:focus-visible {
+  box-shadow: 0 0 3cqw #72ff5a66;
+  outline: 1px solid #b1ffa2;
+}
+
+/* ── Chest readout = title / artist ───────────────────────────────────── */
+.frankenstein-skin .fr-readout {
+  position: absolute;
+  left: 35.7%;
+  top: 65.6%;
+  width: 29%;
+  height: 8%;
+  padding: 0 0.9cqw;
+  background: #1c1724;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1cqw;
+  overflow: hidden;
+  z-index: 3;
+}
+.frankenstein-skin .fr-eyebrow {
+  color: #618d65;
+  font: clamp(6px, 1.2cqw, 10px)/1 var(--font-mono);
+  letter-spacing: 0.15em;
+  white-space: nowrap;
+}
+.frankenstein-skin .fr-title {
+  color: #94d898;
+  font: 700 clamp(11px, 2.55cqw, 20px)/1.05 var(--font-mono);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.frankenstein-skin .fr-subtitle {
+  color: #5f8a65;
+  font: clamp(6px, 1.25cqw, 10px)/1 var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Stitched scar = seek ─────────────────────────────────────────────── */
+.frankenstein-skin .fr-scar {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+.frankenstein-skin .fr-scar-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.frankenstein-skin .fr-scar-route { fill: none; stroke: #a28d7d; stroke-width: 4; }
+.frankenstein-skin .fr-scar-progress { fill: none; stroke: #9cff7f; stroke-width: 5; }
+.frankenstein-skin .fr-scar-thumb {
+  fill: #acff8a;
+  stroke: #78c66c;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 6px #78ff7a);
+}
+.frankenstein-skin .fr-scar-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 145;
+  pointer-events: stroke;
+  cursor: ew-resize;
+  touch-action: none;
+}
+.frankenstein-skin .fr-scar:focus-within .fr-scar-thumb {
+  stroke: #fff;
+  stroke-width: 5;
+}
+.frankenstein-skin .fr-seek {
+  position: absolute;
+  left: 28%;
+  top: 57%;
+  width: 44%;
+  height: 5%;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.frankenstein-skin .fr-times {
+  position: absolute;
+  left: 28%;
+  top: 62.3%;
+  width: 44%;
+  display: flex;
+  justify-content: space-between;
+  color: #a8cb9f;
+  font: clamp(8px, 1.65cqw, 12px) var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 3px #000;
+  pointer-events: none;
+}
+.frankenstein-skin .fr-remaining { transform: translateY(-3.4cqw); }
+
+/* ── Gold watch = volume ──────────────────────────────────────────────── */
+.frankenstein-skin .fr-watch {
+  position: absolute;
+  left: 41.5%;
+  top: 80.6%;
+  width: 18%;
+  height: 12%;
+  z-index: 4;
+}
+.frankenstein-skin .fr-dial {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  outline-offset: 3px;
+}
+.frankenstein-skin .fr-dial:active { cursor: grabbing; }
+.frankenstein-skin .fr-dial:focus-visible { outline: 2px solid #ffe19b; }
+.frankenstein-skin .fr-knob-plate {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
+}
+.frankenstein-skin .fr-knob-face {
+  position: absolute;
+  left: 15.25%;
+  top: 13.7%;
+  width: 67.3%;
+  height: 68.5%;
+  transform: rotate(var(--angle, 54deg));
+  filter: drop-shadow(0 0 2px #c49b3d);
+  pointer-events: none;
+  will-change: transform;
+}
+.frankenstein-skin .fr-dial.muted .fr-knob-face { filter: brightness(0.55); }
+.frankenstein-skin .fr-vol {
+  position: absolute;
+  left: 0;
+  top: 103%;
+  width: 100%;
+  text-align: center;
+  color: #fbebb4;
+  font: clamp(8px, 1.8cqw, 12px) var(--font-mono);
+  text-shadow: 0 1px 3px #000;
+  pointer-events: none;
+}
+.frankenstein-skin .fr-mute {
+  position: absolute;
+  right: -30%;
+  bottom: 0;
+  min-width: 24px;
+  min-height: 24px;
+  border: 1px solid #bc9855;
+  border-radius: 50%;
+  background: #352a18;
+  color: #ffe1a1;
+  font: clamp(9px, 2cqw, 14px) var(--font-mono);
+  cursor: pointer;
+  z-index: 3;
+}
+.frankenstein-skin .fr-mute.muted { background: #1c150c; color: #8a7448; }
+
+/* ── Brass jacket pins = window tools ─────────────────────────────────── */
+.frankenstein-skin .fr-pin {
+  position: absolute;
+  width: 10%;
+  min-width: 32px;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 50%;
+  cursor: pointer;
+  filter: drop-shadow(2px 4px 2px #000b);
+  transition: filter 0.2s, transform 0.18s;
+  touch-action: manipulation;
+  z-index: 7;
+}
+.frankenstein-skin .fr-pin svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 0.3px #0009);
+}
+.frankenstein-skin .fr-pin:hover,
+.frankenstein-skin .fr-pin:focus-visible {
+  transform: translateY(-1px) scale(1.035);
+  filter: drop-shadow(1px 3px 4px #b28f4655);
+  z-index: 10;
+}
+.frankenstein-skin .fr-pin:active {
+  transform: translateY(1px) scale(0.96);
+  filter: drop-shadow(0 1px 1px #000);
+}
+.frankenstein-skin .fr-pin-tip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 7px 10px;
+  white-space: nowrap;
+  color: #ffdfa5;
+  background: linear-gradient(135deg, #293b2d, #112019);
+  border: 1px solid #b99b61;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px #0009;
+  font: clamp(9px, 1.5cqw, 11px) var(--font-mono);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.18s, visibility 0.18s;
   z-index: 2;
 }
-.frankenstein-skin .fr-eye-layer.left { content: var(--fr-eye-left-url); }
-.frankenstein-skin .fr-eye-layer.right { content: var(--fr-eye-right-url); }
-.frankenstein-skin .fr-dial-layer {
-  content: var(--fr-dial-url);
-  transform-origin: 50% 86.5%;
+.frankenstein-skin .fr-pin:hover .fr-pin-tip,
+.frankenstein-skin .fr-pin:focus-visible .fr-pin-tip {
+  opacity: 1;
+  visibility: visible;
 }
-.frankenstein-skin .fr-body:has(.fr-eyes.playing) .fr-eye-layer {
-  animation: fr-eye-pulse 1.1s ease-in-out infinite;
-}
-@keyframes fr-eye-pulse {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.55) saturate(1.3); }
-}
-.frankenstein-skin .fr-eyes {
-  position: absolute;
-  left: 29%;
-  top: 26%;
-  width: 42%;
-  height: 10.5%;
-  padding: 0;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 4;
-  -webkit-app-region: no-drag;
-}
-.frankenstein-skin .fr-eye-glow {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  background:
-    radial-gradient(circle at 39.5% 31.5%, rgba(60, 255, 110, 0.65), rgba(60, 255, 110, 0.18) 5.5%, transparent 9%),
-    radial-gradient(circle at 60.5% 31.5%, rgba(60, 255, 110, 0.65), rgba(60, 255, 110, 0.18) 5.5%, transparent 9%);
-  z-index: 3;
-}
-.frankenstein-skin .fr-body:has(.fr-eyes.playing) .fr-eye-glow { opacity: 1; }
-.frankenstein-skin .fr-track-info {
-  position: absolute;
-  left: 27%;
-  top: 49.3%;
-  width: 46%;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(60, 180, 60, 0.2);
-  text-align: center;
-  z-index: 3;
-  pointer-events: none;
-}
-.frankenstein-skin .fr-title {
-  display: block;
-  font-size: 1.02rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #eaffea;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.9);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.frankenstein-skin .fr-artist {
-  display: block;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #9fe8a9;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
-}
-.frankenstein-skin .fr-viz-panel {
-  position: absolute;
-  left: 27%;
-  top: 11%;
-  width: 46%;
-  height: 12%;
+.frankenstein-skin .fr-pin-folder { left: 18%; top: 53%; }
+.frankenstein-skin .fr-pin-close  { left: 16%; top: 67%; }
+.frankenstein-skin .fr-pin-tracks { left: 79%; top: 53%; }
+.frankenstein-skin .fr-pin-mini   { left: 77%; top: 65%; }
+.frankenstein-skin .fr-pin-skin   { left: 74%; top: 76%; }
+
+/* ── ☰ Tracks board ───────────────────────────────────────────────────── */
+.frankenstein-skin .fr-board {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(430px, calc(100% - 24px));
+  max-height: calc(100% - 24px);
+  overflow: auto;
+  padding: 26px 18px 16px;
+  background: linear-gradient(130deg, #28312d, #111a16 50%, #202923);
+  border: 5px solid #3b4641;
   border-radius: 8px;
-  background: rgba(6, 18, 8, 0.5);
-  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.45);
-  z-index: 1;
+  box-shadow: inset 0 0 0 1px #6a786c, 0 18px 60px #000;
+  text-align: left;
+  z-index: 30;
 }
-.frankenstein-skin .fr-viz { width: 100%; height: 100%; display: block; }
-.frankenstein-skin .fr-prev,
-.frankenstein-skin .fr-next {
+.frankenstein-skin .fr-board[hidden] { display: none; }
+.frankenstein-skin .fr-board::before,
+.frankenstein-skin .fr-board::after {
+  content: '⊕';
   position: absolute;
-  top: 34.5%;
-  width: 14.5%;
-  height: 12.5%;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  z-index: 4;
-  -webkit-app-region: no-drag;
+  top: 6px;
+  color: #829287;
+  font-size: 15px;
 }
-.frankenstein-skin .fr-prev { left: 10.8%; }
-.frankenstein-skin .fr-next { left: 74.7%; }
-.frankenstein-skin .fr-prev:hover,
-.frankenstein-skin .fr-next:hover {
-  background: radial-gradient(circle, rgba(120, 255, 150, 0.28), transparent 72%);
-}
-.frankenstein-skin .fr-prev:active,
-.frankenstein-skin .fr-next:active {
-  background: radial-gradient(circle, rgba(120, 255, 150, 0.45), transparent 72%);
-}
-.frankenstein-skin .fr-seek-region {
-  position: absolute;
-  left: 25.5%;
-  top: 57.2%;
-  width: 49%;
-  z-index: 4;
-  -webkit-app-region: no-drag;
-}
-.frankenstein-skin .fr-seek {
-  width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  height: 22px;
-  margin: 0;
+.frankenstein-skin .fr-board::before { left: 7px; }
+.frankenstein-skin .fr-board::after  { right: 7px; }
+.frankenstein-skin .fr-board-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  z-index: 2;
+  padding: 7px 11px;
+  background: #263a2d;
+  border: 1px solid #829287;
+  border-radius: 4px;
+  color: #d5dfcc;
+  font: clamp(9px, 1.6cqw, 11px) var(--font-mono);
   cursor: pointer;
 }
-.frankenstein-skin .fr-seek::-webkit-slider-runnable-track { background: transparent; height: 22px; }
-.frankenstein-skin .fr-seek::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 17px;
-  height: 17px;
-  margin-top: 2.5px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 35%, #b6ffc2, #2fe05c 62%, #0d7a2c);
-  border: 1px solid rgba(6, 40, 14, 0.85);
-  box-shadow: 0 0 9px rgba(60, 255, 110, 0.75);
+.frankenstein-skin .fr-board .fr-eyebrow { color: #7c997f; }
+.frankenstein-skin .fr-board h1 {
+  margin: 8px 0 4px;
+  color: #d5dfcc;
+  font: 22px/1.1 var(--font-display);
+  letter-spacing: 0.04em;
 }
-.frankenstein-skin .fr-seek::-moz-range-track { background: transparent; }
-.frankenstein-skin .fr-seek::-moz-range-thumb {
-  width: 15px; height: 15px; border-radius: 50%;
-  background: radial-gradient(circle at 38% 35%, #b6ffc2, #2fe05c 62%, #0d7a2c);
-  border: 1px solid rgba(6, 40, 14, 0.85);
-  box-shadow: 0 0 9px rgba(60, 255, 110, 0.75);
-}
-.frankenstein-skin .fr-time {
-  position: absolute;
-  right: 0;
-  top: 21px;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-variant-numeric: tabular-nums;
+.frankenstein-skin .fr-board-sub {
+  color: #7d9980;
+  font: 10px var(--font-mono);
   letter-spacing: 0.08em;
-  color: #c9f5cf;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
-}
-.frankenstein-skin .fr-dial {
-  position: absolute;
-  left: 40.5%;
-  top: 79%;
-  width: 19%;
-  height: 15%;
-  border-radius: 50%;
-  cursor: grab;
-  z-index: 4;
-  -webkit-app-region: no-drag;
-}
-.frankenstein-skin .fr-dial:active { cursor: grabbing; }
-.frankenstein-skin .fr-dial:focus-visible {
-  outline: 2px solid rgba(105, 245, 124, 0.8);
-  outline-offset: 2px;
 }
 .frankenstein-skin .fr-playlist {
-  position: absolute;
-  left: 31.5%;
-  top: 63.8%;
-  width: 37%;
-  max-height: 10.5%;
-  margin: 0;
-  padding: 4px;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  border: 1px solid rgba(60, 180, 60, 0.1);
+  margin: 16px 0 0;
+  padding: 0;
+  max-height: 42vh;
   overflow-y: auto;
-  z-index: 3;
-  background: rgba(8, 10, 14, 0.55);
-  border-radius: 8px;
-  -webkit-app-region: no-drag;
+  list-style: none;
+  border-top: 1px solid #405047;
 }
-.frankenstein-skin .fr-playlist li {
-  padding: 3px 8px;
-  font-size: 0.7rem;
-  text-align: center;
-  color: #d8e6d9;
-  border-radius: 5px;
+.frankenstein-skin .fr-track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 6px;
+  border-bottom: 1px solid #35453b;
+  color: #94ab98;
+  font: clamp(10px, 2.1cqw, 12px) var(--font-mono);
   cursor: pointer;
-  white-space: nowrap;
+}
+.frankenstein-skin .fr-track-num { color: #6e8b72; }
+.frankenstein-skin .fr-track-name {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
 }
-.frankenstein-skin .fr-playlist li:hover {
-  background: rgba(105, 245, 124, 0.14);
-  color: var(--color-text);
+.frankenstein-skin .fr-track-time { color: #6e8b72; font-size: 0.85em; }
+.frankenstein-skin .fr-track:hover { background: #ffffff08; }
+.frankenstein-skin .fr-track.active {
+  color: #adff94;
+  background: #89ff7310;
+  box-shadow: inset 2px 0 #87ff73;
 }
-.frankenstein-skin .fr-playlist li.active {
-  color: #69f57c;
-  background: rgba(105, 245, 124, 0.1);
-  font-weight: 600;
+.frankenstein-skin .fr-board-load,
+.frankenstein-skin .fr-board-restore {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 8px;
+  border: 1px dashed #657360;
+  background: #172019;
+  color: #b4c7aa;
+  text-align: center;
+  cursor: pointer;
+  font: clamp(9px, 1.9cqw, 11px) var(--font-mono);
+  letter-spacing: 0.08em;
+}
+.frankenstein-skin .fr-board-restore {
+  border-style: solid;
+  border-color: #8e7f4b;
+  background: #29251a;
+  color: #e7cb80;
 }
 /* ════════════════════════════════════════════════════════════════════════
    SKELETON — WEB PLATE (2026-11-11)

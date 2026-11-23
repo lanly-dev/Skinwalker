@@ -28,6 +28,8 @@ let source: string | null = null
 let resizeTimer: number | undefined
 /** The silhouette currently applied, so a drag can lift it and put it back. */
 let lastRects: Rect[] = []
+/** True while the region is lifted (a drag, or a panel wider than the plate). */
+let lifted = false
 /** Viewport the current rects were sampled from. The main process scales the
  *  region from this size to the window's actual size, so a resize between
  *  sampling and applying can never cut bands out of the silhouette. */
@@ -49,13 +51,15 @@ function setGenericChromeHidden(hidden: boolean): void {
 }
 
 /**
- * Drop the OS region while the window moves. A shaped window can repaint its
- * region a frame behind a programmatic move, which makes the plate slide
- * against its own outline; a plain rectangle moves as one piece.
+ * Lift the OS region so the whole rectangle shows: while the window moves (a
+ * shaped window repaints its region a frame behind a programmatic move, so the
+ * plate slides against its own outline), and while a panel wider than the
+ * silhouette is open.
  */
-export function clearShapeForDrag(): Promise<void> {
+export function liftShape(): Promise<void> {
   // Hide first and let two frames paint, so the rectangle that appears when
   // the region is lifted never contains the buttons.
+  lifted = true
   setGenericChromeHidden(true)
   return new Promise((resolve) => {
     requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -65,8 +69,14 @@ export function clearShapeForDrag(): Promise<void> {
   })
 }
 
-/** Put the silhouette back once the drag ends. */
+/** The drag handler's name for the same lift. */
+export function clearShapeForDrag(): Promise<void> {
+  return liftShape()
+}
+
+/** Put the silhouette back once the drag ends (or the panel closes). */
 export function restoreShape(): void {
+  lifted = false
   if (lastRects.length) window.skinwalker?.setWindowShape?.(lastRects, lastFrom ?? undefined)
   // The OS applies the region a moment after the message; show the generic
   // chrome only once the silhouette is back, or it flashes in the rectangle.
@@ -201,7 +211,9 @@ function buildRects(on: Uint8Array, w: number, h: number): Rect[] {
 /** Re-shape after a resize (a skin may set the window size on mount). */
 export function installShapeResize(): void {
   window.addEventListener('resize', () => {
-    if (!source) return
+    // A lifted region is meant to be a plain rectangle; reshaping mid-drag or
+    // under an open board would clip it again.
+    if (!source || lifted) return
     window.clearTimeout(resizeTimer)
     resizeTimer = window.setTimeout(() => void applySkinShape(source ?? undefined), 150)
   })

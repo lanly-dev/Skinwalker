@@ -16,7 +16,9 @@ export function installSkinDrag(): void {
     if (e.button !== 0) return
     const target = e.target as HTMLElement | null
     if (!target?.closest('.skin')) return
-    if (target.closest('button, input, textarea, select, ol, ul, [role="button"], [role="slider"], [role="group"]')) {
+    // A modal panel (a skin's track board) owns the pointer while it is open.
+    if (document.querySelector('[role="dialog"]:not([hidden])')) return
+    if (target.closest('button, input, textarea, select, ol, ul, [role="button"], [role="slider"], [role="group"], [role="dialog"]')) {
       return
     }
     if (!isOnSkin(e.clientX, e.clientY)) return
