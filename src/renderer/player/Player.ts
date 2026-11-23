@@ -5,6 +5,7 @@
 import { AudioEngine } from '../audio/AudioEngine'
 import type { Skin } from '../skins/Skin'
 import { applySkinShape } from '../windowShape'
+import { saveLastSkinId } from '../lastSkin'
 
 export interface Track {
   title: string
@@ -97,6 +98,7 @@ export class Player {
     this.activeSkin?.unmount()
     this.activeSkin = skin
     skin.mount(this)
+    saveLastSkinId(skin.id)
     // The skin owns the window size and shape
     window.skinwalker?.setWindowSize(skin.windowSize ?? { width: 480, height: 720 })
     void applySkinShape(skin.shapeImage)

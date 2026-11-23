@@ -8,6 +8,7 @@ import { SKINS } from './skins/index'
 import { installShapeResize } from './windowShape'
 import { installSkinDrag } from './skinDrag'
 import { openLocalFiles } from './openFiles'
+import { loadLastSkinId } from './lastSkin'
 import './style.css'
 
 // ── Demo playlist ─────────────────────────────────────────────────────────────
@@ -27,7 +28,9 @@ const player = new Player()
 player.loadPlaylist(DEMO_TRACKS)
 
 player.setSkins(SKINS)
-player.mountSkin(SKINS[0])
+// Reopen on the skin that was active last time; fall back to the first one.
+const lastId = loadLastSkinId()
+player.mountSkin(SKINS.find((skin) => skin.id === lastId) ?? SKINS[0])
 installSkinDrag()
 installShapeResize()
 
