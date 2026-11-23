@@ -12,7 +12,9 @@
  *   Title panel ────── live title + artist
  *   Blood line ─────── seek: live fill, drip curtain, elapsed / remaining
  *   Jeweled crosses ── volume: wide minus / tall plus at the line's ends
- *   Cape interior ──── mirrored spectrum (dims while the tool row is up)
+ *   Cape interior ──── hanging spectrum: bars fall from the blood line and
+ *                      dissolve into the dark, red→magenta→violet across the
+ *                      chest (dims while the tool row is up)
  *   Crossed hands ──── prev / next
  *   Tracklist ──────── playlist rows with probed durations
  *   Tool row ───────── close, minimize, add files, next skin, mini bat (on hover)
@@ -33,8 +35,25 @@ import { openLocalFiles } from '../openFiles'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
-/** Spectrum resolution (same as the web version) */
-const BAR_COUNT = 48
+/** Bars across the curtain. Fewer than the web build's 48 so each reads as a
+ *  painted stripe rather than a hairline. */
+const BAR_COUNT = 32
+/** The curtain's band on the stage, in the plate's own percentages: under the
+ *  blood line, inside the cape's inner oval (style.css clips to the same
+ *  oval, traced from the trim). */
+const CURTAIN = { left: 0.19, top: 0.55, width: 0.62, height: 0.233 }
+/** Curtain palette: ember red at the left shoulder, magenta through the
+ *  middle, cold violet under the right, as on the reference plate. Stops are
+ *  [bar position 0..1, rgb]. */
+const SPECTRUM_STOPS: ReadonlyArray<readonly [number, readonly [number, number, number]]> = [
+  [0.0, [236, 62, 28]],
+  [0.2, [224, 44, 46]],
+  [0.38, [201, 30, 92]],
+  [0.55, [183, 40, 143]],
+  [0.72, [160, 60, 190]],
+  [0.86, [135, 84, 226]],
+  [1.0, [110, 96, 242]],
+]
 /** Painted drop anchors on the blood strip, % of the seek width / height */
 const DROP_X = [22.0, 30.2, 43.3, 57.0, 67.4, 77.0]
 const DROP_Y = [34, 80, 46, 40, 50, 42]
@@ -482,8 +501,11 @@ export class DraculaSkin implements Skin {
     }
   }
 
-  /** Mirrored spectrum, as drawn by the web version: each measured height is
-   *  drawn equally above and below the centre line. */
+  /** The cape curtain from the reference plate: every bar hangs from the top
+   *  edge with a slight dip through the middle, runs down the chest and melts
+   *  into the dark rather than ending on a hard cap. Colour is one continuous
+   *  left-to-right sweep (red → magenta → violet), so the whole chest reads as
+   *  a single lit sheet instead of two tinted halves. */
   private drawVisualizer(now: number): void {
     const els = this.els
     const p = this.player
@@ -510,65 +532,78 @@ export class DraculaSkin implements Skin {
     const delta = this.lastFrame ? Math.min(2.5, (now - this.lastFrame) / 16.67) : 1
     this.lastFrame = now
 
-    const mid = h / 2
-    const pitch = w / BAR_COUNT
-    const barW = pitch * 0.55
-
-    // Faint gold centre line under the bars
-    ctx.save()
-    ctx.globalAlpha = 0.33
-    ctx.strokeStyle = '#bd8852'
-    ctx.lineWidth = Math.max(1, dpr * 0.7)
-    ctx.beginPath()
-    ctx.moveTo(w * 0.02, mid)
-    ctx.lineTo(w * 0.98, mid)
-    ctx.stroke()
-    ctx.restore()
+    // The canvas is stage-sized (style.css pulls it back over the whole
+    // plate), so the curtain is laid out in the plate's own percentages and
+    // the CSS clip follows the painted trim around it.
+    const bandLeft = w * CURTAIN.left
+    const bandTop = h * CURTAIN.top
+    const bandW = w * CURTAIN.width
+    const bandH = h * CURTAIN.height
+    const bandBottom = bandTop + bandH
+    const pitch = bandW / BAR_COUNT
+    const barW = pitch * 0.78
+    const half = (BAR_COUNT - 1) / 2
 
     for (let i = 0; i < BAR_COUNT; i++) {
-      const x = (i + 0.5) * pitch
-      const frac = i / (BAR_COUNT - 1)
-      const edge = Math.abs((i - (BAR_COUNT - 1) / 2) / ((BAR_COUNT - 1) / 2))
+      const x = bandLeft + (i + 0.5) * pitch
+      // 0 at the cape's centre line, 1 at the wingtips. Heights are mirrored
+      // about the centre, so the mass is one symmetrical bat.
+      const d = Math.abs(i - half) / half
 
-      // Idle bars keep breathing while paused
-      let target = 0.025 + 0.018 * (0.5 + 0.5 * Math.sin(now * 0.0008 + i * 0.31))
+      // Bass on the outside, air towards the middle: that is what gives the
+      // painted reference its tall wings and low centre.
+      const bin = Math.min(
+        this.freqData.length - 1,
+        Math.max(1, Math.floor(Math.pow(1 - d, 1.4) * (this.freqData.length - 2) + 1)),
+      )
+
+      // The painted curtain keeps its bat silhouette at every level: the wings
+      // are long because they are drawn long, not because the bass happens to
+      // be loud on this bar of the track. The signal rides on that profile.
+      const profile = 0.34 + 0.52 * Math.pow(d, 0.9)
+      let target = profile + 0.05 * hash(i) + 0.04 * (0.5 + 0.5 * Math.sin(now * 0.0009 + i * 2.399))
       if (playing) {
-        const bin = Math.min(
-          this.freqData.length - 1,
-          Math.max(1, Math.floor(Math.pow(frac, 2.2) * (this.freqData.length - 2) + 1)),
-        )
-        target += Math.pow(this.freqData[bin] / 255, 1.5) * 0.8
+        target += Math.pow(this.freqData[bin] / 255, 0.9) * 0.5
       }
-      target *= 0.87 + 0.13 * (1 - edge)
+      target = Math.min(1.05, target)
 
       const response = target > this.levels[i] ? 0.12 : 0.045
       this.levels[i] += (target - this.levels[i]) * (1 - Math.pow(1 - response, delta))
 
-      const half = Math.max(h * 0.015, this.levels[i] * h * 0.48)
-      const top = mid - half
-      const bottom = mid + half
-      const warm = i < BAR_COUNT * 0.5
+      // The top edge dips through the middle like a folded wing, so the
+      // curtain hangs from a V instead of a straight rule; the per-bar jitter
+      // keeps that V from reading as a drawn heart.
+      const top = bandTop + bandH * (0.02 + 0.11 * Math.pow(1 - d, 1.4) + 0.025 * hash(i + 11))
+      const length = Math.max(bandH * 0.03, this.levels[i] * (bandBottom - top))
+      const rgb = spectrumColor((i + 0.5) / BAR_COUNT)
 
-      const grad = ctx.createLinearGradient(0, top, 0, bottom)
-      grad.addColorStop(0, warm ? 'rgba(251, 86, 75, 0.96)' : 'rgba(183, 95, 243, 0.96)')
-      grad.addColorStop(0.5, warm ? 'rgba(135, 16, 31, 0.44)' : 'rgba(76, 20, 122, 0.44)')
-      grad.addColorStop(1, warm ? 'rgba(251, 86, 75, 0.96)' : 'rgba(183, 95, 243, 0.96)')
+      // Each bar fades over its own length, so it dissolves at its tip instead
+      // of ending on a cut. The whole band is dimmed into the dark afterwards.
+      const grad = ctx.createLinearGradient(0, top, 0, top + length)
+      grad.addColorStop(0, `rgba(${rgb}, 0.92)`)
+      grad.addColorStop(0.55, `rgba(${rgb}, 0.66)`)
+      grad.addColorStop(0.85, `rgba(${rgb}, 0.28)`)
+      grad.addColorStop(1, `rgba(${rgb}, 0)`)
 
       ctx.save()
       ctx.fillStyle = grad
-      ctx.shadowColor = warm ? 'rgba(243, 40, 53, 0.65)' : 'rgba(149, 52, 242, 0.65)'
-      ctx.shadowBlur = 7 * dpr
-      ctx.fillRect(x - barW / 2, top, barW, half * 2)
-
-      // Gold caps top and bottom
-      ctx.shadowBlur = 4 * dpr
-      ctx.shadowColor = '#e9b760'
-      ctx.fillStyle = 'rgba(244, 202, 126, 0.9)'
-      const cap = Math.max(1, dpr * 1.2)
-      ctx.fillRect(x - barW / 2, top, barW, cap)
-      ctx.fillRect(x - barW / 2, bottom - cap, barW, cap)
+      ctx.shadowColor = `rgba(${rgb}, 0.5)`
+      ctx.shadowBlur = 10 * dpr
+      ctx.fillRect(x - barW / 2, top, barW, length)
       ctx.restore()
     }
+
+    // Fog: the curtain sinks into the unlit velvet below the waist, so no bar
+    // ever finishes on a visible hem.
+    const fog = ctx.createLinearGradient(0, bandTop + bandH * 0.25, 0, bandBottom)
+    fog.addColorStop(0, 'rgba(0, 0, 0, 0)')
+    fog.addColorStop(0.55, 'rgba(0, 0, 0, 0.35)')
+    fog.addColorStop(1, 'rgba(0, 0, 0, 0.95)')
+    ctx.save()
+    ctx.globalCompositeOperation = 'destination-out'
+    ctx.fillStyle = fog
+    ctx.fillRect(0, 0, w, h)
+    ctx.restore()
   }
 
   /** Eyes are a readout: the glow follows the real signal energy */
@@ -619,6 +654,23 @@ export class DraculaSkin implements Skin {
     const remainingText = `-${fmt(Math.max(0, dur - cur))}`
     if (els.remaining.textContent !== remainingText) els.remaining.textContent = remainingText
   }
+}
+
+/** Stable per-bar pseudo-random in [0,1), so the idle curtain is ragged. */
+function hash(i: number): number {
+  const v = Math.sin(i * 12.9898) * 43758.5453
+  return v - Math.floor(v)
+}
+
+/** Interpolate the curtain palette at bar position t (0 = left, 1 = right). */
+function spectrumColor(t: number): string {
+  let i = 1
+  while (i < SPECTRUM_STOPS.length - 1 && t > SPECTRUM_STOPS[i][0]) i++
+  const [t0, c0] = SPECTRUM_STOPS[i - 1]
+  const [t1, c1] = SPECTRUM_STOPS[i]
+  const k = Math.min(1, Math.max(0, (t - t0) / (t1 - t0)))
+  const ch = c0.map((v, j) => Math.round(v + (c1[j] - v) * k))
+  return `${ch[0]}, ${ch[1]}, ${ch[2]}`
 }
 
 function fmt(seconds: number): string {
