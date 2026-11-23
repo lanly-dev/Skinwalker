@@ -1036,26 +1036,32 @@ input[type="range"]::-moz-range-thumb {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  cursor: grab;
+  cursor: ew-resize;
   touch-action: none;
   user-select: none;
   outline-offset: 3px;
 }
-.frankenstein-skin .fr-dial:active { cursor: grabbing; }
+.frankenstein-skin .fr-dial:active { cursor: ew-resize; }
 .frankenstein-skin .fr-dial:focus-visible { outline: 2px solid #ffe19b; }
 .frankenstein-skin .fr-knob-plate {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  /* Keep the 223:219 art undistorted: stretching it made the fixed bezel
+     elliptical under the circular face. */
+  object-fit: contain;
   pointer-events: none;
 }
 .frankenstein-skin .fr-knob-face {
   position: absolute;
   left: 15.25%;
-  top: 13.7%;
+  /* Square box, centred on the disc: a 1.8% vertical stretch turned the
+     rotating face into an ellipse and made its edge wobble. */
+  top: 14.3%;
   width: 67.3%;
-  height: 68.5%;
+  height: 67.3%;
+  transform-origin: 50% 50.4%;
   transform: rotate(var(--angle, 54deg));
   filter: drop-shadow(0 0 2px #c49b3d);
   pointer-events: none;

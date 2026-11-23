@@ -15,7 +15,7 @@
  *   Right eye ──────── play / pause (the glow holds while playing)
  *   Neck bolts ─────── previous / next
  *   Stitched scar ──── seek: the bead rides the scar, progress fills it
- *   Gold watch ─────── volume: drag in a circle, wheel, arrows; tap = mute
+ *   Gold watch ─────── volume: drag left/right, wheel, arrows; tap = mute
  *   Jacket pins ────── open folder, close, ☰ Tracks, mini, next skin
  *   ☰ Tracks ───────── the board: playlist, open folder, restore
  */
@@ -44,6 +44,10 @@ const EQ_IDLE = [4, 3, 5, 3, 5, 3, 5, 3, 4]
 
 /** Stitched scar, in the plate's own 1280×1920 coordinates. */
 const SCAR_PATH = 'M358 1174 C540 1134 751 1139 924 1090'
+
+/** Horizontal pixels for the full 0–100 volume range. One window-width
+ *  drag (480px) turns the knob from silent to full. */
+const VOLUME_DRAG_PIXELS = 480
 
 /** Jacket pin motifs, traced from the reference build's SVGs. */
 const PIN_MOTIFS = {
@@ -245,7 +249,7 @@ export class FrankensteinSkin implements Skin {
         <!-- Gold watch = volume; the dial face turns, a tap mutes -->
         <div class="fr-watch">
           <div class="fr-dial" role="slider" tabindex="0"
-               aria-label="Volume dial: drag in a circle, scroll, or use arrow keys"
+               aria-label="Volume dial: drag left or right, scroll, or use arrow keys"
                aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
             <img class="fr-knob-plate" src="${knobPlate}" alt="" draggable="false" />
             <img class="fr-knob-face" src="${knobFace}" alt="" draggable="false" />
@@ -422,15 +426,19 @@ export class FrankensteinSkin implements Skin {
     const dial = els.dial
 
     let pointer: number | null = null
-    let lastAngle = 0
-    let travel = 0
+    let startX = 0
+    let startY = 0
+    let startVolume = 0
+    let moved = 0
 
     dial.addEventListener('pointerdown', (e) => {
       if (e.button > 0) return
       e.preventDefault()
       pointer = e.pointerId
-      lastAngle = this.dialAngle(e)
-      travel = 0
+      startX = e.clientX
+      startY = e.clientY
+      startVolume = p.currentVolume
+      moved = 0
       dial.focus({ preventScroll: true })
       try {
         dial.setPointerCapture(pointer)
@@ -440,13 +448,9 @@ export class FrankensteinSkin implements Skin {
     })
     dial.addEventListener('pointermove', (e) => {
       if (e.pointerId !== pointer) return
-      const angle = this.dialAngle(e)
-      let delta = angle - lastAngle
-      if (delta > 180) delta -= 360
-      if (delta < -180) delta += 360
-      lastAngle = angle
-      travel += Math.abs(delta)
-      this.applyVolume(p.currentVolume + delta / 2.7)
+      const dx = e.clientX - startX
+      moved = Math.max(moved, Math.hypot(dx, e.clientY - startY))
+      this.applyVolume(startVolume + dx / VOLUME_DRAG_PIXELS)
     })
     const endDial = (e: PointerEvent): void => {
       if (e.pointerId !== pointer) return
@@ -457,7 +461,7 @@ export class FrankensteinSkin implements Skin {
         /* already released */
       }
       // A tap on the watch mutes, as in the reference build.
-      if (travel < 3) this.toggleMute()
+      if (moved < 3) this.toggleMute()
     }
     dial.addEventListener('pointerup', endDial)
     dial.addEventListener('pointercancel', (e) => {
@@ -487,20 +491,6 @@ export class FrankensteinSkin implements Skin {
   }
 
   // ── Volume ───────────────────────────────────────────────────────────────────
-
-  /** Pointer angle around the dial, in degrees, 0 at the top. */
-  private dialAngle(e: PointerEvent): number {
-    const rect = this.els!.dial.getBoundingClientRect()
-    return (
-      (Math.atan2(
-        e.clientY - (rect.top + rect.height * 0.48),
-        e.clientX - (rect.left + rect.width * 0.489),
-      ) *
-        180) /
-        Math.PI +
-      90
-    )
-  }
 
   private applyVolume(value: number): void {
     const p = this.player
