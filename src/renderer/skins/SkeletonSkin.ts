@@ -25,8 +25,9 @@
  *                               the bone X, mouth EQ, eye blooms, title
  *
  * The mini card is the web build's mini player: the window shrinks to a
- * 320×365 card around the 620×622 face, and the shape is lifted so the card
- * is a plain rectangle while it is up.
+ * 340×390 card around the 620×622 face, with a transparent margin so the
+ * art is not cut by the window, and the shape is lifted so the card is a
+ * plain rectangle while it is up.
  */
 import framePlate from '../assets/skeleton-frame.webp'
 import miniFace from '../assets/skeleton-mini-face.webp'
@@ -37,7 +38,7 @@ import type { Player } from '../player/Player'
 
 /** Full 3:2 stage and the 620:622 face card the window shrinks to. */
 const STAGE_SIZE = { width: 960, height: 640, minWidth: 560, minHeight: 380 }
-const MINI_SIZE = { width: 320, height: 365, minWidth: 320, minHeight: 365 }
+const MINI_SIZE = { width: 340, height: 390, minWidth: 340, minHeight: 390 }
 
 /** Spectrum resolution — the web build's teeth line draws 24 bars */
 const BAR_COUNT = 24
@@ -323,9 +324,9 @@ export class SkeletonSkin implements Skin {
     p.onTrackChange = (track, idx) => {
       els.track.textContent = track.title
       els.track.title = track.title
-      this.setArtist(track.artist)
       els.miniTrack.textContent = track.title
       els.miniTrack.title = track.title
+      this.setArtist(track.artist)
       this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }

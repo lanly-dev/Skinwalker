@@ -1664,7 +1664,8 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-tool:focus-visible .sk-tip { display: block; }
 
 /* Mini version = the web build's 620×622 face card. The window shrinks to
-   320×365, the shape is lifted, and the card is a plain rounded rectangle. */
+   340×390: a 20px transparent margin above the 320×321 face and a title
+   strip below it. The card itself stays transparent. */
 .skeleton-skin .sk-mini { display: none; }
 .skeleton-skin.mini-mode .sk-body { background: none; }
 .skeleton-skin.mini-mode .sk-body > :not(.sk-mini) { display: none; }
@@ -1672,14 +1673,16 @@ input[type="range"]::-moz-range-thumb {
   position: absolute;
   inset: 0;
   display: block;
-  background: #020d11;
+  background: none;
   border-radius: 3.75cqw;
-  box-shadow: 0 0 7.5cqw #00b8e230;
   overflow: hidden;
   cursor: grab;
 }
 .skeleton-skin .sk-mini-face {
-  position: relative;
+  position: absolute;
+  left: 10px;
+  top: 20px;
+  width: 320px;
   aspect-ratio: 620 / 622;
 }
 .skeleton-skin .sk-mini-art {
@@ -1689,6 +1692,11 @@ input[type="range"]::-moz-range-thumb {
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
+  filter: drop-shadow(0 0 4px #00dfff88);
+  /* The source crop touches its top and bottom edges; feather those edges
+     into the transparent margin instead of showing a hard cut. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16px, #000 calc(100% - 10px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 16px, #000 calc(100% - 10px), transparent 100%);
 }
 .skeleton-skin .sk-mini-eq {
   position: absolute;
@@ -1763,17 +1771,26 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-mini-restore { left: 63%; top: 51.6%; width: 20%; height: 20%; }
 .skeleton-skin .sk-mini-close { left: 18.6%; top: 69%; width: 16%; height: 16%; }
 .skeleton-skin .sk-mini-info {
-  padding: 1.5625cqw 5.3125cqw 4.6875cqw;
-  background: #020c10;
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 341px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  pointer-events: none;
 }
 .skeleton-skin .sk-mini-track {
   display: block;
-  margin: 0 0 3.125cqw;
+  max-width: 100%;
   color: #f2fbff;
-  font: bold 3.75cqw Georgia, "Times New Roman", serif;
+  font: bold 4cqw Georgia, "Times New Roman", serif;
   letter-spacing: 0.04em;
   text-align: center;
-  text-shadow: 0 0 2.1875cqw #1ddfff88;
+  -webkit-text-stroke: 0.35px #000;
+  text-shadow: 0 0 2px #000, 0 0 3px #000, 0 1px 3px #000, 0 0 2.1875cqw #1ddfff88;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
