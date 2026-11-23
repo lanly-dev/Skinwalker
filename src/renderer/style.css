@@ -1450,8 +1450,8 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 3px #bcffff, 0 0 8px #00dfff, 0 0 16px #008cffaa;
 }
 
-/* Speaker on the same arm = mute. The icon is painted on the plate; the
-   hotspot only lights up and carries the state. */
+/* Speaker on the same arm = mute. The plate's channel is blanked (the
+   reference's panel), so the glyph is drawn inside the button. */
 .skeleton-skin .sk-mute {
   position: absolute;
   left: 16.14%;
@@ -1466,6 +1466,12 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   filter: drop-shadow(0 0 0.26cqw #00cfff);
   z-index: 3;
+}
+.skeleton-skin .sk-mute svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 .skeleton-skin .sk-mute:hover,
 .skeleton-skin .sk-mute:focus-visible {
@@ -1651,108 +1657,118 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-tool:hover .sk-tip,
 .skeleton-skin .sk-tool:focus-visible .sk-tip { display: block; }
 
-/* Mini version = compact card around the skull, like the web build's mini
-   player. The window shape is lifted while it is up, so the card is a plain
-   rectangle with transparent rounded corners. */
+/* Mini version = the web build's 620×622 face card. The window shrinks to
+   320×365, the shape is lifted, and the card is a plain rounded rectangle. */
 .skeleton-skin .sk-mini { display: none; }
 .skeleton-skin.mini-mode .sk-body { background: none; }
 .skeleton-skin.mini-mode .sk-body > :not(.sk-mini) { display: none; }
 .skeleton-skin.mini-mode .sk-mini {
   position: absolute;
   inset: 0;
-  display: grid;
-  grid-template-columns: 27cqw 1fr;
-  align-items: center;
-  gap: 3.2cqw;
-  padding: 4cqw;
-  background: linear-gradient(160deg, #061923, #01070c 72%);
-  border: 1px solid #36dcff;
-  border-radius: 2.4cqw;
-  box-shadow: 0 0 2.4cqw rgba(0, 184, 226, 0.35), inset 0 0 2.6cqw rgba(0, 52, 68, 0.9);
+  display: block;
+  background: #020d11;
+  border-radius: 3.75cqw;
+  box-shadow: 0 0 7.5cqw #00b8e230;
+  overflow: hidden;
   cursor: grab;
 }
-.skeleton-skin .sk-mini-crop {
-  width: 27cqw;
-  height: 31cqw;
-  border-radius: 1.6cqw;
-  background-image: var(--sk-frame-url);
-  background-size: 667% auto;
-  background-position: 50% 43.5%;
-  border: 1px solid #1a6274;
-  box-shadow: inset 0 0 2.4cqw #000a, 0 0 1cqw rgba(0, 207, 255, 0.25);
+.skeleton-skin .sk-mini-face {
+  position: relative;
+  aspect-ratio: 620 / 622;
 }
-.skeleton-skin .sk-mini-info {
+.skeleton-skin .sk-mini-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.skeleton-skin .sk-mini-eq {
+  position: absolute;
+  left: 35.5%;
+  top: 40.5%;
+  width: 20.5%;
+  height: 12%;
   display: flex;
-  flex-direction: column;
-  gap: 1.2cqw;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+  clip-path: polygon(0 0, 65% 15%, 100% 60%, 95% 85%, 45% 100%, 0 90%);
+}
+.skeleton-skin .sk-mini-eq i {
+  width: 3%;
+  height: 6%;
+  background: #29e7ff;
+  border-top: 1px solid #fff;
+  box-shadow: 0 0 4px #00dfff;
+}
+.skeleton-skin .sk-mini-eye {
+  position: absolute;
+  width: 5%;
+  height: 5%;
+  border-radius: 50%;
+  background: #b1ffff;
+  filter: blur(1.25cqw);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.12;
+}
+.skeleton-skin .sk-mini-eye-left { left: 36.5%; top: 17.5%; }
+.skeleton-skin .sk-mini-eye-right { left: 56.8%; top: 19.5%; }
+.skeleton-skin .sk-mini-face button {
+  position: absolute;
   min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+}
+.skeleton-skin .sk-mini-face button:hover,
+.skeleton-skin .sk-mini-face button:focus-visible {
+  filter: drop-shadow(0 0 2.1875cqw #2eeaff);
+}
+.skeleton-skin .sk-mini-restore:hover,
+.skeleton-skin .sk-mini-restore:focus-visible,
+.skeleton-skin .sk-mini-close:hover,
+.skeleton-skin .sk-mini-close:focus-visible {
+  background: #27eaff0c;
+}
+.skeleton-skin .sk-mini-face .sk-mini-play {
+  left: 41.2%;
+  top: 78%;
+  width: 16%;
+  height: 15%;
+  background: #03202d;
+  color: #e0ffff;
+  font: 9.375cqw Arial, sans-serif;
+  text-shadow: 0 0 0.9375cqw #fff, 0 0 2.1875cqw #0ff, 0 0 5cqw #008cff;
+  box-shadow: 0 0 2.8125cqw #00dfff40;
+}
+.skeleton-skin .sk-mini-face .sk-mini-play.isPlaying {
+  background: transparent;
+  color: transparent;
+  box-shadow: none;
+  text-shadow: none;
+}
+.skeleton-skin .sk-mini-restore { left: 63%; top: 51.6%; width: 20%; height: 20%; }
+.skeleton-skin .sk-mini-close { left: 18.6%; top: 69%; width: 16%; height: 16%; }
+.skeleton-skin .sk-mini-info {
+  padding: 1.5625cqw 5.3125cqw 4.6875cqw;
+  background: #020c10;
 }
 .skeleton-skin .sk-mini-track {
-  color: #f2dfaf;
-  font: 4.4cqw Georgia, "Times New Roman", serif;
+  display: block;
+  margin: 0 0 3.125cqw;
+  color: #f2fbff;
+  font: bold 3.75cqw Georgia, "Times New Roman", serif;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-shadow: 0 0 2.1875cqw #1ddfff88;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: 0 0 0.4cqw rgba(242, 223, 175, 0.35);
-}
-.skeleton-skin .sk-mini-artist {
-  color: #c9c6ad;
-  font: bold 2.4cqw Georgia, serif;
-  letter-spacing: 0.08cqw;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.skeleton-skin .sk-mini-actions {
-  display: flex;
-  align-items: center;
-  gap: 1.8cqw;
-  margin-top: 0.4cqw;
-}
-.skeleton-skin .sk-mini-actions button {
-  display: grid;
-  place-items: center;
-  width: 9cqw;
-  height: 9cqw;
-  min-width: 34px;
-  min-height: 34px;
-  padding: 0;
-  border: 1px solid #2a7f95;
-  border-radius: 50%;
-  background: #031620;
-  color: #8ff6ff;
-  font: 3.6cqw Georgia, serif;
-  text-shadow: 0 0 0.5cqw #00cfff;
-  cursor: pointer;
-}
-.skeleton-skin .sk-mini-actions button:hover,
-.skeleton-skin .sk-mini-actions button:focus-visible {
-  border-color: #7df2ff;
-  background: #052a3a;
-  box-shadow: 0 0 1cqw rgba(0, 207, 255, 0.45);
-}
-.skeleton-skin .sk-mini-seek {
-  width: 100%;
-  height: 1.2cqw;
-  min-height: 4px;
-  margin: 0.4cqw 0 0;
-  appearance: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-  border: 1px solid #1f7f95;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #2fe3ff var(--progress, 0%), #062632 var(--progress, 0%));
-  box-shadow: 0 0 0.5cqw rgba(0, 210, 255, 0.45);
-}
-.skeleton-skin .sk-mini-seek::-webkit-slider-thumb {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 3.4cqw;
-  height: 3.4cqw;
-  min-width: 12px;
-  min-height: 12px;
-  border: 1px solid #b3f7ff;
-  border-radius: 50%;
-  background: #22c9ff;
-  box-shadow: 0 0 0.7cqw #21caff;
 }

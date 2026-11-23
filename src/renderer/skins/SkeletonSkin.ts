@@ -20,21 +20,24 @@
  *   Right bone arm ──────────── window tools, on the painted icon row:
  *                               skull → mini, half-mask → change skin,
  *                               coffin → open folder, bar → minimize, X → close
- *   Mini card ───────────────── skull crop + title + play + seek + restore
+ *   Mini card ───────────────── 620×622 face card: play over the pendant,
+ *                               restore over the ribcage badge, close over
+ *                               the bone X, mouth EQ, eye blooms, title
  *
- * The mini card follows the web build's mini player: the window shrinks to a
- * compact card around the skull, and the shape is lifted so the card is a
- * plain rectangle while it is up.
+ * The mini card is the web build's mini player: the window shrinks to a
+ * 320×365 card around the 620×622 face, and the shape is lifted so the card
+ * is a plain rectangle while it is up.
  */
 import framePlate from '../assets/skeleton-frame.webp'
+import miniFace from '../assets/skeleton-mini-face.webp'
 import { applySkinShape } from '../windowShape'
 import { openLocalFiles } from '../openFiles'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
-/** Full 3:2 stage and the compact card the window shrinks to. */
+/** Full 3:2 stage and the 620:622 face card the window shrinks to. */
 const STAGE_SIZE = { width: 960, height: 640, minWidth: 560, minHeight: 380 }
-const MINI_SIZE = { width: 380, height: 220, minWidth: 300, minHeight: 180 }
+const MINI_SIZE = { width: 320, height: 365, minWidth: 320, minHeight: 365 }
 
 /** Spectrum resolution — the web build's teeth line draws 24 bars */
 const BAR_COUNT = 24
@@ -57,9 +60,9 @@ interface SkeletonEls {
   mute: HTMLButtonElement
   playlist: HTMLOListElement
   miniPlay: HTMLButtonElement
-  miniSeek: HTMLInputElement
   miniTrack: HTMLElement
-  miniArtist: HTMLElement
+  miniBars: HTMLElement[]
+  miniEyes: HTMLElement[]
 }
 
 export class SkeletonSkin implements Skin {
@@ -126,6 +129,7 @@ export class SkeletonSkin implements Skin {
   // ── DOM ──────────────────────────────────────────────────────────────────────
 
   private template(): string {
+    const miniBars = '<i></i>'.repeat(BAR_COUNT)
     return /* html */ `
       <div class="sk-body" aria-label="Skeleton media player" style="--eye: 0.16">
 
@@ -144,10 +148,19 @@ export class SkeletonSkin implements Skin {
         <!-- Pendant at the throat = play / pause -->
         <button class="sk-pendant" aria-label="Play" aria-pressed="false" title="Play / Pause"></button>
 
-        <!-- Left bone arm = volume, and the painted speaker beside it = mute -->
+        <!-- Left bone arm = volume, and the speaker glyph at the channel's
+             left end = mute. The plate's channel is blanked, so the glyph is
+             drawn here (as in the web build) rather than painted on the art. -->
         <input class="sk-volume" type="range" min="0" max="100" step="1" value="80"
                aria-label="Volume" title="Volume" />
-        <button class="sk-mute" aria-label="Mute" aria-pressed="false" title="Mute"></button>
+        <button class="sk-mute" aria-label="Mute" aria-pressed="false" title="Mute">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M6 18h8L26 8v32L14 30H6z" fill="#b7f5ff" stroke="#eaffff"
+                  stroke-width="1.5" stroke-linejoin="round" />
+            <path d="M32 16q8 8 0 16M37 10q13 14 0 28" fill="none" stroke="#66eaff"
+                  stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </button>
 
         <!-- Title block = live title + artist -->
         <div class="sk-meta">
@@ -184,19 +197,19 @@ export class SkeletonSkin implements Skin {
           <span class="sk-tip" aria-hidden="true">Close player</span>
         </button>
 
-        <!-- Mini version = compact card around the skull -->
-        <div class="sk-mini">
-          <span class="sk-mini-crop" aria-hidden="true"></span>
+        <!-- Mini version = the web build's 620×622 face card -->
+        <div class="sk-mini" role="complementary" aria-label="Mini player">
+          <div class="sk-mini-face">
+            <img class="sk-mini-art" src="${miniFace}" alt="" draggable="false" />
+            <div class="sk-mini-eq" aria-hidden="true">${miniBars}</div>
+            <i class="sk-mini-eye sk-mini-eye-left" aria-hidden="true"></i>
+            <i class="sk-mini-eye sk-mini-eye-right" aria-hidden="true"></i>
+            <button class="sk-mini-play" aria-label="Play" aria-pressed="false" title="Play / Pause">▶</button>
+            <button class="sk-mini-restore" aria-label="Back to the full player" title="Back to the full player"></button>
+            <button class="sk-mini-close" aria-label="Close player" title="Close player"></button>
+          </div>
           <div class="sk-mini-info">
             <span class="sk-mini-track">—</span>
-            <span class="sk-mini-artist">—</span>
-            <div class="sk-mini-actions">
-              <button class="sk-mini-play" aria-label="Play" aria-pressed="false" title="Play / Pause">▶</button>
-              <button class="sk-mini-restore" aria-label="Back to the full player" title="Back to the full player">⤢</button>
-              <button class="sk-mini-close" aria-label="Close player" title="Close player">✕</button>
-            </div>
-            <input class="sk-mini-seek" type="range" min="0" max="1000" value="0" step="1"
-                   aria-label="Seek through track" />
           </div>
         </div>
       </div>
@@ -223,9 +236,9 @@ export class SkeletonSkin implements Skin {
       mute: c.querySelector('.sk-mute')!,
       playlist: c.querySelector('.sk-list')!,
       miniPlay: c.querySelector('.sk-mini-play')!,
-      miniSeek: c.querySelector('.sk-mini-seek')!,
       miniTrack: c.querySelector('.sk-mini-track')!,
-      miniArtist: c.querySelector('.sk-mini-artist')!,
+      miniBars: Array.from(c.querySelectorAll<HTMLElement>('.sk-mini-eq i')),
+      miniEyes: Array.from(c.querySelectorAll<HTMLElement>('.sk-mini-eye')),
     }
     this.els = els
 
@@ -298,23 +311,13 @@ export class SkeletonSkin implements Skin {
     c.querySelector('.sk-tool-mini')!.addEventListener('click', () => this.enterMini())
     c.querySelector('.sk-tool-close')!.addEventListener('click', () => window.skinwalker?.close?.())
 
-    // Mini card → play, restore, close, seek
+    // Mini card → play, restore, close
     els.miniPlay.addEventListener('click', () => {
       p.togglePlayPause()
       this.updatePlayState()
     })
     c.querySelector('.sk-mini-restore')!.addEventListener('click', () => this.exitMini())
     c.querySelector('.sk-mini-close')!.addEventListener('click', () => window.skinwalker?.close?.())
-    els.miniSeek.addEventListener('input', () => {
-      this.seeking = true
-      const dur = p.audio.duration
-      const cur = dur * (Number(els.miniSeek.value) / 1000)
-      this.paintSeekUi(els.miniSeek.value, cur, dur)
-    })
-    els.miniSeek.addEventListener('change', () => {
-      p.seek(Number(els.miniSeek.value) / 1000)
-      this.seeking = false
-    })
 
     // Track change
     p.onTrackChange = (track, idx) => {
@@ -323,8 +326,6 @@ export class SkeletonSkin implements Skin {
       this.setArtist(track.artist)
       els.miniTrack.textContent = track.title
       els.miniTrack.title = track.title
-      els.miniArtist.textContent = track.artist
-      els.miniArtist.title = track.artist
       this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }
@@ -471,6 +472,7 @@ export class SkeletonSkin implements Skin {
     const miniPlay = this.els?.miniPlay
     if (miniPlay) {
       miniPlay.textContent = playing ? 'Ⅱ' : '▶'
+      miniPlay.classList.toggle('isPlaying', playing)
       miniPlay.setAttribute('aria-pressed', String(playing))
       miniPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play')
     }
@@ -524,6 +526,19 @@ export class SkeletonSkin implements Skin {
       ctx.fillRect(x, h - height, barWidth, 2)
     }
 
+    // Mini card: the web build's mouth bars use the raw spectrum, 6% at rest.
+    const freq = this.freqData
+    let miniEnergy = 0
+    els.miniBars.forEach((bar, i) => {
+      const raw = playing && freq
+        ? freq[Math.min(freq.length - 1, i * 3 + 2)] / 255
+        : 0.04
+      miniEnergy += raw
+      bar.style.height = `${6 + raw * 94}%`
+    })
+    const miniEye = playing ? 0.2 + miniEnergy / 48 : 0.12
+    for (const eyeEl of els.miniEyes) eyeEl.style.opacity = String(miniEye)
+
     const eye = playing ? Math.min(1, 0.3 + (energy / BAR_COUNT) * 1.9) : 0.2
     const quantized = Math.round(eye * 20) / 20
     if (quantized !== this.eyeLevel) {
@@ -543,7 +558,6 @@ export class SkeletonSkin implements Skin {
     if (!this.seeking && dur > 0) {
       const value = String(Math.round((cur / dur) * 1000))
       if (els.seek.value !== value) els.seek.value = value
-      if (els.miniSeek.value !== value) els.miniSeek.value = value
     }
     this.paintSeekUi(els.seek.value, cur, dur)
 
@@ -553,16 +567,13 @@ export class SkeletonSkin implements Skin {
     if (els.remaining.textContent !== remainingText) els.remaining.textContent = remainingText
   }
 
-  /** Paint both seek bars from one value, so the full player and the mini
-   *  card never disagree while either is dragged. */
+  /** Paint the seek bar and its readout from one value. */
   private paintSeekUi(value: string, cur: number, dur: number): void {
     const els = this.els
     if (!els) return
     els.seek.value = value
-    els.miniSeek.value = value
     const progress = `${Number(value) / 10}%`
     els.seek.style.setProperty('--progress', progress)
-    els.miniSeek.style.setProperty('--progress', progress)
     if (this.seeking) {
       els.elapsed.textContent = fmt(cur)
       els.remaining.textContent = `-${fmt(Math.max(0, dur - cur))}`
