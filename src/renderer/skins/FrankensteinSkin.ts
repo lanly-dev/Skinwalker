@@ -202,9 +202,6 @@ interface FrEls {
   eye: HTMLElement
   iris: HTMLElement
   play: HTMLButtonElement
-  eyebrow: HTMLElement
-  title: HTMLElement
-  subtitle: HTMLElement
   seek: HTMLInputElement
   scarSvg: SVGSVGElement
   scarHit: SVGPathElement
@@ -337,12 +334,11 @@ export class FrankensteinSkin implements Skin {
         <button class="fr-bolt fr-next" type="button" aria-label="Next track"
                 title="Next track"></button>
 
-        <!-- Chest readout = live title + artist -->
-        <div class="fr-readout">
-          <small class="fr-eyebrow">REANIMATED AUDIO / 001</small>
-          <strong class="fr-title">—</strong>
-          <span class="fr-subtitle">—</span>
-        </div>
+        <!-- The plate has a baked dummy label on the chest (placeholder text
+             lines). The live title readout that used to cover it is gone —
+             the mouth monitor carries the track — so this blank plate keeps
+             the baked text off the screen. -->
+        <div class="fr-chest-blank" aria-hidden="true"></div>
 
         <!-- Stitched scar = seek -->
         <div class="fr-scar">
@@ -373,17 +369,19 @@ export class FrankensteinSkin implements Skin {
           <output class="fr-vol">80%</output>
         </div>
 
-        <!-- Brass jacket pins = window tools -->
-        <button class="fr-pin fr-pin-folder" type="button" aria-label="Open folder"
-                title="Open folder">${pinSvg('folder', PIN_MOTIFS.folder, 'OPEN FOLDER')}</button>
-        <button class="fr-pin fr-pin-close" type="button" aria-label="Close player"
-                title="Close player">${pinSvg('close', PIN_MOTIFS.close, 'Close player')}</button>
-        <button class="fr-pin fr-pin-minimize" type="button" aria-label="Minimize"
-                title="Minimize">${pinSvg('minimize', PIN_MOTIFS.minimize, 'Minimize')}</button>
-        <button class="fr-pin fr-pin-mini" type="button" aria-label="Mini mode"
-                aria-pressed="false" title="Mini mode">${pinSvg('mini', PIN_MOTIFS.mini, 'Mini mode')}</button>
-        <button class="fr-pin fr-pin-skin" type="button" aria-label="Next skin"
-                title="Next skin">${pinSvg('skin', PIN_MOTIFS.skin, 'Next skin')}</button>
+        <!-- Brass jacket pins = window tools. No title attributes: each pin
+             draws its own hover/focus tip (the fr-pin-tip span), and the
+             native tooltip would pop a second, slower copy of the same label. -->
+        <button class="fr-pin fr-pin-folder" type="button"
+                aria-label="Open folder">${pinSvg('folder', PIN_MOTIFS.folder, 'OPEN FOLDER')}</button>
+        <button class="fr-pin fr-pin-close" type="button"
+                aria-label="Close player">${pinSvg('close', PIN_MOTIFS.close, 'Close player')}</button>
+        <button class="fr-pin fr-pin-minimize" type="button"
+                aria-label="Minimize">${pinSvg('minimize', PIN_MOTIFS.minimize, 'Minimize')}</button>
+        <button class="fr-pin fr-pin-mini" type="button"
+                aria-label="Mini mode" aria-pressed="false">${pinSvg('mini', PIN_MOTIFS.mini, 'Mini mode')}</button>
+        <button class="fr-pin fr-pin-skin" type="button"
+                aria-label="Next skin">${pinSvg('skin', PIN_MOTIFS.skin, 'Next skin')}</button>
 
       </div>
     `
@@ -401,9 +399,6 @@ export class FrankensteinSkin implements Skin {
       eye: c.querySelector('.fr-eye')!,
       iris: c.querySelector('.fr-iris')!,
       play: c.querySelector('.fr-play')!,
-      eyebrow: c.querySelector('.fr-eyebrow')!,
-      title: c.querySelector('.fr-title')!,
-      subtitle: c.querySelector('.fr-subtitle')!,
       seek: c.querySelector('.fr-seek')!,
       scarSvg: c.querySelector('.fr-scar-svg')!,
       scarHit: c.querySelector('.fr-scar-hit')!,
@@ -449,12 +444,8 @@ export class FrankensteinSkin implements Skin {
     document.addEventListener('pointerdown', this.onPointerAim, { passive: true })
 
     // Track change
-    p.onTrackChange = (track, idx) => {
-      els.eyebrow.textContent = `REANIMATED AUDIO / ${String(idx + 1).padStart(3, '0')}`
-      els.title.textContent = track.title
-      els.title.title = track.title
-      els.subtitle.textContent = track.artist
-      els.subtitle.title = track.artist
+    // The mouth monitor is now the only place the current track is named.
+    p.onTrackChange = (_track, idx) => {
       this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }
@@ -685,7 +676,6 @@ export class FrankensteinSkin implements Skin {
     pin.innerHTML = pinSvg('mini', this.mini ? PIN_MOTIFS.restore : PIN_MOTIFS.mini, label)
     pin.setAttribute('aria-label', label)
     pin.setAttribute('aria-pressed', String(this.mini))
-    pin.title = label
   }
 
   // ── Playlist ─────────────────────────────────────────────────────────────────
