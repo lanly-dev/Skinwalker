@@ -176,9 +176,9 @@ export class SkeletonSkin implements Skin {
                aria-label="Volume" title="Volume" />
         <button class="sk-mute" aria-label="Mute" aria-pressed="false" title="Mute">
           <svg viewBox="0 0 48 48" aria-hidden="true">
-            <path d="M7 17.5h8.6L26.4 7v34L15.6 30.5H7z" fill="#b7f5ff" stroke="#eaffff"
+            <path class="sk-mute-cone" d="M7 17.5h8.6L26.4 7v34L15.6 30.5H7z" fill="#b7f5ff" stroke="#eaffff"
                   stroke-width="1.6" stroke-linejoin="round" />
-            <path d="M31.2 16.2q6.4 7.8 0 15.6M36.4 9.6q11 14.4 0 28.8" fill="none" stroke="#66eaff"
+            <path class="sk-mute-waves" d="M31.2 16.2q6.4 7.8 0 15.6M36.4 9.6q11 14.4 0 28.8" fill="none" stroke="#66eaff"
                   stroke-width="3.2" stroke-linecap="round" />
           </svg>
         </button>
@@ -289,6 +289,9 @@ export class SkeletonSkin implements Skin {
     // beside it, which mutes without losing the level it was muted from.
     const syncMute = (): void => {
       els.mute.classList.toggle('muted', this.muted)
+      // The arm's neon goes out while muted; the level itself is kept, so
+      // unmuting relights the same run.
+      els.volume.classList.toggle('muted', this.muted)
       els.mute.setAttribute('aria-pressed', String(this.muted))
       els.mute.setAttribute('aria-label', this.muted ? 'Unmute' : 'Mute')
       els.mute.title = this.muted ? 'Unmute' : 'Mute'

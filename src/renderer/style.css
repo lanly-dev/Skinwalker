@@ -1545,16 +1545,41 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 3px #bcffff, 0 0 8px #00dfff, 0 0 16px #008cffaa;
 }
 
+/* Muted: the arm's neon goes out. The lit run falls back to a dead tube and
+   the knob loses its bloom, so the silence is visible; the level and the
+   knob's position stay where they were, so unmuting relights them. */
+.skeleton-skin .sk-volume.muted {
+  background: linear-gradient(
+    90deg,
+    #17566d 0%,
+    #17566d var(--level, 80%),
+    #03101d var(--level, 80%),
+    #03101d 100%
+  );
+  border-color: #0d3644;
+  box-shadow: inset 0 2px 4px #000c;
+}
+.skeleton-skin .sk-volume.muted::-webkit-slider-thumb {
+  border-color: #2d5d6c;
+  background: radial-gradient(circle at 35% 30%, #4a6a76, #1e4552 55%, #0b2833);
+  box-shadow: 0 1px 2px #000c;
+}
+.skeleton-skin .sk-volume.muted::-moz-range-thumb {
+  border-color: #2d5d6c;
+  background: radial-gradient(circle at 35% 30%, #4a6a76, #1e4552 55%, #0b2833);
+  box-shadow: 0 1px 2px #000c;
+}
+
 /* Speaker on the same arm = mute. The plate's channel is blanked (the
    reference's panel), so the glyph is drawn inside the button. */
 /* The channel tilts 6° with the arm, so the glyph's centre sits on the
    channel's own axis at the track's left end, not on a level line. */
 .skeleton-skin .sk-mute {
   position: absolute;
-  left: 16.06%;
-  top: 54.07%;
-  width: 3.5%;
-  height: 5.45%;
+  left: 16.41%;
+  top: 54.7%;
+  width: 2.8%;
+  height: 4.2%;
   padding: 0;
   border: 0;
   border-radius: 35%;
@@ -1587,6 +1612,21 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 0.1cqw #ffd2da, 0 0 0.28cqw #ff6076, 0 0 0.8cqw #ff2d4d;
   transform: rotate(-38deg);
   pointer-events: none;
+}
+
+/* Off: the glyph's own neon dies with the channel, so the whole arm reads
+   dead. The cone and waves drop to unlit glass and the bloom is pulled back
+   to a faint contact shadow — the red bar keeps its glow as the only live
+   mark. Placed after the hover rule so hovering a muted speaker stays dark. */
+.skeleton-skin .sk-mute.muted {
+  filter: drop-shadow(0 0 0.06cqw #00cfff2e);
+}
+.skeleton-skin .sk-mute.muted .sk-mute-cone {
+  fill: #38626f;
+  stroke: #4a7c8b;
+}
+.skeleton-skin .sk-mute.muted .sk-mute-waves {
+  stroke: #2f5764;
 }
 
 /* Title block = live title + artist, each over the painted line it replaces */
