@@ -150,8 +150,24 @@ export class SkeletonSkin implements Skin {
         <!-- Jaw = visualizer -->
         <canvas class="sk-viz" width="320" height="200" aria-hidden="true"></canvas>
 
-        <!-- Pendant at the throat = play / pause -->
-        <button class="sk-pendant" aria-label="Play" aria-pressed="false" title="Play / Pause"></button>
+        <!-- Pendant at the throat = play / pause. The disc's own triangle was
+             taken off the plate, so the glyph is drawn here and toggles to the
+             pause bars while playing. -->
+        <button class="sk-pendant" aria-label="Play" aria-pressed="false" title="Play / Pause">
+          <span class="sk-pendant-glow" aria-hidden="true"></span>
+          <svg class="sk-pendant-icon" viewBox="0 0 100 100" aria-hidden="true">
+            <!-- Placed by its ink: the curve only reaches x 68.25 although its
+                 Q control sits at 73.75, so the path is nudged right until the
+                 triangle's own bounding box is centred in the disc — plus one
+                 unit more, which is the tiny right nudge the eye asks for. -->
+            <path class="sk-glyph sk-glyph-play"
+                  d="M45.96 32.80 Q33.75 25.25 33.75 39.61 L33.75 60.39 Q33.75 74.75 45.96 67.20 L62.76 56.80 Q73.75 50 62.76 43.20 Z" />
+            <g class="sk-glyph sk-glyph-pause">
+              <rect x="31.75" y="25.25" width="12.5" height="49.5" rx="5" />
+              <rect x="55.75" y="25.25" width="12.5" height="49.5" rx="5" />
+            </g>
+          </svg>
+        </button>
 
         <!-- Left bone arm = volume, and the speaker glyph at the channel's
              left end = mute. The plate's channel is blanked, so the glyph is

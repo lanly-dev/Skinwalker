@@ -1429,20 +1429,61 @@ input[type="range"]::-moz-range-thumb {
   z-index: 2;
 }
 
-/* Pendant at the throat = play / pause */
+/* Pendant at the throat = play / pause. The button is the disc opening itself:
+   the bone ring's inner edge fits a circle at (768.8, 666.5) r 44.5 on the
+   1534x1025 plate, so the glyph lands dead centre instead of riding the old
+   painted triangle's off-centre spot. The plate no longer carries a glyph — the
+   neon one is drawn here so it can toggle to the pause bars — and the button
+   clips its bloom to the disc, exactly as the ring did. */
 .skeleton-skin .sk-pendant {
   position: absolute;
-  left: 47.6%;
-  top: 61.7%;
-  width: 5.5%;
-  height: 7.6%;
+  left: 47.216%;
+  top: 60.683%;
+  width: 5.802%;
+  height: 8.683%;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: transparent;
+  overflow: hidden;
   cursor: pointer;
   z-index: 4;
 }
+/* The bloom the painted disc used to carry under the glyph */
+.skeleton-skin .sk-pendant-glow {
+  position: absolute;
+  inset: 2%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #00b4ff8c 0%,
+    #0078ff4d 40%,
+    #0050d81f 64%,
+    transparent 80%
+  );
+  filter: blur(0.22cqw);
+  pointer-events: none;
+}
+.skeleton-skin .sk-pendant-icon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 0 0.16cqw #cdffff)
+    drop-shadow(0 0 0.44cqw #1ee6ff)
+    drop-shadow(0 0 1.05cqw #008cff);
+}
+.skeleton-skin .sk-glyph {
+  fill: #0af6ff;
+  stroke: #d6ffff;
+  stroke-width: 4.5;
+  stroke-linejoin: round;
+}
+.skeleton-skin .sk-glyph-pause { display: none; }
+.skeleton-skin .sk-body.playing .sk-glyph-play { display: none; }
+.skeleton-skin .sk-body.playing .sk-glyph-pause { display: block; }
 .skeleton-skin .sk-body.playing .sk-pendant {
   box-shadow:
     inset 0 0 0.59cqw #00cfff99,
