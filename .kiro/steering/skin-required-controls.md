@@ -42,5 +42,5 @@ part or painted element, never a generic widget stuck on top.
 - [ ] close, minimize, switch skin, mini version, open folder
 - [ ] `npm run typecheck` and `npm run build` pass
 
-## Current state (2026-11-23)
+## Current state (2026-11-24)
 Audit table: `.kiro/specs/skin-required-controls.md`. All three skins have the ten controls (Frankenstein's minimize closed 2026-11-24). The generic title bar was removed, so no skin gets window buttons for free.

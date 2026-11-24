@@ -59,8 +59,8 @@ UNVERIFIED = could not be checked here.
 | Criterion | Weakest point | Cheapest honest fix |
 |-----------|---------------|---------------------|
 | Potential Impact | A media player is not a new problem. | Say so. Frame as a UI craft entry for the Costume Contest, not a utility. |
-| Technological Implementation (Kiro use) | Specs came after code. No MCP, custom agents, PBT or tests. Hooks are reminders plus one typecheck. | State it plainly in `docs/submission/kiro-usage.md`. Write the next change spec-first (T6 of this spec is an example) and show its timestamps. |
-| Design | Window shape and plates not visually verified in this audit. Installer shows the default Electron icon. | Maintainer checks on Windows and records the video. Set the installer icon (decision for maintainer; config only). |
+| Technological Implementation (Kiro use) | Specs came after code. No MCP, custom agents, PBT or tests. Hooks are reminders plus one typecheck. | State it plainly in `docs/submission/kiro-usage.md`. Point to the changes that were spec-first and show their timestamps: `remember-last-skin.md` (`3dedc7f`) before `bd6293f`, and the `skin-required-controls.md` audit (2026-11-21) before the Skeleton and Frankenstein window tools. |
+| Design | Window shape and plates not visually verified in this audit. Installer shows the default Electron icon and packs `reference/` and other local files (row 34). | Maintainer checks on Windows and records the video. Add `build.files` and `build.win.icon` to `package.json` (decision for maintainer; config only). |
 | Innovation | Skin-as-controls idea is clear; Winamp-style skins exist. | Lead with the anatomy table in `docs/README.md`. |
 | Presentation | No video, no release, no About description. | Record the video from `docs/submission/demo-script.md`. Publish a GitHub release. Add an About description. |
 
