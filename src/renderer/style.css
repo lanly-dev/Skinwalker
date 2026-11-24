@@ -821,10 +821,11 @@ input[type="range"]::-moz-range-thumb {
    forehead is the equalizer, whose left eye follows the pointer and whose
    right eye is play/pause, with neck bolts, a stitched scar seek line, a
    gold watch for volume and brass jacket pins for the window tools.
-   Every position below is the reference build's own percentage of its 2:3
-   stage (1280×1920), and this skin's window is 2:3, so each live element
-   lands on its painted counterpart. cqw units keep the UI proportional as
-   the window resizes.
+   Every position below is the reference build's own percentage of its
+   1280×1760 stage (the plate is cropped from the reference's 2:3 art at the
+   chest, with the hand lifted to the new bottom edge), and this skin's window
+   matches that 8:11 stage, so each live element lands on its painted
+   counterpart. cqw units keep the UI proportional as the window resizes.
    ════════════════════════════════════════════════════════════════════ */
 .frankenstein-skin { filter: none; }
 .frankenstein-skin .fr-body {
@@ -852,9 +853,9 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-eq {
   position: absolute;
   left: 29.7%;
-  top: 12.6%;
+  top: 13.75%;
   width: 41%;
-  height: 9.1%;
+  height: 9.93%;
   background: #709b73;
   border-radius: 3%;
   z-index: 1;
@@ -865,9 +866,9 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-eye {
   position: absolute;
   left: 34.2%;
-  top: 28.1%;
+  top: 30.65%;
   width: 10.9%;
-  height: 5.7%;
+  height: 6.22%;
   background: radial-gradient(ellipse at 45% 38%, #edf0cf, #c9c99b 75%);
   border: 0.75cqw solid #284b31;
   border-radius: 46% 48% 48% 50%;
@@ -914,9 +915,9 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-play {
   position: absolute;
   left: 56.2%;
-  top: 28.2%;
+  top: 30.76%;
   width: 9.7%;
-  height: 5.5%;
+  height: 6%;
   padding: 0;
   display: grid;
   place-items: center;
@@ -964,9 +965,9 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-mouth {
   position: absolute;
   left: 28%;
-  top: 34.8%;
+  top: 37.96%;
   width: 44%;
-  height: 18.2%;
+  height: 19.85%;
   z-index: 6;
 }
 .frankenstein-skin .fr-mask-art {
@@ -1078,9 +1079,9 @@ input[type="range"]::-moz-range-thumb {
 /* ── Neck bolts = prev / next ─────────────────────────────────────────── */
 .frankenstein-skin .fr-bolt {
   position: absolute;
-  top: 36.1%;
+  top: 39.38%;
   width: 7%;
-  height: 9.3%;
+  height: 10.15%;
   padding: 0;
   background: transparent;
   border: none;
@@ -1094,20 +1095,6 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-bolt:focus-visible {
   box-shadow: 0 0 3cqw #72ff5a66;
   outline: 1px solid #b1ffa2;
-}
-
-/* ── Chest blank = hides the plate's baked placeholder label ──────────── */
-/* Same box the live title readout occupied: the art was drawn with a dummy
-   text block there, and the mouth monitor now carries the track name. */
-.frankenstein-skin .fr-chest-blank {
-  position: absolute;
-  left: 35.7%;
-  top: 65.6%;
-  width: 29%;
-  height: 8%;
-  background: #1c1724;
-  z-index: 3;
-  pointer-events: none;
 }
 
 /* ── Stitched scar = seek ─────────────────────────────────────────────── */
@@ -1148,9 +1135,9 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-seek {
   position: absolute;
   left: 28%;
-  top: 57%;
+  top: 62.18%;
   width: 44%;
-  height: 5%;
+  height: 5.45%;
   margin: 0;
   opacity: 0;
   pointer-events: none;
@@ -1158,7 +1145,7 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-times {
   position: absolute;
   left: 28%;
-  top: 62.3%;
+  top: 67.96%;
   width: 44%;
   display: flex;
   justify-content: space-between;
@@ -1174,9 +1161,9 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-watch {
   position: absolute;
   left: 41.5%;
-  top: 80.6%;
+  top: 78.84%;
   width: 18%;
-  height: 12%;
+  height: 13.09%;
   z-index: 4;
 }
 .frankenstein-skin .fr-dial {
@@ -1302,11 +1289,11 @@ input[type="range"]::-moz-range-thumb {
 /* Minimize takes the left jacket pin and open folder the right one (swapped
    on the maintainer's call, 2026-11-24); close, mini and next skin keep their
    places. */
-.frankenstein-skin .fr-pin-minimize { left: 18%; top: 53%; }
-.frankenstein-skin .fr-pin-close  { left: 16%; top: 67%; }
-.frankenstein-skin .fr-pin-folder { left: 79%; top: 53%; }
-.frankenstein-skin .fr-pin-mini   { left: 77%; top: 65%; }
-.frankenstein-skin .fr-pin-skin   { left: 74%; top: 76%; }
+.frankenstein-skin .fr-pin-minimize { left: 18%; top: 57.82%; }
+.frankenstein-skin .fr-pin-close  { left: 16%; top: 73.09%; }
+.frankenstein-skin .fr-pin-folder { left: 79%; top: 57.82%; }
+.frankenstein-skin .fr-pin-mini   { left: 77%; top: 70.91%; }
+.frankenstein-skin .fr-pin-skin   { left: 74%; top: 82.91%; }
 
 /* ════════════════════════════════════════════════════════════════════════
    SKELETON — WEB PLATE (2026-11-11)

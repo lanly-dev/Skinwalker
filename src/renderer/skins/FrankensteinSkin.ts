@@ -11,8 +11,11 @@
  * of the list — its rows are the playlist's keyboard path too.
  *
  * Anatomy → control / readout. Every position in style.css is the reference
- * build's own percentage of its 2:3 stage, and this skin's window is 2:3, so
- * each live element lands on its painted counterpart:
+ * build's own percentage of its 1280×1760 stage, and this skin's window is
+ * that same 8:11 shape, so each live element lands on its painted
+ * counterpart. The plate is cut 160px short of the reference's 2:3 art at the
+ * chest, and the hand with the watch is lifted to the new bottom edge, so the
+ * player is shorter than the reference without losing the fist:
  *   Forehead EQ ────── visualizer: 9 × 5 blocks, lit from the bottom
  *   Left eye ───────── readout: the iris follows the pointer, blinks, drifts
  *   Right eye ──────── play / pause (the glow holds while playing)
@@ -33,10 +36,10 @@ import { formatTime as fmt, durationLabel, probeDurations } from '../trackDurati
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
-/** The reference build's 2:3 stage — this skin's window matches it exactly. */
-const STAGE_SIZE = { width: 480, height: 720, minWidth: 380, minHeight: 560 }
+/** 1280×1760 at 0.375 — the plate's own proportions, cropped at the chest. */
+const STAGE_SIZE = { width: 480, height: 660, minWidth: 380, minHeight: 520 }
 /** Mini keeps the whole figure, as the reference does — just smaller. */
-const MINI_SIZE = { width: 320, height: 480, minWidth: 240, minHeight: 360 }
+const MINI_SIZE = { width: 320, height: 440, minWidth: 240, minHeight: 330 }
 
 /** Forehead equalizer: the reference build's 9 × 5 block grid. */
 const EQ_COLS = 9
@@ -48,7 +51,7 @@ const EQ_BLOCK_H = 22
 /** What the blocks show while paused, column by column. */
 const EQ_IDLE = [4, 3, 5, 3, 5, 3, 5, 3, 4]
 
-/** Stitched scar, in the plate's own 1280×1920 coordinates. */
+/** Stitched scar, in the plate's own 1280×1760 coordinates. */
 const SCAR_PATH = 'M358 1174 C540 1134 751 1139 924 1090'
 
 /** Horizontal pixels for the full 0–100 volume range. One window-width
@@ -127,8 +130,8 @@ function sutureTicks(
  * HTML element placed exactly in it.
  *
  * Drawn in the mask's own 420×260 box, which is the same ratio as its CSS box
- * (44% of a 2:3 window), so preserveAspectRatio="none" costs no distortion
- * and the screen's percentages line up with the grille.
+ * (44% × 19.85% of the 480×660 stage), so preserveAspectRatio="none" costs no
+ * distortion and the screen's percentages line up with the grille.
  */
 function mouthMaskSvg(): string {
   return /* html */ `
@@ -222,6 +225,7 @@ export class FrankensteinSkin implements Skin {
   readonly id = 'frankenstein'
   readonly label = 'Frankenstein'
   readonly shapeImage = framePlate
+  readonly windowSize = { width: 480, height: 660 }
 
   private container: HTMLElement | null = null
   private player: Player | null = null
@@ -334,15 +338,9 @@ export class FrankensteinSkin implements Skin {
         <button class="fr-bolt fr-next" type="button" aria-label="Next track"
                 title="Next track"></button>
 
-        <!-- The plate has a baked dummy label on the chest (placeholder text
-             lines). The live title readout that used to cover it is gone —
-             the mouth monitor carries the track — so this blank plate keeps
-             the baked text off the screen. -->
-        <div class="fr-chest-blank" aria-hidden="true"></div>
-
         <!-- Stitched scar = seek -->
         <div class="fr-scar">
-          <svg class="fr-scar-svg" viewBox="0 0 1280 1920" aria-hidden="true">
+          <svg class="fr-scar-svg" viewBox="0 0 1280 1760" aria-hidden="true">
             <path class="fr-scar-route" d="${SCAR_PATH}"/>
             <path class="fr-scar-progress" d="${SCAR_PATH}" pathLength="1000"/>
             <circle class="fr-scar-thumb" r="15"/>
