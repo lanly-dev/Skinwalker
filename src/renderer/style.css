@@ -1648,14 +1648,13 @@ input[type="range"]::-moz-range-thumb {
   justify-content: center;
   padding: 0 1%;
   overflow: hidden;
-  background: #020c13;
-  border-radius: 0.5cqw;
   color: #f4e9d0;
   font: 900 clamp(9px, 2.05cqw, 32px) Georgia, "Times New Roman", serif;
   letter-spacing: -0.04em;
   line-height: 1;
   white-space: nowrap;
   text-overflow: ellipsis;
+  text-shadow: 0 0 0.3cqw #01070b, 0 0 0.8cqw #01070bcc;
 }
 .skeleton-skin .sk-artist {
   position: absolute;
@@ -1667,11 +1666,11 @@ input[type="range"]::-moz-range-thumb {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #020c13;
   color: #e8ddc2;
   font: bold clamp(6px, 1.45cqw, 23px) Georgia, serif;
   letter-spacing: 0.04em;
   white-space: nowrap;
+  text-shadow: 0 0 0.25cqw #01070b, 0 0 0.6cqw #01070bcc;
 }
 .skeleton-skin .sk-artist b { color: #11e2ff; }
 
