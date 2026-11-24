@@ -43,7 +43,7 @@ UNVERIFIED = could not be checked here.
 | 30 | `npm run dev` from a fresh install | FAIL then fixed locally | Failed with "Electron uninstall": `node_modules/electron/path.txt` was missing because Electron's download step had not run. Fixed by running `node node_modules/electron/install.js`; README Quick Start now explains this. A second failure, `listen EACCES ::1:5173`, came from a Windows reserved port range; the dev server now uses port 5500 (`electron.vite.config.ts`, commit `445317a`). |
 | 31 | Docs cite files outside the repo | FAIL | `docs/AGENTS.md` cites `reference/dracula-web/*` scripts. `reference/**` is gitignored. See the note at the end of `docs/AGENTS.md`. |
 | 32 | Return from Skeleton or Frankenstein | PASS (from source) | All three skins have a next-skin control (2026-11-22 and 2026-11-23). Not clicked in the running app. |
-| 33 | Ten required controls per skin | PASS (from source) | `.kiro/specs/skin-required-controls.md`: all three skins carry the ten controls; Frankenstein's minimize pin landed 2026-11-24. Not clicked in the running app. |
+| 33 | Ten required controls per skin | PASS (from source) | `.kiro/specs/skin-required-controls.md`: all three skins carry the ten controls. Frankenstein's minimize pin landed 2026-11-24; its playlist control is now the inline mouth monitor rather than the ☰ Tracks board. Neither the minimize action nor the monitor was exercised in the running app. |
 
 ## Open Risks (need the maintainer)
 

@@ -57,7 +57,7 @@ The generic title bar was removed on 2026-11-21 (T0b), and the floating
 - [x] T0b: Remove the generic title bar (minimize, maximize, close) entirely: `#titlebar` in `src/renderer/index.html`, `renderWindowControls()` in `src/renderer/main.ts`, its CSS in `src/renderer/style.css`. Maintainer decision 2026-11-21. Answers open decision 4 (maximize is dropped).
 - [ ] T1: Resolve open decisions and update this spec's design section.
 - [ ] T2: Shared helper for the five window buttons — moot: each skin carries its own.
-- [x] T3: Frankenstein: five buttons and mini version. Four buttons and mini done 2026-11-23; minimize closed 2026-11-24.
+- [x] T3: Frankenstein: five buttons and mini version. Four buttons and mini done 2026-11-23; minimize closed 2026-11-24 (added from source, not exercised in the running app).
 - [x] T4: Skeleton: five buttons and mini version.
 - [x] T5: Hide the global bar and "+ Add files" for skins that provide their own.
 - [x] T6: Update `docs/AGENTS.md` scope text and `README.md` skin table.
