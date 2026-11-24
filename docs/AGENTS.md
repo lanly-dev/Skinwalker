@@ -189,6 +189,15 @@ A CSS shade element (`.sk-tools-bed`, two linear-gradient masks with `mask-compo
 and removed: the composite rendered as a hard-edged slab in the app, so the art is cleaned instead of veiled.
 Verified from a 1:1 capture of the running Electron window (1442x960 client at 1.5 DPI): five icons, no double
 image, no rectangle, nothing clipped. Hover/focus states were not exercised.
+**Row aligned (2026-11-24, Lan: "fix the 5 buttons alignment, and the speaker icon"):** the five equal 4.35%x6.5%
+boxes (`object-fit: contain`) gave every icon a different rendered width and height (the wide bone bar was half the
+height of the others) and their tops wandered (55.38/54.9/54.12/54.51/54.12%), so the row read as a clump. Each
+button now takes its icon's own aspect at one common height (5.45%, the bar 3.38%), the gaps between the five are
+equal (5.3px at a 960px window), and their centres sit on the painted strip's own axis — measured off the plate's
+pill interior, it rises 4.7° to the right (centres 55.9/55.4/55.0/55.5/53.9% tops). The mute speaker is no longer
+placed on a level line beside the volume channel: its centre rides the channel's 6° axis at the track's left end
+(54.07% top, 3.5%x5.45%) and its glyph paths were redrawn a touch larger and rounder. Checked again from the same
+1:1 capture: even gaps, one optical height, glyph centred on the tilt.
 
 - **Skeleton returns — the web build's neon plate (2026-11-11, Lan's pick):**
 the lineup cut is partly reversed: `SkeletonSkin` is back, rebuilt from the Boba
