@@ -865,15 +865,18 @@ input[type="range"]::-moz-range-thumb {
 /* ── Eyes: left = living readout, right = play / pause ────────────────── */
 .frankenstein-skin .fr-eye {
   position: absolute;
-  left: 34.2%;
-  top: 30.65%;
-  width: 10.9%;
-  height: 6.22%;
-  background: radial-gradient(ellipse at 45% 38%, #edf0cf, #c9c99b 75%);
-  border: 0.75cqw solid #284b31;
-  border-radius: 46% 48% 48% 50%;
+  left: 34.61%;
+  top: 30.97%;
+  width: 9.69%;
+  height: 5.63%;
+  /* The eye is the plate's own orb, cropped to its exact bbox (art 443–566 ×
+     545–643, with the baked play glyph diffused out), so its silhouette, rim
+     shading and rim seams land pixel-for-pixel in the socket. Only the iris
+     below is live. */
+  background: var(--fr-eye-url) center / 100% 100% no-repeat;
+  border: 0;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: inset 0 0.5cqw 1cqw #536a3a;
   pointer-events: none;
   z-index: 3;
 }
@@ -901,7 +904,8 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-eye::after {
   content: '';
   position: absolute;
-  inset: -2px;
+  inset: 0;
+  border-radius: 50%;
   background: #416943;
   transform: scaleY(0);
   transform-origin: top;
@@ -914,41 +918,65 @@ input[type="range"]::-moz-range-thumb {
 }
 .frankenstein-skin .fr-play {
   position: absolute;
-  left: 56.2%;
-  top: 30.76%;
-  width: 9.7%;
-  height: 6%;
+  /* The right socket's own orb (art 719–841 × 545–643), cropped separately
+     from the left one with its baked pause bars diffused out, and the live
+     play / pause glyph on top — so the button is the socket itself, not a
+     mirrored or borrowed orb sitting over it. */
+  left: 56.1719%;
+  top: 30.9659%;
+  width: 9.6094%;
+  height: 5.625%;
   padding: 0;
   display: grid;
   place-items: center;
-  background: #00de26;
-  border: 0.7cqw solid #244630;
-  border-radius: 50%;
-  box-shadow: 0 0 2cqw #64ff7040;
+  background: var(--fr-eye-right-url) center / 100% 100% no-repeat;
+  border: 0;
+  border-radius: 0;
   cursor: pointer;
-  transition: box-shadow 0.2s, filter 0.2s;
+  transition: filter 0.2s;
   z-index: 4;
 }
 .frankenstein-skin .fr-play:hover,
 .frankenstein-skin .fr-play:focus-visible {
-  box-shadow: 0 0 2.8cqw #8bff9a80;
-  filter: brightness(1.12);
+  filter: brightness(1.18);
 }
+.frankenstein-skin .fr-play:focus-visible {
+  outline: 1px solid #b1ffa2;
+  outline-offset: 2px;
+}
+/* The live glyphs take the footprint and optical centre of the plate's own
+   baked glyphs (play 47×52 art px, pause bars 41×50 with 15px bars and an
+   11px gap), so swapping the painted glyph for the live one leaves no
+   size or position jump. */
 .frankenstein-skin .fr-play-symbol {
   width: 0;
   height: 0;
-  border-top: 1.5cqw solid transparent;
-  border-bottom: 1.5cqw solid transparent;
-  border-left: 2.3cqw solid #b3ff94;
-  margin-left: 0.5cqw;
+  border-top: 2.03cqw solid transparent;
+  border-bottom: 2.03cqw solid transparent;
+  border-left: 3.67cqw solid #9bff96;
+  transform: translate(0.35cqw, -0.35cqw);
 }
 .frankenstein-skin .fr-pause-symbol {
   display: none;
-  width: 2.5cqw;
-  height: 3cqw;
-  border-left: 0.8cqw solid #b3ff94;
-  border-right: 0.8cqw solid #b3ff94;
+  position: relative;
+  width: 3.19cqw;
+  height: 3.9cqw;
+  transform: translateY(-0.27cqw);
 }
+/* Capsule bars, rounded like the plate's painted ones (a border-made pair
+   would keep square ends). */
+.frankenstein-skin .fr-pause-symbol::before,
+.frankenstein-skin .fr-pause-symbol::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1.17cqw;
+  border-radius: 999px;
+  background: #9bff96;
+}
+.frankenstein-skin .fr-pause-symbol::before { left: 0; }
+.frankenstein-skin .fr-pause-symbol::after { right: 0; }
 .frankenstein-skin .fr-body.playing .fr-play-symbol { display: none; }
 .frankenstein-skin .fr-body.playing .fr-pause-symbol { display: block; }
 

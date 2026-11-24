@@ -28,6 +28,10 @@
  *   Jacket pins ────── open folder, close, minimize, mini, next skin
  */
 import framePlate from '../assets/frankenstein-frame.webp'
+// Kept as files, never inlined: the renderer's CSP allows 'self' only, so a
+// data: URL background would be refused.
+import eyeOrb from '../assets/frankenstein-eye.webp?no-inline'
+import eyeOrbRight from '../assets/frankenstein-eye-right.webp?no-inline'
 import knobPlate from '../assets/frankenstein-knob-plate.webp'
 import knobFace from '../assets/frankenstein-knob-face.webp'
 import { applySkinShape } from '../windowShape'
@@ -264,6 +268,10 @@ export class FrankensteinSkin implements Skin {
     this.container = document.createElement('div')
     this.container.className = 'skin frankenstein-skin'
     this.container.style.setProperty('--fr-frame-url', `url("${framePlate}")`)
+    // Each socket orb itself, cropped from the plate with its baked glyph
+    // diffused out, so both eyes are the art rather than a shape near it.
+    this.container.style.setProperty('--fr-eye-url', `url("${eyeOrb}")`)
+    this.container.style.setProperty('--fr-eye-right-url', `url("${eyeOrbRight}")`)
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
