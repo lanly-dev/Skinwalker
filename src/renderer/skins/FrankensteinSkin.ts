@@ -18,7 +18,8 @@
  *   Right eye ──────── play / pause (the glow holds while playing)
  *   Mouth mask ─────── MK-style half mask whose top edge rises into three
  *                      bolted points around the eye sockets; the CRT
- *                      playlist is its grille
+ *                      playlist is its grille (pointer-only — the board is
+ *                      the keyboard path to the same list)
  *   Neck bolts ─────── previous / next
  *   Stitched scar ──── seek: the bead rides the scar, progress fills it
  *   Gold watch ─────── volume: drag left/right, wheel, arrows; tap = mute
@@ -135,12 +136,12 @@ function mouthMaskSvg(): string {
     <svg class="fr-mask-art" viewBox="0 0 420 260" preserveAspectRatio="none" aria-hidden="true">
       <defs>
         <linearGradient id="fr-mask-leather" x1=".1" y1="0" x2=".9" y2="1">
-          <stop stop-color="#3a4147"/><stop offset=".34" stop-color="#242a2f"/>
-          <stop offset=".72" stop-color="#171c20"/><stop offset="1" stop-color="#0d1114"/>
+          <stop stop-color="#4b564d"/><stop offset=".34" stop-color="#313b35"/>
+          <stop offset=".72" stop-color="#1f2722"/><stop offset="1" stop-color="#121815"/>
         </linearGradient>
         <linearGradient id="fr-mask-steel" x1="0" y1="0" x2="0" y2="1">
-          <stop stop-color="#aab5bd"/><stop offset=".22" stop-color="#6a757e"/>
-          <stop offset=".62" stop-color="#3a434a"/><stop offset="1" stop-color="#1a2025"/>
+          <stop stop-color="#8d9a92"/><stop offset=".22" stop-color="#5b6861"/>
+          <stop offset=".62" stop-color="#333d38"/><stop offset="1" stop-color="#161d1a"/>
         </linearGradient>
         <radialGradient id="fr-mask-bolt" cx=".34" cy=".3" r=".85">
           <stop stop-color="#e2eaef"/><stop offset=".5" stop-color="#939da5"/>
@@ -151,16 +152,16 @@ function mouthMaskSvg(): string {
       <!-- Leather shell: a below-the-eyes half mask, cheekbones to chin. Its top
            edge climbs into three points that track the two eye sockets — the
            outer corner of each socket and the bridge between them. -->
-      <path d="M8 36 L42 3 Q78 26 110 32 L210 0 Q242 26 310 32 L378 3 Q396 16 412 36
+      <path d="M8 38 L42 0 Q78 30 110 38 L210 -5 Q242 30 310 38 L378 0 Q396 18 412 38
                C414 70 404 116 388 152 C372 194 320 244 210 254
-               C100 244 48 194 32 152 C16 116 6 70 8 36 Z"
+               C100 244 48 194 32 152 C16 116 6 70 8 38 Z"
             fill="url(#fr-mask-leather)" stroke="#080b0d" stroke-width="3" stroke-linejoin="round"/>
 
       <!-- The three points, each bolted through its tab -->
       <g fill="url(#fr-mask-bolt)" stroke="#090d10" stroke-width="1">
-        <circle cx="42" cy="12" r="4.6"/>
-        <circle cx="210" cy="9" r="4.6"/>
-        <circle cx="378" cy="12" r="4.6"/>
+        <circle cx="42" cy="10" r="4.4"/>
+        <circle cx="210" cy="5" r="4.4"/>
+        <circle cx="378" cy="10" r="4.4"/>
       </g>
 
       <!-- Cheek seams, stitched like the rest of him -->
@@ -178,14 +179,15 @@ function mouthMaskSvg(): string {
       </g>
 
       <!-- Bolted steel grille over nose and mouth; the live screen fills its
-           opening (x 48–372, y 50–180) -->
+           opening (x 48–372, y 54–180) -->
       <path fill-rule="evenodd" fill="url(#fr-mask-steel)" stroke="#0a0e11" stroke-width="2.4"
-            d="M30 40 L390 40 Q396 40 393 47 L352 188 Q349 197 340 195 Q276 206 210 206 Q144 206 80 195 Q71 197 68 188 L27 47 Q24 40 30 40 Z
-               M74 50 H346 A26 26 0 0 1 372 76 V154 A26 26 0 0 1 346 180 H74 A26 26 0 0 1 48 154 V76 A26 26 0 0 1 74 50 Z"/>
+            d="M30 44 L390 44 Q396 44 393 51 L352 188 Q349 197 340 195 Q276 206 210 206 Q144 206 80 195 Q71 197 68 188 L27 51 Q24 44 30 44 Z
+               M74 54 H346 A26 26 0 0 1 372 80 V154 A26 26 0 0 1 346 180 H74 A26 26 0 0 1 48 154 V80 A26 26 0 0 1 74 54 Z"/>
 
-      <!-- Bolted at the chin lip -->
+      <!-- Bolted top and chin, so the grille reads as bolted plate metal -->
       <g fill="url(#fr-mask-bolt)" stroke="#090d10" stroke-width=".9">
-        <circle cx="106" cy="194" r="4.6"/><circle cx="314" cy="194" r="4.6"/>
+        <circle cx="210" cy="49" r="4.2"/>
+        <circle cx="106" cy="194" r="5"/><circle cx="314" cy="194" r="5"/>
       </g>
 
       <!-- Chin seam, stitched shut like everything else here -->
@@ -329,15 +331,18 @@ export class FrankensteinSkin implements Skin {
 
         <!-- Mouth = a Mortal Kombat–style mask over the jaw. The plate has no
              mouth, so the mask covers it and its grille is a live monitor:
-             the playlist lives on that screen. -->
-        <div class="fr-mouth" role="group" aria-label="Playlist monitor">
+             the playlist lives on that screen. It is pointer-only and hidden
+             from assistive tech — the ☰ Tracks board is the keyboard path to
+             the same list, and announcing it twice only doubles the tab
+             stops. -->
+        <div class="fr-mouth" aria-hidden="true">
           ${mouthMaskSvg()}
           <div class="fr-screen">
             <div class="fr-mouth-head">
               <span>PLAYLIST</span>
               <span class="fr-mouth-count">—</span>
             </div>
-            <ol class="fr-mouth-list" aria-label="Tracklist"></ol>
+            <ol class="fr-mouth-list"></ol>
           </div>
         </div>
 
@@ -774,9 +779,10 @@ export class FrankensteinSkin implements Skin {
     const els = this.els
     if (!p || !els) return
 
-    // The same tracks fill the board and the mouth monitor.
-    this.fillList(els.playlist, 'fr-track')
-    this.fillList(els.mouthList, 'fr-mouth-row')
+    // The same tracks fill the board and the mouth monitor; only the board
+    // takes the keyboard.
+    this.fillList(els.playlist, 'fr-track', true)
+    this.fillList(els.mouthList, 'fr-mouth-row', false)
     els.mouthCount.textContent = String(p.playlist.length).padStart(2, '0')
 
     this.highlightPlaylistItem(this.activeIndex)
@@ -784,8 +790,10 @@ export class FrankensteinSkin implements Skin {
   }
 
   /** Renders one track list. The mouth monitor's rows share the board's
-   *  markup, so both stay in step; only the row class differs. */
-  private fillList(ol: HTMLOListElement, rowClass: string): void {
+   *  markup, so both stay in step; only the row class differs. `keyboard`
+   *  is the board's: its rows are buttons in the tab order, while the
+   *  monitor's rows stay mouse-clickable but out of it. */
+  private fillList(ol: HTMLOListElement, rowClass: string, keyboard: boolean): void {
     const p = this.player
     if (!p) return
     ol.replaceChildren()
@@ -794,9 +802,11 @@ export class FrankensteinSkin implements Skin {
       const li = document.createElement('li')
       li.className = rowClass
       li.dataset.index = String(i)
-      li.setAttribute('role', 'button')
-      li.setAttribute('tabindex', '0')
-      li.setAttribute('aria-label', `Play ${track.title}`)
+      if (keyboard) {
+        li.setAttribute('role', 'button')
+        li.setAttribute('tabindex', '0')
+        li.setAttribute('aria-label', `Play ${track.title}`)
+      }
 
       const num = document.createElement('span')
       num.className = 'fr-track-num'
@@ -812,11 +822,13 @@ export class FrankensteinSkin implements Skin {
 
       li.append(num, name, time)
       li.addEventListener('click', () => void p.playIndex(i).catch(logPlayError))
-      li.addEventListener('keydown', (e) => {
-        if (e.key !== 'Enter' && e.key !== ' ') return
-        e.preventDefault()
-        void p.playIndex(i).catch(logPlayError)
-      })
+      if (keyboard) {
+        li.addEventListener('keydown', (e) => {
+          if (e.key !== 'Enter' && e.key !== ' ') return
+          e.preventDefault()
+          void p.playIndex(i).catch(logPlayError)
+        })
+      }
       ol.appendChild(li)
     })
   }

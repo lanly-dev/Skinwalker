@@ -978,14 +978,14 @@ input[type="range"]::-moz-range-thumb {
   filter: drop-shadow(0 0.55cqw 0.9cqw #000c);
   pointer-events: none;
 }
-/* The grille's opening: x 48–372, y 50–180 of the mask's 420×260 art, plus a
+/* The grille's opening: x 48–372, y 54–180 of the mask's 420×260 art, plus a
    hair of bleed so no sliver of shell shows at the lip. */
 .frankenstein-skin .fr-screen {
   position: absolute;
   left: 11.19%;
-  top: 18.85%;
+  top: 20.38%;
   width: 77.62%;
-  height: 50.77%;
+  height: 49.23%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1035,7 +1035,9 @@ input[type="range"]::-moz-range-thumb {
   display: flex;
   flex-direction: column;
   margin: 0;
-  padding: 0 0.8cqw 0.8cqw;
+  /* No bottom padding: the three rows must fill the screen and the fourth
+     must fall exactly at its edge, so no half-row peeks out. */
+  padding: 0 0.8cqw;
   list-style: none;
   overflow-y: auto;
   scrollbar-width: none;
