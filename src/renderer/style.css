@@ -951,6 +951,125 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-body.playing .fr-play-symbol { display: none; }
 .frankenstein-skin .fr-body.playing .fr-pause-symbol { display: block; }
 
+/* ── Mouth = a below-the-eyes half mask with a live monitor ───────────────
+   The plate leaves the mouth empty, so a leather-and-steel half mask is
+   bolted over it, Mortal Kombat style: the shell follows the cheekbones and
+   tapers to the chin, its top edge rises into three bolted points around the
+   eye sockets, a steel grille covers nose and mouth, and sutures hold the
+   leather together. That grille is a CRT — the playlist
+   scrolls there in phosphor green, on the same LED palette as the forehead
+   equalizer. The mask art is inline SVG (mouthMaskSvg() in the skin) drawn
+   in a 420×260 box, the same ratio as this one, so the screen below lands
+   exactly in the grille's opening. */
+.frankenstein-skin .fr-mouth {
+  position: absolute;
+  left: 28%;
+  top: 34.8%;
+  width: 44%;
+  height: 18.2%;
+  z-index: 6;
+}
+.frankenstein-skin .fr-mask-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0.55cqw 0.9cqw #000c);
+  pointer-events: none;
+}
+/* The grille's opening: x 48–372, y 50–180 of the mask's 420×260 art, plus a
+   hair of bleed so no sliver of shell shows at the lip. */
+.frankenstein-skin .fr-screen {
+  position: absolute;
+  left: 11.19%;
+  top: 18.85%;
+  width: 77.62%;
+  height: 50.77%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 2.7cqw;
+  background: radial-gradient(120% 100% at 50% 30%, #124023 0%, #071d11 58%, #020906 100%);
+  box-shadow:
+    inset 0 0 1.3cqw #000d,
+    inset 0 0 0 1px #5d8a6a44,
+    0 0 1.1cqw #5bff7a22;
+  color: #86e88d;
+  font: clamp(5.5px, 1.55cqw, 9px)/1.15 var(--font-mono);
+}
+/* Glass sheen, then the CRT's scanlines. */
+.frankenstein-skin .fr-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(112deg, #ffffff12 0%, #ffffff08 22%, transparent 46%);
+  pointer-events: none;
+}
+.frankenstein-skin .fr-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, #00000066 0 1px, transparent 1px 3px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.frankenstein-skin .fr-mouth-head {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7cqw 1.2cqw 0.35cqw;
+  color: #4f8a5c;
+  font-size: clamp(4.5px, 1.25cqw, 7px);
+  letter-spacing: 0.14em;
+  text-shadow: 0 0 0.5cqw #6bff8a55;
+}
+.frankenstein-skin .fr-mouth-list {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0 0.8cqw 0.8cqw;
+  list-style: none;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.frankenstein-skin .fr-mouth-list::-webkit-scrollbar { width: 0; height: 0; }
+.frankenstein-skin .fr-mouth-row {
+  display: flex;
+  align-items: center;
+  gap: 1.4cqw;
+  flex: 0 0 33.3333%;
+  padding: 0 0.8cqw;
+  border-radius: 0.5cqw;
+  color: #7fd08a;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.frankenstein-skin .fr-mouth-row .fr-track-num { color: #3f7a4c; }
+.frankenstein-skin .fr-mouth-row .fr-track-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.frankenstein-skin .fr-mouth-row .fr-track-time { color: #4b8a58; font-size: 0.9em; }
+.frankenstein-skin .fr-mouth-row:hover { background: #86ff7a12; }
+.frankenstein-skin .fr-mouth-row.active {
+  color: #c7ffb6;
+  background: #8dff7420;
+  box-shadow: inset 0.4cqw 0 #a6ff8c;
+  text-shadow: 0 0 0.6cqw #8dff8a88;
+}
+.frankenstein-skin .fr-mouth-row.active .fr-track-num,
+.frankenstein-skin .fr-mouth-row.active .fr-track-time { color: #9fe6a4; }
+
 /* ── Neck bolts = prev / next ─────────────────────────────────────────── */
 .frankenstein-skin .fr-bolt {
   position: absolute;

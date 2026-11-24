@@ -5,7 +5,10 @@
  * the monster's left eye follows the pointer, the right eye is play/pause,
  * the neck bolts change tracks, the stitched scar across the chest is the
  * seek line, the gold watch in the hand is volume, and five brass jacket
- * pins are the window tools. The board behind the ☰ pin holds the playlist.
+ * pins are the window tools. The plate leaves the mouth blank, so a riveted
+ * mask closes it and the mask's cut-out is a working monitor: the playlist
+ * runs in phosphor green on that screen. The board behind the ☰ pin still
+ * holds the same list full size.
  *
  * Anatomy → control / readout. Every position in style.css is the reference
  * build's own percentage of its 2:3 stage, and this skin's window is 2:3, so
@@ -13,6 +16,9 @@
  *   Forehead EQ ────── visualizer: 9 × 5 blocks, lit from the bottom
  *   Left eye ───────── readout: the iris follows the pointer, blinks, drifts
  *   Right eye ──────── play / pause (the glow holds while playing)
+ *   Mouth mask ─────── MK-style half mask whose top edge rises into three
+ *                      bolted points around the eye sockets; the CRT
+ *                      playlist is its grille
  *   Neck bolts ─────── previous / next
  *   Stitched scar ──── seek: the bead rides the scar, progress fills it
  *   Gold watch ─────── volume: drag left/right, wheel, arrows; tap = mute
@@ -88,6 +94,107 @@ function pinSvg(id: string, motif: string, label: string): string {
     <span class="fr-pin-tip" aria-hidden="true">${label}</span>`
 }
 
+/** Short suture ticks crossing a quadratic seam, alternating lean — the mask,
+ *  like the rest of the monster, is stitched together. */
+function sutureTicks(
+  x0: number,
+  y0: number,
+  cx: number,
+  cy: number,
+  x1: number,
+  y1: number,
+  count: number,
+): string {
+  let d = ''
+  for (let i = 0; i <= count; i++) {
+    const t = i / count
+    const mt = 1 - t
+    const x = mt * mt * x0 + 2 * mt * t * cx + t * t * x1
+    const y = mt * mt * y0 + 2 * mt * t * cy + t * t * y1
+    const lean = i % 2 === 0 ? 5.5 : -5.5
+    d += `M${(x - 4.2).toFixed(1)} ${(y + lean).toFixed(1)}L${(x + 4.2).toFixed(1)} ${(y - lean).toFixed(1)}`
+  }
+  return d
+}
+
+/**
+ * The mouth mask: a below-the-eyes half mask, Mortal Kombat style — a dark
+ * leather shell that follows the cheekbones and tapers to the chin, its top
+ * edge rising into three bolted points around the two eye sockets (outer
+ * corner, bridge, outer corner), a steel grille over nose and mouth,
+ * stitched cheek and chin seams, studs.
+ * The grille's opening is left empty here: the live playlist screen is an
+ * HTML element placed exactly in it.
+ *
+ * Drawn in the mask's own 420×260 box, which is the same ratio as its CSS box
+ * (44% of a 2:3 window), so preserveAspectRatio="none" costs no distortion
+ * and the screen's percentages line up with the grille.
+ */
+function mouthMaskSvg(): string {
+  return /* html */ `
+    <svg class="fr-mask-art" viewBox="0 0 420 260" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="fr-mask-leather" x1=".1" y1="0" x2=".9" y2="1">
+          <stop stop-color="#3a4147"/><stop offset=".34" stop-color="#242a2f"/>
+          <stop offset=".72" stop-color="#171c20"/><stop offset="1" stop-color="#0d1114"/>
+        </linearGradient>
+        <linearGradient id="fr-mask-steel" x1="0" y1="0" x2="0" y2="1">
+          <stop stop-color="#aab5bd"/><stop offset=".22" stop-color="#6a757e"/>
+          <stop offset=".62" stop-color="#3a434a"/><stop offset="1" stop-color="#1a2025"/>
+        </linearGradient>
+        <radialGradient id="fr-mask-bolt" cx=".34" cy=".3" r=".85">
+          <stop stop-color="#e2eaef"/><stop offset=".5" stop-color="#939da5"/>
+          <stop offset="1" stop-color="#20272c"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Leather shell: a below-the-eyes half mask, cheekbones to chin. Its top
+           edge climbs into three points that track the two eye sockets — the
+           outer corner of each socket and the bridge between them. -->
+      <path d="M8 36 L42 3 Q78 26 110 32 L210 0 Q242 26 310 32 L378 3 Q396 16 412 36
+               C414 70 404 116 388 152 C372 194 320 244 210 254
+               C100 244 48 194 32 152 C16 116 6 70 8 36 Z"
+            fill="url(#fr-mask-leather)" stroke="#080b0d" stroke-width="3" stroke-linejoin="round"/>
+
+      <!-- The three points, each bolted through its tab -->
+      <g fill="url(#fr-mask-bolt)" stroke="#090d10" stroke-width="1">
+        <circle cx="42" cy="12" r="4.6"/>
+        <circle cx="210" cy="9" r="4.6"/>
+        <circle cx="378" cy="12" r="4.6"/>
+      </g>
+
+      <!-- Cheek seams, stitched like the rest of him -->
+      <path d="M22 46 Q13 110 28 168" fill="none" stroke="#cbb6a0" stroke-width="1.2" opacity=".32"/>
+      <path d="${sutureTicks(22, 50, 13, 110, 27, 164, 9)}" stroke="#cbb6a0" stroke-width="2.2"
+            stroke-linecap="round" opacity=".55"/>
+      <path d="M398 46 Q407 110 392 168" fill="none" stroke="#cbb6a0" stroke-width="1.2" opacity=".32"/>
+      <path d="${sutureTicks(398, 50, 407, 110, 393, 164, 9)}" stroke="#cbb6a0" stroke-width="2.2"
+            stroke-linecap="round" opacity=".55"/>
+
+      <!-- Studs in the cheek margin -->
+      <g fill="url(#fr-mask-bolt)" stroke="#090d10" stroke-width=".9">
+        <circle cx="28" cy="72" r="4.2"/><circle cx="40" cy="130" r="4.2"/>
+        <circle cx="392" cy="72" r="4.2"/><circle cx="380" cy="130" r="4.2"/>
+      </g>
+
+      <!-- Bolted steel grille over nose and mouth; the live screen fills its
+           opening (x 48–372, y 50–180) -->
+      <path fill-rule="evenodd" fill="url(#fr-mask-steel)" stroke="#0a0e11" stroke-width="2.4"
+            d="M30 40 L390 40 Q396 40 393 47 L352 188 Q349 197 340 195 Q276 206 210 206 Q144 206 80 195 Q71 197 68 188 L27 47 Q24 40 30 40 Z
+               M74 50 H346 A26 26 0 0 1 372 76 V154 A26 26 0 0 1 346 180 H74 A26 26 0 0 1 48 154 V76 A26 26 0 0 1 74 50 Z"/>
+
+      <!-- Bolted at the chin lip -->
+      <g fill="url(#fr-mask-bolt)" stroke="#090d10" stroke-width=".9">
+        <circle cx="106" cy="194" r="4.6"/><circle cx="314" cy="194" r="4.6"/>
+      </g>
+
+      <!-- Chin seam, stitched shut like everything else here -->
+      <path d="M122 228 Q210 242 298 228" fill="none" stroke="#cbb6a0" stroke-width="1.3" opacity=".4"/>
+      <path d="${sutureTicks(122, 228, 210, 242, 298, 228, 9)}" stroke="#cbb6a0" stroke-width="2.2"
+            stroke-linecap="round" opacity=".6"/>
+    </svg>`
+}
+
 interface FrEls {
   body: HTMLElement
   canvas: HTMLCanvasElement
@@ -108,6 +215,8 @@ interface FrEls {
   mute: HTMLButtonElement
   vol: HTMLOutputElement
   playlist: HTMLOListElement
+  mouthList: HTMLOListElement
+  mouthCount: HTMLElement
   board: HTMLElement
   boardClose: HTMLButtonElement
   boardLoad: HTMLButtonElement
@@ -192,9 +301,10 @@ export class FrankensteinSkin implements Skin {
 
   onPlaylistUpdate(): void {
     this.buildPlaylist()
-    // Added rows land at the bottom of the board; show them.
-    const list = this.els?.playlist
-    if (list) list.scrollTop = list.scrollHeight
+    // Added rows land at the bottom of each list; show them.
+    for (const list of [this.els?.playlist, this.els?.mouthList]) {
+      if (list) list.scrollTop = list.scrollHeight
+    }
   }
 
   // ── DOM ──────────────────────────────────────────────────────────────────────
@@ -216,6 +326,20 @@ export class FrankensteinSkin implements Skin {
           <span class="fr-play-symbol" aria-hidden="true"></span>
           <span class="fr-pause-symbol" aria-hidden="true"></span>
         </button>
+
+        <!-- Mouth = a Mortal Kombat–style mask over the jaw. The plate has no
+             mouth, so the mask covers it and its grille is a live monitor:
+             the playlist lives on that screen. -->
+        <div class="fr-mouth" role="group" aria-label="Playlist monitor">
+          ${mouthMaskSvg()}
+          <div class="fr-screen">
+            <div class="fr-mouth-head">
+              <span>PLAYLIST</span>
+              <span class="fr-mouth-count">—</span>
+            </div>
+            <ol class="fr-mouth-list" aria-label="Tracklist"></ol>
+          </div>
+        </div>
 
         <!-- Neck bolts = prev / next -->
         <button class="fr-bolt fr-prev" type="button" aria-label="Previous track"
@@ -313,6 +437,8 @@ export class FrankensteinSkin implements Skin {
       mute: c.querySelector('.fr-mute')!,
       vol: c.querySelector('.fr-vol')!,
       playlist: c.querySelector('.fr-playlist')!,
+      mouthList: c.querySelector('.fr-mouth-list')!,
+      mouthCount: c.querySelector('.fr-mouth-count')!,
       board: c.querySelector('.fr-board')!,
       boardClose: c.querySelector('.fr-board-close')!,
       boardLoad: c.querySelector('.fr-board-load')!,
@@ -647,12 +773,26 @@ export class FrankensteinSkin implements Skin {
     const p = this.player
     const els = this.els
     if (!p || !els) return
-    const ol = els.playlist
+
+    // The same tracks fill the board and the mouth monitor.
+    this.fillList(els.playlist, 'fr-track')
+    this.fillList(els.mouthList, 'fr-mouth-row')
+    els.mouthCount.textContent = String(p.playlist.length).padStart(2, '0')
+
+    this.highlightPlaylistItem(this.activeIndex)
+    this.probeDurations()
+  }
+
+  /** Renders one track list. The mouth monitor's rows share the board's
+   *  markup, so both stay in step; only the row class differs. */
+  private fillList(ol: HTMLOListElement, rowClass: string): void {
+    const p = this.player
+    if (!p) return
     ol.replaceChildren()
 
     p.playlist.forEach((track, i) => {
       const li = document.createElement('li')
-      li.className = 'fr-track'
+      li.className = rowClass
       li.dataset.index = String(i)
       li.setAttribute('role', 'button')
       li.setAttribute('tabindex', '0')
@@ -679,18 +819,23 @@ export class FrankensteinSkin implements Skin {
       })
       ol.appendChild(li)
     })
-
-    this.highlightPlaylistItem(this.activeIndex)
-    this.probeDurations()
   }
 
   private highlightPlaylistItem(idx: number): void {
-    const ol = this.els?.playlist
-    if (!ol || idx < 0) return
-    ol.querySelectorAll<HTMLElement>('.fr-track').forEach((row, i) => {
-      row.classList.toggle('active', i === idx)
-      row.setAttribute('aria-current', i === idx ? 'true' : 'false')
-    })
+    const els = this.els
+    if (!els || idx < 0) return
+    const lists: Array<[HTMLOListElement, string]> = [
+      [els.playlist, '.fr-track'],
+      [els.mouthList, '.fr-mouth-row'],
+    ]
+    for (const [ol, selector] of lists) {
+      ol.querySelectorAll<HTMLElement>(selector).forEach((row, i) => {
+        row.classList.toggle('active', i === idx)
+        row.setAttribute('aria-current', i === idx ? 'true' : 'false')
+        // Keep the live row in view on the mouth monitor.
+        if (i === idx) row.scrollIntoView({ block: 'nearest' })
+      })
+    }
   }
 
   /** Read each track's duration with a throwaway <audio> so the board can

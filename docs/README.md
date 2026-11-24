@@ -13,7 +13,7 @@ Every body part is meant to do real work. The table below lists the anatomy-to-c
 | Monster | Status | Anatomy |
 |---------|--------|---------|
 | 🧛 Dracula | flagship | medallion → play/pause · cape → visualizer · blood line → seek · jeweled minus/plus → volume · crossed hands → prev/next · tool row (on hover) → close / minimize / add files / next skin / mini bat |
-| ⚡ Frankenstein | functional | forehead EQ → visualizer · left eye → cursor-tracking readout · right eye → play/pause · neck bolts → prev/next · stitched scar → seek · gold watch → volume, tap or ϟ → mute · brass jacket pins → open folder / close / ☰ Tracks / mini / next skin · ☰ Tracks board → playlist |
+| ⚡ Frankenstein | functional | forehead EQ → visualizer · left eye → cursor-tracking readout · right eye → play/pause · MK-style mouth mask → playlist monitor · neck bolts → prev/next · stitched scar → seek · gold watch → volume, tap or ϟ → mute · brass jacket pins → open folder / close / ☰ Tracks / mini / next skin · ☰ Tracks board → playlist |
 | 💀 Skeleton | functional | pendant → play/pause · jaw → visualizer · bone board → playlist · blood line → seek · left bone arm → volume, speaker → mute · bone plaques → prev/next · right bone icons → mini / change skin / add files / minimize / close · mini card → 620×622 face, play / restore / close, mouth EQ |
 
 ---
