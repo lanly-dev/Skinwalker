@@ -24,7 +24,7 @@
  */
 import draculaFrameUrl from '../assets/dracula-frame.webp'
 import draculaBatUrl from '../assets/dracula-bat.webp'
-import draculaToolsUrl from '../assets/dracula-tools.jpg'
+import draculaToolsUrl from '../assets/dracula-tools.webp'
 import draculaHandLeftUrl from '../assets/dracula-hand-glow-left.webp'
 import draculaHandRightUrl from '../assets/dracula-hand-glow-right.webp'
 import draculaMedallionFaceUrl from '../assets/dracula-medallion-face.webp'

@@ -66,7 +66,7 @@ src/renderer/
 ├── assets/                 # Images, fonts, static files
 │   ├── dracula-frame.webp
 │   ├── dracula-bat.webp
-│   ├── dracula-tools.jpg
+│   ├── dracula-tools.webp
 │   ├── frankenstein-frame.webp
 │   ├── frankenstein-eye-left.png
 │   ├── frankenstein-eye-right.png
