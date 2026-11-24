@@ -1,6 +1,6 @@
 # Skin Required Controls Specification
 
-**Status:** Implemented for the shipped skins, with one gap: Frankenstein has no minimize control (re-checked from source 2026-11-23 at `bd6293f`..`1bc0d48`). Requirements R1 to R6 stay unticked until checked in the running app.
+**Status:** Implemented for the shipped skins. Frankenstein's missing minimize closed 2026-11-24: its ☰ Tracks pin became a minimize pin when the dialog board was removed and the playlist moved into the mouth mask's monitor. All three skins now provide the ten controls. Requirements R1 to R6 stay unticked until checked in the running app.
 **Created:** 2026-11-21
 **Owner:** Maintainer
 **Implementation:** Kiro, after the open decisions below are answered
@@ -20,16 +20,16 @@ Checked by reading `src/renderer/skins/*.ts` and `src/renderer/main.ts`. Not run
 | Previous / next | yes | yes | yes |
 | Seek bar | yes | yes | yes |
 | Volume | yes (jeweled minus/plus, wheel, keys) | yes (gold watch: drag left/right, wheel, keys; tap = mute) | yes (horizontal slider on the left arm + speaker mute) |
-| Track board | yes (`dr-playlist`) | yes (`fr-playlist`) | yes (`sk-board`) |
+| Track board | yes (`dr-playlist`) | yes — inline mouth monitor (`fr-mouth-list`) since 2026-11-24 | yes (`sk-board`) |
 | Close | yes (tool row) | yes (jacket pin) | yes (right bone icon) |
-| Minimize | yes (tool row) | **no** (the five jacket pins are open folder, close, tracks, mini, next skin; no `minimize` call in `FrankensteinSkin.ts`) | yes (right bone icon) |
+| Minimize | yes (tool row) | yes (jacket pin, since 2026-11-24) | yes (right bone icon) |
 | Switch skin | yes (tool row) | yes (jacket pin) | yes (right bone icon) |
 | Mini version | yes (bat, 380x380) | yes (whole figure, 320x480) | yes (face card, 340x351) |
 | Open folder | yes (tool row) | yes (jacket pin) | yes (right bone icon) |
 
 The generic title bar was removed on 2026-11-21 (T0b), and the floating
 "+ Add files" pill is now hidden for all three skins (`style.css`,
-`body:has(...)`), because each skin carries its own folder control. Dracula and Skeleton provide the ten controls. Frankenstein provides nine; minimize is missing.
+`body:has(...)`), because each skin carries its own folder control. All three skins provide the ten controls. Frankenstein's playlist moved from the ☰ Tracks dialog board to the inline mouth monitor on 2026-11-24, the same change that turned that pin into minimize.
 
 ## Requirements
 ### Functional
@@ -57,7 +57,7 @@ The generic title bar was removed on 2026-11-21 (T0b), and the floating
 - [x] T0b: Remove the generic title bar (minimize, maximize, close) entirely: `#titlebar` in `src/renderer/index.html`, `renderWindowControls()` in `src/renderer/main.ts`, its CSS in `src/renderer/style.css`. Maintainer decision 2026-11-21. Answers open decision 4 (maximize is dropped).
 - [ ] T1: Resolve open decisions and update this spec's design section.
 - [ ] T2: Shared helper for the five window buttons — moot: each skin carries its own.
-- [ ] T3: Frankenstein: five buttons and mini version. Four buttons and mini done 2026-11-23; minimize missing.
+- [x] T3: Frankenstein: five buttons and mini version. Four buttons and mini done 2026-11-23; minimize closed 2026-11-24.
 - [x] T4: Skeleton: five buttons and mini version.
 - [x] T5: Hide the global bar and "+ Add files" for skins that provide their own.
 - [x] T6: Update `docs/AGENTS.md` scope text and `README.md` skin table.

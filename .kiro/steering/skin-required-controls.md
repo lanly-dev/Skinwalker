@@ -43,4 +43,4 @@ part or painted element, never a generic widget stuck on top.
 - [ ] `npm run typecheck` and `npm run build` pass
 
 ## Current state (2026-11-23)
-Audit table: `.kiro/specs/skin-required-controls.md`. Dracula and Skeleton have all ten controls. Frankenstein has nine: it has no minimize control. The generic title bar was removed, so no skin gets window buttons for free.
+Audit table: `.kiro/specs/skin-required-controls.md`. All three skins have the ten controls (Frankenstein's minimize closed 2026-11-24). The generic title bar was removed, so no skin gets window buttons for free.

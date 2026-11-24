@@ -7,8 +7,8 @@
  * seek line, the gold watch in the hand is volume, and five brass jacket
  * pins are the window tools. The plate leaves the mouth blank, so a riveted
  * mask closes it and the mask's cut-out is a working monitor: the playlist
- * runs in phosphor green on that screen. The board behind the ☰ pin still
- * holds the same list full size.
+ * runs in phosphor green on that screen, and that screen is the only copy
+ * of the list — its rows are the playlist's keyboard path too.
  *
  * Anatomy → control / readout. Every position in style.css is the reference
  * build's own percentage of its 2:3 stage, and this skin's window is 2:3, so
@@ -18,18 +18,16 @@
  *   Right eye ──────── play / pause (the glow holds while playing)
  *   Mouth mask ─────── MK-style half mask whose top edge rises into three
  *                      bolted points around the eye sockets; the CRT
- *                      playlist is its grille (pointer-only — the board is
- *                      the keyboard path to the same list)
+ *                      playlist is its grille
  *   Neck bolts ─────── previous / next
  *   Stitched scar ──── seek: the bead rides the scar, progress fills it
  *   Gold watch ─────── volume: drag left/right, wheel, arrows; tap = mute
- *   Jacket pins ────── open folder, close, ☰ Tracks, mini, next skin
- *   ☰ Tracks ───────── the board: playlist, open folder, restore
+ *   Jacket pins ────── open folder, close, minimize, mini, next skin
  */
 import framePlate from '../assets/frankenstein-frame.webp'
 import knobPlate from '../assets/frankenstein-knob-plate.webp'
 import knobFace from '../assets/frankenstein-knob-face.webp'
-import { applySkinShape, liftShape, restoreShape } from '../windowShape'
+import { applySkinShape } from '../windowShape'
 import { openLocalFiles } from '../openFiles'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
@@ -61,7 +59,7 @@ const PIN_MOTIFS = {
   folder:
     'M16 29l5-10h13l5 6h16l-4 28H18z M17 33l7-7h29 M38 34v12q-7-3-8 2t8 1v-9l9-3v8q-6-2-6 2t6 1V33z',
   close: 'M24 18l29 29-6 6-29-29z M47 18l6 6-29 29-6-6z M23 23h1 M49 49h1 M49 23h1 M23 49h1',
-  tracks: 'M19 24h11m5 0h18 M19 36h24m5 0h5 M19 48h8m5 0h21 M16 20v32 M56 20v32',
+  minimize: 'M36 16v24 M25 31l11 11 11-11 M18 50h36',
   mini: 'M19 19h34v33H19z M23 24h26 M39 32v6m-5 9v-7h10v7 M36 29h6 M25 30v15m-3-3 3 4 3-4',
   restore:
     'M19 19h34v33H19z M23 24h26 M30 31h12v16H30z M23 38v-8h8 M23 30l7 7 M49 39v9h-8 M49 48l-7-7',
@@ -216,14 +214,9 @@ interface FrEls {
   dial: HTMLElement
   mute: HTMLButtonElement
   vol: HTMLOutputElement
-  playlist: HTMLOListElement
   mouthList: HTMLOListElement
   mouthCount: HTMLElement
-  board: HTMLElement
-  boardClose: HTMLButtonElement
-  boardLoad: HTMLButtonElement
-  boardRestore: HTMLButtonElement
-  tracksPin: HTMLButtonElement
+  minimizePin: HTMLButtonElement
   miniPin: HTMLButtonElement
 }
 
@@ -238,7 +231,6 @@ export class FrankensteinSkin implements Skin {
   private rafId = 0
   private eyeRaf = 0
   private mini = false
-  private boardOpen = false
 
   private freqData: Uint8Array<ArrayBuffer> | null = null
 
@@ -266,7 +258,6 @@ export class FrankensteinSkin implements Skin {
   mount(player: Player): void {
     this.player = player
     this.mini = false
-    this.boardOpen = false
     const app = document.getElementById('app')!
     document.documentElement.dataset.skin = this.id
 
@@ -290,8 +281,6 @@ export class FrankensteinSkin implements Skin {
     cancelAnimationFrame(this.eyeRaf)
     document.removeEventListener('pointermove', this.onPointerAim)
     document.removeEventListener('pointerdown', this.onPointerAim)
-    document.removeEventListener('pointerdown', this.onDocPointerDown)
-    document.removeEventListener('keydown', this.onKeyDown)
     if (this.player) this.player.onTrackChange = null
     this.container?.remove()
     this.container = null
@@ -303,10 +292,9 @@ export class FrankensteinSkin implements Skin {
 
   onPlaylistUpdate(): void {
     this.buildPlaylist()
-    // Added rows land at the bottom of each list; show them.
-    for (const list of [this.els?.playlist, this.els?.mouthList]) {
-      if (list) list.scrollTop = list.scrollHeight
-    }
+    // Added rows land at the bottom of the screen; show them.
+    const list = this.els?.mouthList
+    if (list) list.scrollTop = list.scrollHeight
   }
 
   // ── DOM ──────────────────────────────────────────────────────────────────────
@@ -331,18 +319,16 @@ export class FrankensteinSkin implements Skin {
 
         <!-- Mouth = a Mortal Kombat–style mask over the jaw. The plate has no
              mouth, so the mask covers it and its grille is a live monitor:
-             the playlist lives on that screen. It is pointer-only and hidden
-             from assistive tech — the ☰ Tracks board is the keyboard path to
-             the same list, and announcing it twice only doubles the tab
-             stops. -->
-        <div class="fr-mouth" aria-hidden="true">
+             the playlist lives on that screen, and these rows are the only
+             copy of it — so they carry the keyboard path too. -->
+        <div class="fr-mouth" role="group" aria-label="Playlist monitor">
           ${mouthMaskSvg()}
           <div class="fr-screen">
-            <div class="fr-mouth-head">
+            <div class="fr-mouth-head" aria-hidden="true">
               <span>PLAYLIST</span>
               <span class="fr-mouth-count">—</span>
             </div>
-            <ol class="fr-mouth-list"></ol>
+            <ol class="fr-mouth-list" aria-label="Tracklist"></ol>
           </div>
         </div>
 
@@ -393,25 +379,13 @@ export class FrankensteinSkin implements Skin {
                 title="Open folder">${pinSvg('folder', PIN_MOTIFS.folder, 'OPEN FOLDER')}</button>
         <button class="fr-pin fr-pin-close" type="button" aria-label="Close player"
                 title="Close player">${pinSvg('close', PIN_MOTIFS.close, 'Close player')}</button>
-        <button class="fr-pin fr-pin-tracks" type="button" aria-label="Tracks"
-                aria-haspopup="dialog" aria-controls="fr-board" aria-expanded="false"
-                title="Tracks">${pinSvg('tracks', PIN_MOTIFS.tracks, '☰ Tracks')}</button>
+        <button class="fr-pin fr-pin-minimize" type="button" aria-label="Minimize"
+                title="Minimize">${pinSvg('minimize', PIN_MOTIFS.minimize, 'Minimize')}</button>
         <button class="fr-pin fr-pin-mini" type="button" aria-label="Mini mode"
                 aria-pressed="false" title="Mini mode">${pinSvg('mini', PIN_MOTIFS.mini, 'Mini mode')}</button>
         <button class="fr-pin fr-pin-skin" type="button" aria-label="Next skin"
                 title="Next skin">${pinSvg('skin', PIN_MOTIFS.skin, 'Next skin')}</button>
 
-        <!-- ☰ Tracks = the board -->
-        <div class="fr-board" id="fr-board" role="dialog" aria-modal="true"
-             aria-labelledby="fr-board-title" hidden>
-          <button class="fr-board-close" type="button" aria-label="Close tracks">✕ Close</button>
-          <p class="fr-eyebrow">HIGH VOLTAGE / AUDIO ARCHIVE</p>
-          <h1 id="fr-board-title">THE LABORATORY</h1>
-          <p class="fr-board-sub">STITCHED TOGETHER. BROUGHT TO LIFE.</p>
-          <ol class="fr-playlist" aria-label="Tracklist"></ol>
-          <button class="fr-board-load" type="button">▱ OPEN AUDIO FOLDER</button>
-          <button class="fr-board-restore" type="button">↗ Restore full player</button>
-        </div>
       </div>
     `
   }
@@ -441,14 +415,9 @@ export class FrankensteinSkin implements Skin {
       dial: c.querySelector('.fr-dial')!,
       mute: c.querySelector('.fr-mute')!,
       vol: c.querySelector('.fr-vol')!,
-      playlist: c.querySelector('.fr-playlist')!,
       mouthList: c.querySelector('.fr-mouth-list')!,
       mouthCount: c.querySelector('.fr-mouth-count')!,
-      board: c.querySelector('.fr-board')!,
-      boardClose: c.querySelector('.fr-board-close')!,
-      boardLoad: c.querySelector('.fr-board-load')!,
-      boardRestore: c.querySelector('.fr-board-restore')!,
-      tracksPin: c.querySelector('.fr-pin-tracks')!,
+      minimizePin: c.querySelector('.fr-pin-minimize')!,
       miniPin: c.querySelector('.fr-pin-mini')!,
     }
     this.els = els
@@ -468,30 +437,17 @@ export class FrankensteinSkin implements Skin {
 
     // Jacket pins
     c.querySelector('.fr-pin-folder')!.addEventListener('click', () => void openLocalFiles(p))
+    els.minimizePin.addEventListener('click', () => window.skinwalker?.minimize?.())
     c.querySelector('.fr-pin-close')!.addEventListener('click', () => window.skinwalker?.close?.())
-    els.tracksPin.addEventListener('click', () => {
-      if (this.boardOpen) this.closeBoard()
-      else this.openBoard()
-    })
     els.miniPin.addEventListener('click', () => {
       if (this.mini) this.exitMini()
       else this.enterMini()
     })
     c.querySelector('.fr-pin-skin')!.addEventListener('click', () => p.nextSkin())
 
-    // Board
-    els.boardClose.addEventListener('click', () => this.closeBoard())
-    els.boardLoad.addEventListener('click', () => void openLocalFiles(p))
-    els.boardRestore.addEventListener('click', () => {
-      this.closeBoard()
-      this.exitMini()
-    })
-
     // The eye follows the pointer anywhere over the window
     document.addEventListener('pointermove', this.onPointerAim, { passive: true })
     document.addEventListener('pointerdown', this.onPointerAim, { passive: true })
-    document.addEventListener('pointerdown', this.onDocPointerDown)
-    document.addEventListener('keydown', this.onKeyDown)
 
     // Track change
     p.onTrackChange = (track, idx) => {
@@ -702,49 +658,10 @@ export class FrankensteinSkin implements Skin {
     els.thumb.setAttribute('cy', String(point.y))
   }
 
-  // ── Board ────────────────────────────────────────────────────────────────────
-
-  private openBoard(): void {
-    const els = this.els
-    if (!els || this.boardOpen) return
-    this.boardOpen = true
-    els.board.hidden = false
-    els.tracksPin.setAttribute('aria-expanded', 'true')
-    // The board is wider than the silhouette, so the OS region is lifted
-    // while it is up and put back on close.
-    void liftShape()
-    els.boardClose.focus({ preventScroll: true })
-  }
-
-  private closeBoard(): void {
-    const els = this.els
-    if (!els || !this.boardOpen) return
-    this.boardOpen = false
-    els.board.hidden = true
-    els.tracksPin.setAttribute('aria-expanded', 'false')
-    restoreShape()
-    els.tracksPin.focus({ preventScroll: true })
-  }
-
-  private onDocPointerDown = (e: PointerEvent): void => {
-    if (!this.boardOpen) return
-    const target = e.target as HTMLElement | null
-    if (!target) return
-    if (target.closest('.fr-board') || target.closest('.fr-pin-tracks')) return
-    this.closeBoard()
-  }
-
-  private onKeyDown = (e: KeyboardEvent): void => {
-    if (e.key !== 'Escape' || !this.boardOpen) return
-    e.preventDefault()
-    this.closeBoard()
-  }
-
   // ── Mini ─────────────────────────────────────────────────────────────────────
 
   private enterMini(): void {
     if (!this.container || this.mini) return
-    if (this.boardOpen) this.closeBoard()
     this.mini = true
     this.container.classList.add('mini')
     window.skinwalker?.setWindowSize?.(MINI_SIZE)
@@ -779,34 +696,28 @@ export class FrankensteinSkin implements Skin {
     const els = this.els
     if (!p || !els) return
 
-    // The same tracks fill the board and the mouth monitor; only the board
-    // takes the keyboard.
-    this.fillList(els.playlist, 'fr-track', true)
-    this.fillList(els.mouthList, 'fr-mouth-row', false)
+    this.fillList(els.mouthList)
     els.mouthCount.textContent = String(p.playlist.length).padStart(2, '0')
 
     this.highlightPlaylistItem(this.activeIndex)
     this.probeDurations()
   }
 
-  /** Renders one track list. The mouth monitor's rows share the board's
-   *  markup, so both stay in step; only the row class differs. `keyboard`
-   *  is the board's: its rows are buttons in the tab order, while the
-   *  monitor's rows stay mouse-clickable but out of it. */
-  private fillList(ol: HTMLOListElement, rowClass: string, keyboard: boolean): void {
+  /** Renders the mouth monitor's track list. Its rows are the playlist's
+   *  only UI, so each one is a button in the tab order and plays the track
+   *  on click or on Enter / Space. */
+  private fillList(ol: HTMLOListElement): void {
     const p = this.player
     if (!p) return
     ol.replaceChildren()
 
     p.playlist.forEach((track, i) => {
       const li = document.createElement('li')
-      li.className = rowClass
+      li.className = 'fr-mouth-row'
       li.dataset.index = String(i)
-      if (keyboard) {
-        li.setAttribute('role', 'button')
-        li.setAttribute('tabindex', '0')
-        li.setAttribute('aria-label', `Play ${track.title}`)
-      }
+      li.setAttribute('role', 'button')
+      li.setAttribute('tabindex', '0')
+      li.setAttribute('aria-label', `Play ${track.title}`)
 
       const num = document.createElement('span')
       num.className = 'fr-track-num'
@@ -822,35 +733,27 @@ export class FrankensteinSkin implements Skin {
 
       li.append(num, name, time)
       li.addEventListener('click', () => void p.playIndex(i).catch(logPlayError))
-      if (keyboard) {
-        li.addEventListener('keydown', (e) => {
-          if (e.key !== 'Enter' && e.key !== ' ') return
-          e.preventDefault()
-          void p.playIndex(i).catch(logPlayError)
-        })
-      }
+      li.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return
+        e.preventDefault()
+        void p.playIndex(i).catch(logPlayError)
+      })
       ol.appendChild(li)
     })
   }
 
   private highlightPlaylistItem(idx: number): void {
-    const els = this.els
-    if (!els || idx < 0) return
-    const lists: Array<[HTMLOListElement, string]> = [
-      [els.playlist, '.fr-track'],
-      [els.mouthList, '.fr-mouth-row'],
-    ]
-    for (const [ol, selector] of lists) {
-      ol.querySelectorAll<HTMLElement>(selector).forEach((row, i) => {
-        row.classList.toggle('active', i === idx)
-        row.setAttribute('aria-current', i === idx ? 'true' : 'false')
-        // Keep the live row in view on the mouth monitor.
-        if (i === idx) row.scrollIntoView({ block: 'nearest' })
-      })
-    }
+    const ol = this.els?.mouthList
+    if (!ol || idx < 0) return
+    ol.querySelectorAll<HTMLElement>('.fr-mouth-row').forEach((row, i) => {
+      row.classList.toggle('active', i === idx)
+      row.setAttribute('aria-current', i === idx ? 'true' : 'false')
+      // Keep the live row in view on the screen.
+      if (i === idx) row.scrollIntoView({ block: 'nearest' })
+    })
   }
 
-  /** Read each track's duration with a throwaway <audio> so the board can
+  /** Read each track's duration with a throwaway <audio> so the screen can
    *  show a time before the engine has ever decoded that track. */
   private probeDurations(): void {
     const p = this.player

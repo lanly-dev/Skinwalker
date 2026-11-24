@@ -19,10 +19,10 @@ Skinwalker is a Windows desktop media player where the skin is a monster and its
 | Skin | Anatomy to control |
 |------|--------------------|
 | Dracula | medallion: play/pause. Cape: visualizer. Blood line: seek, painted from the plate art with six animated drops. Jeweled minus/plus: volume. Crossed hands: previous/next. Hover tool row: close, minimize, add files, next skin, mini bat. |
-| Frankenstein | forehead EQ: visualizer. Right eye: play/pause (the left eye follows the pointer). Neck bolts: previous/next. Stitched scar: seek. Gold watch: volume, tap to mute. Brass jacket pins: open folder, close, tracks board, mini, next skin. |
+| Frankenstein | forehead EQ: visualizer. Right eye: play/pause (the left eye follows the pointer). Neck bolts: previous/next. Stitched scar: seek. Gold watch: volume, tap to mute. Brass jacket pins: open folder, close, minimize, mini, next skin. Playlist: scrolled inside the mouth mask's monitor. |
 | Skeleton | pendant: play/pause. Jaw: visualizer. Bone board: playlist. Blood line: seek. Left bone arm: volume, speaker: mute. Bone plaques: previous/next. Right bone icons: mini, change skin, add files, minimize, close. |
 
-On first launch the app opens on Dracula; after that it reopens on the last skin used. Every skin has a "next skin" control, and the order wraps: Dracula, Skeleton, Frankenstein, Dracula. Every skin also has a mini version. Frankenstein has no minimize button; use the taskbar. [MAINTAINER: add one or say so.]
+On first launch the app opens on Dracula; after that it reopens on the last skin used. Every skin has a "next skin" control, and the order wraps: Dracula, Skeleton, Frankenstein, Dracula. Every skin also has a mini version, and every skin has a minimize button.
 
 ### Platform
 Built and tested on Windows. [MAINTAINER: Linux and macOS are untested; say so or leave them out.]

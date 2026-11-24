@@ -12,7 +12,7 @@ Timestamps come from `git log` (commit time, Pacific). Re-check with
 | `code-optimization.md` | `0d5711b`, 2026-11-11 01:21 | Complete | Committed in the same commit as its first change (a 10-line CSS edit). |
 | `submission-readiness.md` | 2026-11-20 | Complete | Spec for the audit and submission drafts. Docs only. |
 | `remember-last-skin.md` | 2026-11-23 (`3dedc7f`) | Implemented, runtime check pending | Committed before its code (`bd6293f`). |
-| `skin-required-controls.md` | 2026-11-21 | Implemented, one gap | Audit of the 10 required controls per skin. Written before the Skeleton and Frankenstein window tools were built. Frankenstein still lacks minimize. |
+| `skin-required-controls.md` | 2026-11-21 | Implemented | Audit of the 10 required controls per skin. Written before the Skeleton and Frankenstein window tools were built. Frankenstein's minimize closed 2026-11-24. |
 
 ## Steering (`.kiro/steering/`)
 
@@ -22,7 +22,7 @@ Timestamps come from `git log` (commit time, Pacific). Re-check with
 | `css-conventions.md` | auto | CSS naming and structure for skins. |
 | `audio-guide.md` | auto | Web Audio API and AnalyserNode patterns. |
 | `electron-conventions.md` | auto | Main/preload/renderer and IPC conventions. |
-| `skin-required-controls.md` | auto | The 10 controls every skin must provide (playback, volume, seek, track board, 5 window buttons). Dracula and Skeleton comply; Frankenstein lacks minimize (2026-11-23). |
+| `skin-required-controls.md` | auto | The 10 controls every skin must provide (playback, volume, seek, track board, 5 window buttons). All three skins comply since 2026-11-24. |
 | `spec-template.md` | manual | Template for new specs. |
 | `testing-guide.md` | manual | Pre-completion checklist. |
 | `understanding-kiro.md` | manual | Explainer on specs, steering, hooks, workflows. |
