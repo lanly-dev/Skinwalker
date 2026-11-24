@@ -32,6 +32,7 @@ import draculaVolMinusUrl from '../assets/dracula-vol-minus.webp'
 import draculaVolPlusUrl from '../assets/dracula-vol-plus.webp'
 import { applySkinShape } from '../windowShape'
 import { openLocalFiles } from '../openFiles'
+import { formatTime as fmt, durationLabel, probeDurations } from '../trackDurations'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
@@ -174,8 +175,6 @@ export class DraculaSkin implements Skin {
   /** Quantized eye glow, so the DOM only updates when the level moves */
   private eyeLevel = -1
 
-  private durations = new Map<string, number>()
-  private probed = new Set<string>()
 
   mount(player: Player): void {
     this.player = player
@@ -506,7 +505,7 @@ export class DraculaSkin implements Skin {
 
       const time = document.createElement('span')
       time.className = 'dr-track-time'
-      time.textContent = `• ${this.trackDuration(track.url)}`
+      time.textContent = `• ${durationLabel(track.url)}`
 
       li.append(name, time)
       li.addEventListener('click', () => void p.playIndex(i).catch(logPlayError))
@@ -519,7 +518,7 @@ export class DraculaSkin implements Skin {
     })
 
     this.highlightPlaylistItem(this.activeIndex)
-    this.probeDurations()
+    probeDurations(this.player?.playlist ?? [], () => this.buildPlaylist())
   }
 
   private highlightPlaylistItem(idx: number): void {
@@ -533,30 +532,6 @@ export class DraculaSkin implements Skin {
 
   /** Read each track's duration with a throwaway <audio> so the playlist can
    *  show "• mm:ss" before the track has ever been decoded by the engine. */
-  private probeDurations(): void {
-    const p = this.player
-    if (!p) return
-    p.playlist.forEach((track) => {
-      if (this.probed.has(track.url)) return
-      this.probed.add(track.url)
-      const probe = new Audio()
-      probe.preload = 'metadata'
-      probe.addEventListener('loadedmetadata', () => {
-        if (Number.isFinite(probe.duration) && probe.duration > 0) {
-          this.durations.set(track.url, probe.duration)
-          this.buildPlaylist()
-        }
-        probe.src = ''
-      }, { once: true })
-      probe.addEventListener('error', () => { probe.src = '' }, { once: true })
-      probe.src = track.url
-    })
-  }
-
-  private trackDuration(url: string): string {
-    const seconds = this.durations.get(url)
-    return seconds ? fmt(seconds) : '--:--'
-  }
 
   // ── RAF loop ─────────────────────────────────────────────────────────────────
 
@@ -804,11 +779,6 @@ function spectrumColor(t: number): string {
   return `${ch[0]}, ${ch[1]}, ${ch[2]}`
 }
 
-function fmt(seconds: number): string {
-  if (!Number.isFinite(seconds)) return '--:--'
-  const s = Math.max(0, Math.floor(seconds))
-  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
-}
 
 function logPlayError(err: unknown): void {
   console.error('skinwalker: could not play track', err)

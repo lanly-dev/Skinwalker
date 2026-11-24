@@ -29,6 +29,7 @@ import knobPlate from '../assets/frankenstein-knob-plate.webp'
 import knobFace from '../assets/frankenstein-knob-face.webp'
 import { applySkinShape } from '../windowShape'
 import { openLocalFiles } from '../openFiles'
+import { formatTime as fmt, durationLabel, probeDurations } from '../trackDurations'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
 
@@ -252,8 +253,6 @@ export class FrankensteinSkin implements Skin {
   private volumeBeforeMute = 0.8
 
   private activeIndex = -1
-  private durations = new Map<string, number>()
-  private probed = new Set<string>()
 
   mount(player: Player): void {
     this.player = player
@@ -700,7 +699,7 @@ export class FrankensteinSkin implements Skin {
     els.mouthCount.textContent = String(p.playlist.length).padStart(2, '0')
 
     this.highlightPlaylistItem(this.activeIndex)
-    this.probeDurations()
+    probeDurations(this.player?.playlist ?? [], () => this.buildPlaylist())
   }
 
   /** Renders the mouth monitor's track list. Its rows are the playlist's
@@ -729,7 +728,7 @@ export class FrankensteinSkin implements Skin {
 
       const time = document.createElement('span')
       time.className = 'fr-track-time'
-      time.textContent = this.trackDuration(track.url)
+      time.textContent = durationLabel(track.url)
 
       li.append(num, name, time)
       li.addEventListener('click', () => void p.playIndex(i).catch(logPlayError))
@@ -755,30 +754,6 @@ export class FrankensteinSkin implements Skin {
 
   /** Read each track's duration with a throwaway <audio> so the screen can
    *  show a time before the engine has ever decoded that track. */
-  private probeDurations(): void {
-    const p = this.player
-    if (!p) return
-    p.playlist.forEach((track) => {
-      if (this.probed.has(track.url)) return
-      this.probed.add(track.url)
-      const probe = new Audio()
-      probe.preload = 'metadata'
-      probe.addEventListener('loadedmetadata', () => {
-        if (Number.isFinite(probe.duration) && probe.duration > 0) {
-          this.durations.set(track.url, probe.duration)
-          this.buildPlaylist()
-        }
-        probe.src = ''
-      }, { once: true })
-      probe.addEventListener('error', () => { probe.src = '' }, { once: true })
-      probe.src = track.url
-    })
-  }
-
-  private trackDuration(url: string): string {
-    const seconds = this.durations.get(url)
-    return seconds ? fmt(seconds) : '--:--'
-  }
 
   // ── RAF loops ────────────────────────────────────────────────────────────────
 
@@ -889,11 +864,6 @@ export class FrankensteinSkin implements Skin {
   }
 }
 
-function fmt(seconds: number): string {
-  if (!Number.isFinite(seconds)) return '--:--'
-  const s = Math.max(0, Math.floor(seconds))
-  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
-}
 
 function logPlayError(err: unknown): void {
   console.error('skinwalker: could not play track', err)
