@@ -1,6 +1,6 @@
 # Submission Audit
 
-Audited 2026-11-20 at the repo root on branch `main`. Rows 18, 19 and 29 re-checked 2026-11-22 at `9c67d6d`; other rows were not re-run. Rules source:
+Audited 2026-11-20 at the repo root on branch `main`. **Full re-run 2026-11-24 at `b377da0`** (equal to `origin/main`); every row below was re-checked that day unless it says otherwise. Rules source:
 https://kiroween.devpost.com/rules (fetched 2026-11-20; checklist in `docs/AGENTS.md`).
 Submission closes Fri 2026-12-04 2:00 PM PT.
 
@@ -21,9 +21,9 @@ UNVERIFIED = could not be checked here.
 | 8 | No absolute local paths in tracked files | PASS | `git grep -n -I -E 'C:\\Users\|/home/[a-z]'` has hits only in rule text that names the pattern (hook prompts, `docs/AGENTS.md`, steering). No real paths. |
 | 9 | No personal info in tracked files | PASS after fix | The local OS login name appeared in 3 tracked files. Removed in this audit. Maintainer's first name "Lan" appears 10 times in `docs/AGENTS.md`; it matches the public GitHub author name. [MAINTAINER: keep or remove.] |
 | 10 | No secrets or `.env` in tracked files | PASS | No `.env`, `.pem`, `.key` in `git ls-files`. Pattern grep for key/secret/password/token finds only rule text. |
-| 11 | Same checks across git history (report only) | FAIL (reported, not rewritten) | The local login name is in the history in commits `e531b3d` and `872c86e` (2026-11-11). Author identity is the GitHub noreply address. No secrets or env files in history (`git log --all --name-only`). Rewriting published history is not recommended; the exposure is a login name inside docs text. [MAINTAINER: decide.] |
-| 12 | Ignored files are untracked | PASS | `out/`, `node_modules/`, `.vite/`, `package-lock.json`, `reference/**` not tracked (except `reference/README.md`, intentionally). `dist/` and `release/` were not ignored; added to `.gitignore`. `.freebuff/` is self-ignored by its own `.gitignore`. |
-| 13 | `package-lock.json` | FAIL (reproducibility) | Listed in `.gitignore` and not tracked. A judge's `npm install` resolves fresh versions (`electron ^45`, `typescript ^7`). Fix is a decision for the maintainer. |
+| 11 | Same checks across git history (report only) | FAIL (reported, not rewritten) | 2026-11-24: `git log --all -S` finds the local login name in 3 commits (2 that added it on 2026-11-11, 1 that removed it, `e8953b3`). No secrets or env files in history. Only author address is the GitHub noreply address. [MAINTAINER: decide.] |
+| 12 | Ignored files are untracked | PASS | `git ls-files` lists nothing under `out/`, `dist/`, `release/`, `node_modules/`, `.vite/`; no `.env`, `.pem`, `.key`. `.freebuff/` and `.cloud-attachments/` are untracked. |
+| 13 | `package-lock.json` | PASS | Tracked as of 2026-11-24 and no longer in `.gitignore`. |
 | 14 | Third-party music licensed | PASS (attribution in app UNVERIFIED) | `public/tracks/README.md` and README credit Kevin MacLeod, CC BY 4.0, with source URLs. The track list in `src/renderer/main.ts` shows "Kevin MacLeod" as artist. Whether the license text is shown in the packaged app was not checked. |
 | 15 | Synthetic track artist label | UNVERIFIED (risk) | `src/renderer/main.ts` labels a track "Bathory • Eternal Night". Bathory is a real band. The tracks README says it is "fictional styling". Cheapest fix: rename the label. |
 | 16 | Art and image provenance | UNVERIFIED | No license or source for the five plate/layer images in `src/renderer/assets/`. [MAINTAINER: state source and tool.] |
@@ -31,19 +31,20 @@ UNVERIFIED = could not be checked here.
 | 18 | Typecheck passes | PASS | `npm run typecheck` exit 0 (re-run 2026-11-22 at `9c67d6d`). |
 | 19 | Build passes | PASS | `npm run build` exit 0 (re-run 2026-11-22 at `9c67d6d`). |
 | 20 | Tests pass | N/A | The repo has no test script and no tests. |
-| 21 | App runs | PASS (partial) | `dist/win-unpacked/skinwalker.exe` stayed running 8 s after launch on Windows 11. No UI was seen. Playback, controls and window shape were not exercised. |
-| 22 | Installer builds | PASS | `npm run package` exit 0 on current HEAD; produced `dist/skinwalker Setup 0.1.0.exe` (174.6 MB, NSIS, unsigned). An earlier run of the same command returned exit 1 with no error text in the last 25 lines; the retry succeeded. |
-| 23 | Installer branding | FAIL | electron-builder logs "default Electron icon is used. reason=application icon is not set". `resources/icon.png` is only used for the runtime window icon (`src/main/index.ts`). |
+| 21 | App runs | PASS (partial) | 2026-11-24: `dist/win-unpacked/skinwalker.exe` stayed running 8 s on Windows. No UI was inspected; controls, playback and shape were not exercised by this audit. |
+| 22 | Installer builds | PASS | 2026-11-24: `npm run package` exit 0; `dist/skinwalker Setup 0.1.0.exe` is 295.1 MB (was 174.6 MB on 2026-11-20; see row 34). Unsigned. |
+| 23 | Installer branding | FAIL | 2026-11-24: electron-builder still logs "default Electron icon is used. reason=application icon is not set". `package.json` has no `build` config. |
 | 24 | Install steps work as described | UNVERIFIED | The installer was not run. SmartScreen will likely warn (unsigned). |
-| 25 | "Provide a URL to your functional application" / release assets | FAIL | `GET /repos/lanly-dev/Skinwalker/releases` returns `[]`. No downloadable build exists. Judges can still build from source. |
+| 25 | "Provide a URL to your functional application" / release assets | FAIL | 2026-11-24: `GET /repos/lanly-dev/Skinwalker/releases` returns `[]`. API `description` is still `null`. |
 | 26 | Demo video under 3 min on public YouTube | UNVERIFIED | Not made by this audit. Needs [YOU]. |
 | 27 | Kiro usage write-up | PASS (draft) | `docs/submission/kiro-usage.md`. Needs maintainer facts. |
 | 28 | Linux and macOS | UNVERIFIED | Only Windows was used. `setShape` is skipped on macOS by code. |
-| 29 | Local repo in sync with remote | PASS | 2026-11-22: `HEAD` equals `origin/main` (`9c67d6d`). |
+| 29 | Local repo in sync with remote | PASS | 2026-11-24: `HEAD` equals `origin/main` (`b377da0`). |
 | 30 | `npm run dev` from a fresh install | FAIL then fixed locally | Failed with "Electron uninstall": `node_modules/electron/path.txt` was missing because Electron's download step had not run. Fixed by running `node node_modules/electron/install.js`; README Quick Start now explains this. A second failure, `listen EACCES ::1:5173`, came from a Windows reserved port range; the dev server now uses port 5500 (`electron.vite.config.ts`, commit `445317a`). |
 | 31 | Docs cite files outside the repo | FAIL | `docs/AGENTS.md` cites `reference/dracula-web/*` scripts. `reference/**` is gitignored. See the note at the end of `docs/AGENTS.md`. |
 | 32 | Return from Skeleton or Frankenstein | PASS (from source) | All three skins have a next-skin control (2026-11-22 and 2026-11-23). Not clicked in the running app. |
-| 33 | Ten required controls per skin | PASS (from source) | `.kiro/specs/skin-required-controls.md`: all three skins carry the ten controls. Frankenstein's minimize pin landed 2026-11-24; its playlist control is now the inline mouth monitor rather than the ☰ Tracks board. Neither the minimize action nor the monitor was exercised in the running app. |
+| 33 | Ten required controls per skin | PASS (from source) | 2026-11-24: all three skin files wire close, minimize, next skin, open folder, mini, play/pause, prev/next, seek, volume and the playlist (grep of `src/renderer/skins/*Skin.ts`). Not clicked in the running app. |
+| 34 | Installer contains only what the app needs | **FAIL (high)** | 2026-11-24: `npx @electron/asar list dist/win-unpacked/resources/app.asar` shows the whole project folder packed into the 238.7 MB `app.asar`: 1,021 files from `reference/` (181.5 MB of local design references, gitignored because they must "never ship" per `.gitignore`), 10 files from `.cloud-attachments/`, `.freebuff/project-id`, plus `src/`, `.kiro/`, `docs/`, `scripts/`. Anyone who downloads the installer gets those files. Cause: no `build.files` list in `package.json`. Fix is a packaging config change; see Open Risks 5. |
 
 ## Open Risks (need the maintainer)
 
@@ -51,6 +52,7 @@ UNVERIFIED = could not be checked here.
 2. **AI-generated art.** AGENTS.md says the character art was "generated". [MAINTAINER: which tool, and do its terms allow this use?]
 3. **Mixed tooling.** `docs/AGENTS.md` records other agents prepared assets (SAM attempt, color segmentation). The repo rule says Kiro must write the core app. `.kiro/` was first committed on 2026-11-11, after all `src/` files existed. Judges can see that in `git log`. [MAINTAINER: which parts were written in Kiro, from your own memory and session history.]
 4. **Retrospective specs.** See `.kiro/INDEX.md`.
+5. **Installer ships private and third-party files (row 34).** Do not publish a release built from the current config. A `build.files` allow-list in `package.json` (for example `out/**`, `resources/**`, `package.json`) and a `build.win.icon` would fix rows 34 and 23. [MAINTAINER: approve the config change.]
 
 ## Judging criteria map
 
