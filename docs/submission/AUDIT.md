@@ -32,8 +32,8 @@ UNVERIFIED = could not be checked here.
 | 19 | Build passes | PASS | `npm run build` exit 0 (re-run 2026-11-22 at `9c67d6d`). |
 | 20 | Tests pass | N/A | The repo has no test script and no tests. |
 | 21 | App runs | PASS (partial) | 2026-11-24: `dist/win-unpacked/skinwalker.exe` stayed running 8 s on Windows. No UI was inspected; controls, playback and shape were not exercised by this audit. |
-| 22 | Installer builds | PASS | 2026-11-24: `npm run package` exit 0; `dist/skinwalker Setup 0.1.0.exe` is 295.1 MB (was 174.6 MB on 2026-11-20; see row 34). Unsigned. |
-| 23 | Installer branding | FAIL | 2026-11-24: electron-builder still logs "default Electron icon is used. reason=application icon is not set". `package.json` has no `build` config. |
+| 22 | Installer builds | PASS | 2026-11-24: `npm run package` exit 0; `dist/skinwalker Setup 0.1.0.exe` is 140.0 MB after the packaging fix (295.1 MB before). Unsigned. |
+| 23 | Installer branding | PASS | 2026-11-24: `build.win.icon` set to `resources/icon.png`; electron-builder no longer logs the default-icon message. Icon not inspected in Explorer. |
 | 24 | Install steps work as described | UNVERIFIED | The installer was not run. SmartScreen will likely warn (unsigned). |
 | 25 | "Provide a URL to your functional application" / release assets | FAIL | 2026-11-24: `GET /repos/lanly-dev/Skinwalker/releases` returns `[]`. API `description` is still `null`. |
 | 26 | Demo video under 3 min on public YouTube | UNVERIFIED | Not made by this audit. Needs [YOU]. |
@@ -44,7 +44,7 @@ UNVERIFIED = could not be checked here.
 | 31 | Docs cite files outside the repo | FAIL | `docs/AGENTS.md` cites `reference/dracula-web/*` scripts. `reference/**` is gitignored. See the note at the end of `docs/AGENTS.md`. |
 | 32 | Return from Skeleton or Frankenstein | PASS (from source) | All three skins have a next-skin control (2026-11-22 and 2026-11-23). Not clicked in the running app. |
 | 33 | Ten required controls per skin | PASS (from source) | 2026-11-24: all three skin files wire close, minimize, next skin, open folder, mini, play/pause, prev/next, seek, volume and the playlist (grep of `src/renderer/skins/*Skin.ts`). Not clicked in the running app. |
-| 34 | Installer contains only what the app needs | **FAIL (high)** | 2026-11-24: `npx @electron/asar list dist/win-unpacked/resources/app.asar` shows the whole project folder packed into the 238.7 MB `app.asar`: 1,021 files from `reference/` (181.5 MB of local design references, gitignored because they must "never ship" per `.gitignore`), 10 files from `.cloud-attachments/`, `.freebuff/project-id`, plus `src/`, `.kiro/`, `docs/`, `scripts/`. Anyone who downloads the installer gets those files. Cause: no `build.files` list in `package.json`. Fix is a packaging config change; see Open Risks 5. |
+| 34 | Installer contains only what the app needs | PASS | 2026-11-24: `build.files` in `package.json` limits the asar to `out/**`, `resources/**`, `package.json`. `npx @electron/asar list` shows only those (26.95 MB, was 238.7 MB). See `.kiro/specs/code-asset-optimization.md`. |
 
 ## Open Risks (need the maintainer)
 
@@ -52,7 +52,7 @@ UNVERIFIED = could not be checked here.
 2. **AI-generated art.** AGENTS.md says the character art was "generated". [MAINTAINER: which tool, and do its terms allow this use?]
 3. **Mixed tooling.** `docs/AGENTS.md` records other agents prepared assets (SAM attempt, color segmentation). The repo rule says Kiro must write the core app. `.kiro/` was first committed on 2026-11-11, after all `src/` files existed. Judges can see that in `git log`. [MAINTAINER: which parts were written in Kiro, from your own memory and session history.]
 4. **Retrospective specs.** See `.kiro/INDEX.md`.
-5. **Installer ships private and third-party files (row 34).** Do not publish a release built from the current config. A `build.files` allow-list in `package.json` (for example `out/**`, `resources/**`, `package.json`) and a `build.win.icon` would fix rows 34 and 23. [MAINTAINER: approve the config change.]
+5. **Installer ships private and third-party files (row 34).** Fixed 2026-11-24. Installers built before commit `ae8edd5` contain `reference/` and other local files; do not publish those.
 
 ## Judging criteria map
 
@@ -60,7 +60,7 @@ UNVERIFIED = could not be checked here.
 |-----------|---------------|---------------------|
 | Potential Impact | A media player is not a new problem. | Say so. Frame as a UI craft entry for the Costume Contest, not a utility. |
 | Technological Implementation (Kiro use) | Specs came after code. No MCP, custom agents, PBT or tests. Hooks are reminders plus one typecheck. | State it plainly in `docs/submission/kiro-usage.md`. Point to the changes that were spec-first and show their timestamps: `remember-last-skin.md` (`3dedc7f`) before `bd6293f`, and the `skin-required-controls.md` audit (2026-11-21) before the Skeleton and Frankenstein window tools. |
-| Design | Window shape and plates not visually verified in this audit. Installer shows the default Electron icon and packs `reference/` and other local files (row 34). | Maintainer checks on Windows and records the video. Add `build.files` and `build.win.icon` to `package.json` (decision for maintainer; config only). |
+| Design | Window shape and plates not visually verified in this audit. Packaging fixed 2026-11-24 (rows 23, 34). | Maintainer checks on Windows and records the video. |
 | Innovation | Skin-as-controls idea is clear; Winamp-style skins exist. | Lead with the anatomy table in `docs/README.md`. |
 | Presentation | No video, no release, no About description. | Record the video from `docs/submission/demo-script.md`. Publish a GitHub release. Add an About description. |
 

@@ -11,6 +11,7 @@ Timestamps come from `git log` (commit time, Pacific). Re-check with
 | `dracula-blood-effects.md` | `ba0284e`, 2026-11-11 01:16 | Partially implemented | Committed after the drip code (`662ba10`, 2026-11-10 11:31). Describes splatter and trails that were never committed. Retrospective. |
 | `code-optimization.md` | `0d5711b`, 2026-11-11 01:21 | Complete | Committed in the same commit as its first change (a 10-line CSS edit). |
 | `submission-readiness.md` | 2026-11-20 | Complete | Spec for the audit and submission drafts. Docs only. |
+| `code-asset-optimization.md` | 2026-11-24 (`25fede9`) | Complete | Committed with a measured baseline before its changes (`ae8edd5`, `04ceaf3`, `5d26469`). |
 | `remember-last-skin.md` | 2026-11-23 (`3dedc7f`) | Implemented, runtime check pending | Committed before its code (`bd6293f`). |
 | `skin-required-controls.md` | 2026-11-21 | Implemented | Audit of the 10 required controls per skin. Written before the Skeleton and Frankenstein window tools were built. Frankenstein's minimize closed 2026-11-24. |
 

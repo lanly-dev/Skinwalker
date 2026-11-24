@@ -1,6 +1,6 @@
 # Code and Asset Optimization Specification
 
-**Status:** In Progress
+**Status:** Complete (2026-11-24). Runtime look and feel pending maintainer check.
 **Created:** 2026-11-24
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -20,19 +20,19 @@ behavioral change. Baseline measured 2026-11-24 at `84d0c02`.
 | Dead CSS | none | All 140 class selectors in `style.css` are referenced in `src/renderer/`; no unused `@keyframes`. |
 
 ## Requirements
-- [ ] R1: The installer contains only `out/**`, `resources/**` and `package.json` (plus what electron-builder adds itself).
-- [ ] R2: The installer and the app use the Skinwalker icon.
-- [ ] R3: `icon.png` is at least 256x256 (electron-builder minimum) and smaller on disk.
-- [ ] R4: `dracula-tools` is WebP and visually equal to the JPEG (mean absolute pixel difference reported).
-- [ ] R5: Track duration probing and time formatting live in one module; durations are probed once per URL for the whole app, not once per skin.
-- [ ] R6: No behavior change. `npm run typecheck` and `npm run build` pass.
+- [x] R1: The installer contains only `out/**`, `resources/**` and `package.json` (plus what electron-builder adds itself).
+- [x] R2: The installer and the app use the Skinwalker icon.
+- [x] R3: `icon.png` is at least 256x256 (electron-builder minimum) and smaller on disk.
+- [x] R4: `dracula-tools` is WebP and visually equal to the JPEG (mean absolute pixel difference reported).
+- [x] R5: Track duration probing and time formatting live in one module; durations are probed once per URL for the whole app, not once per skin.
+- [x] R6: No behavior change. `npm run typecheck` and `npm run build` pass.
 
 ## Tasks
-- [ ] T1: `package.json` `build.files` allow-list and `build.win.icon`.
-- [ ] T2: `icon.png` downscaled to 512x512 with PIL (LANCZOS), optimized PNG.
-- [ ] T3: `dracula-tools.jpg` to `dracula-tools.webp` (quality 90), update the import in `DraculaSkin.ts`.
-- [ ] T4: New `src/renderer/trackDurations.ts` (`formatTime`, `probeDurations`, `durationOf`, cached app-wide); the three skins use it.
-- [ ] T5: Rebuild, re-measure, fill the Results table.
+- [x] T1: `package.json` `build.files` allow-list and `build.win.icon`.
+- [x] T2: `icon.png` downscaled to 512x512 with PIL (LANCZOS), optimized PNG.
+- [x] T3: `dracula-tools.jpg` to `dracula-tools.webp` (quality 90), update the import in `DraculaSkin.ts`.
+- [x] T4: New `src/renderer/trackDurations.ts` (`formatTime`, `probeDurations`, `durationOf`, cached app-wide); the three skins use it.
+- [x] T5: Rebuild, re-measure, fill the Results table.
 
 ## Acceptance Criteria
 - Results table below filled with measured numbers.
@@ -41,4 +41,18 @@ behavioral change. Baseline measured 2026-11-24 at `84d0c02`.
 - [MAINTAINER: run the app and confirm the tool row, playlists and durations look and behave as before.]
 
 ## Results
-(filled in T5)
+Measured 2026-11-24 after commits `ae8edd5`, `04ceaf3`, `5d26469`.
+
+| Item | Before | After |
+|------|--------|-------|
+| Installer | 295.1 MB | 140.0 MB |
+| `app.asar` | 238.7 MB | 26.95 MB (38 `out/` entries, `package.json`, 2 `resources/` entries; nothing else) |
+| electron-builder "default Electron icon is used" | logged | not logged |
+| `resources/icon.png` | 1,266 KB, 1024x1024 | 375 KB, 512x512 |
+| Dracula tools sprite | 167 KB JPEG | 126 KB WebP q90; mean absolute pixel difference 0.65 of 255, max 24 |
+| Duration probe / `fmt` copies | 3 (about 33 lines each) | 1 (`src/renderer/trackDurations.ts`); 99 lines removed from the skins |
+
+Most of the remaining 140 MB is the Electron runtime and the 26 MB of demo tracks.
+`npm run typecheck` and `npm run build` pass. The packaged `skinwalker.exe` stayed running 8 s; no UI was inspected.
+Kept `productName` unset on purpose: setting it would move the app's data folder and reset the saved skin (`.kiro/specs/remember-last-skin.md`).
+Behavior note: the shared probe also records failed URLs and does not retry them, matching the old per-skin `probed` set.
