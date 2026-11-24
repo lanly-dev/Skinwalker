@@ -31,6 +31,11 @@
  */
 import framePlate from '../assets/skeleton-frame.webp'
 import miniFace from '../assets/skeleton-mini-face.webp'
+import toolMiniIcon from '../assets/skeleton-tool-mini.webp'
+import toolSkinIcon from '../assets/skeleton-tool-skin.webp'
+import toolFolderIcon from '../assets/skeleton-tool-folder.webp'
+import toolMinimizeIcon from '../assets/skeleton-tool-minimize.webp'
+import toolCloseIcon from '../assets/skeleton-tool-close.webp'
 import { applySkinShape } from '../windowShape'
 import { openLocalFiles } from '../openFiles'
 import type { Skin } from './Skin'
@@ -180,22 +185,29 @@ export class SkeletonSkin implements Skin {
         <button class="sk-prev" aria-label="Previous track" title="Previous track"></button>
         <button class="sk-next" aria-label="Next track" title="Next track"></button>
 
-        <!-- Right bone arm = window tools, one per painted icon -->
+        <!-- Right bone arm = window tools: the five glowing icons from the web
+             build's controller sprite, on the plate's bare strip. -->
         <button class="sk-tool sk-tool-minimize" aria-label="Minimize" title="Minimize">
+          <img class="sk-tool-icon" src="${toolMinimizeIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Minimize</span>
         </button>
         <button class="sk-tool sk-tool-skin" aria-label="Change skin" title="Change skin">
+          <img class="sk-tool-icon" src="${toolSkinIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Change skin</span>
         </button>
         <button class="sk-tool sk-tool-folder" aria-label="Open audio folder" title="Open audio folder">
+          <img class="sk-tool-icon" src="${toolFolderIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Open audio folder</span>
         </button>
         <button class="sk-tool sk-tool-mini" aria-label="Mini version" title="Mini version">
+          <img class="sk-tool-icon" src="${toolMiniIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Mini version</span>
         </button>
         <button class="sk-tool sk-tool-close" aria-label="Close player" title="Close player">
+          <img class="sk-tool-icon" src="${toolCloseIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Close player</span>
         </button>
+
 
         <!-- Mini version = the web build's 620×622 face card -->
         <div class="sk-mini" role="complementary" aria-label="Mini player">

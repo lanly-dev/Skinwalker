@@ -177,6 +177,19 @@ from, with a neon slash while muted. Verified by measuring every live element ag
 1534x1025 (all within 0.05%) and rendering the skin's own CSS over the new plate at that size; native
 window behaviour was not exercised.
 
+- **Skeleton tool row cleared (2026-11-23, same day, after Lan: "the button image look really bad"):** the five
+right-arm tools are the supplied 1774x887 sprite's own crops as RGBA webp (`skeleton-tool-*.webp`, flood-fill matte
+from the sprite's pure-black corners so dark interiors such as the coffin wood stay opaque, then unpremultiplied).
+The previous crops had been written as opaque RGB, so each tool was a black tile on the bone strip. Buttons are now
+4.35%x6.5% centred on the plate's painted row (66.8/70.7/75.1/79.0/83.6% centres), so the icons read at control
+size. The painted row is gone from the plate: flood the strip interior out from its centre over non-bone pixels,
+seal the cream-coloured painted icons as holes (flooding alone leaves them as islands), repaint with the strip's
+owner per-row median shading and feather 2px — the bone rim, its highlight and the plate alpha are untouched.
+A CSS shade element (`.sk-tools-bed`, two linear-gradient masks with `mask-composite: intersect`) was tried first
+and removed: the composite rendered as a hard-edged slab in the app, so the art is cleaned instead of veiled.
+Verified from a 1:1 capture of the running Electron window (1442x960 client at 1.5 DPI): five icons, no double
+image, no rectangle, nothing clipped. Hover/focus states were not exercised.
+
 - **Skeleton returns — the web build's neon plate (2026-11-11, Lan's pick):**
 the lineup cut is partly reversed: `SkeletonSkin` is back, rebuilt from the Boba
 web build (`SKINWALKER PLAYER • v1.0 SKELETON`) instead of the old portrait bust.
