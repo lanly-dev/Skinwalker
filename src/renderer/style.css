@@ -953,8 +953,11 @@ input[type="range"]::-moz-range-thumb {
   height: 0;
   border-top: 2.03cqw solid transparent;
   border-bottom: 2.03cqw solid transparent;
-  border-left: 3.67cqw solid #9bff96;
+  border-left: 3.67cqw solid #ffffff;
   transform: translate(0.35cqw, -0.35cqw);
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.6))
+    drop-shadow(0 0 6px rgba(170, 255, 165, 0.5));
+  transition: filter 0.2s;
 }
 .frankenstein-skin .fr-pause-symbol {
   display: none;
@@ -962,6 +965,9 @@ input[type="range"]::-moz-range-thumb {
   width: 3.19cqw;
   height: 3.9cqw;
   transform: translateY(-0.27cqw);
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.6))
+    drop-shadow(0 0 6px rgba(170, 255, 165, 0.5));
+  transition: filter 0.2s;
 }
 /* Capsule bars, rounded like the plate's painted ones (a border-made pair
    would keep square ends). */
@@ -973,10 +979,19 @@ input[type="range"]::-moz-range-thumb {
   bottom: 0;
   width: 1.17cqw;
   border-radius: 999px;
-  background: #9bff96;
+  background: #ffffff;
 }
 .frankenstein-skin .fr-pause-symbol::before { left: 0; }
 .frankenstein-skin .fr-pause-symbol::after { right: 0; }
+/* The white glyph carries the button's glow: a soft halo at rest, a much
+   hotter one on hover / focus. */
+.frankenstein-skin .fr-play:hover .fr-play-symbol,
+.frankenstein-skin .fr-play:focus-visible .fr-play-symbol,
+.frankenstein-skin .fr-play:hover .fr-pause-symbol,
+.frankenstein-skin .fr-play:focus-visible .fr-pause-symbol {
+  filter: drop-shadow(0 0 3px #ffffff) drop-shadow(0 0 10px #c8ffc2)
+    drop-shadow(0 0 20px rgba(155, 255, 150, 0.85));
+}
 .frankenstein-skin .fr-body.playing .fr-play-symbol { display: none; }
 .frankenstein-skin .fr-body.playing .fr-pause-symbol { display: block; }
 
