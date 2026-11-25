@@ -1119,9 +1119,29 @@ input[type="range"]::-moz-range-thumb {
 }
 .frankenstein-skin .fr-prev { left: 16.6%; }
 .frankenstein-skin .fr-next { right: 16%; }
-.frankenstein-skin .fr-bolt:hover,
+/* Hover lights the bolt's own carved chevron (the path is the art's, in bolt
+   coordinates) instead of outlining the button box; keyboard focus keeps the
+   shared hairline, like the play socket. */
+.frankenstein-skin .fr-bolt-arrow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #a9ff98;
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  filter: drop-shadow(0 0 0.5cqw #d2ffc6) drop-shadow(0 0 1.1cqw #6dff5a99);
+  transition: opacity 0.18s;
+  pointer-events: none;
+}
+.frankenstein-skin .fr-bolt:hover .fr-bolt-arrow,
+.frankenstein-skin .fr-bolt:focus-visible .fr-bolt-arrow {
+  opacity: 1;
+}
 .frankenstein-skin .fr-bolt:focus-visible {
-  box-shadow: 0 0 3cqw #72ff5a66;
   outline: 1px solid #b1ffa2;
 }
 

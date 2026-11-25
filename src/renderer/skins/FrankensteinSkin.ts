@@ -343,11 +343,21 @@ export class FrankensteinSkin implements Skin {
           </div>
         </div>
 
-        <!-- Neck bolts = prev / next -->
+        <!-- Neck bolts = prev / next. The chevron is the plate's own carved one
+             (its path is measured off the bolt head), redrawn live so hover can
+             light it up green instead of outlining the button box. -->
         <button class="fr-bolt fr-prev" type="button" aria-label="Previous track"
-                title="Previous track"></button>
+                title="Previous track">
+          <svg class="fr-bolt-arrow" viewBox="0 0 90 179" aria-hidden="true">
+            <path d="M50.5 61.5 L23.7 89.6 L48 117.5" />
+          </svg>
+        </button>
         <button class="fr-bolt fr-next" type="button" aria-label="Next track"
-                title="Next track"></button>
+                title="Next track">
+          <svg class="fr-bolt-arrow" viewBox="0 0 89 179" aria-hidden="true">
+            <path d="M37 61.5 L62.3 89.8 L40 117.5" />
+          </svg>
+        </button>
 
         <!-- Stitched scar = seek. The stitched underline is its own layer
              (cropped from the plate, which no longer paints it); the green
