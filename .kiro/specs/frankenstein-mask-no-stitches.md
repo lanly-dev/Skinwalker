@@ -1,6 +1,6 @@
 # Frankenstein Mask Without Stitches
 
-**Status:** In Progress
+**Status:** Implemented; visual check pending
 **Created:** 2026-11-24
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -17,9 +17,9 @@ is a faint line plus suture ticks from `sutureTicks()`.
 - [ ] R3: The neck-to-chest seek scar is not touched (it is the seek bar, not part of the mask).
 
 ## Tasks
-- [ ] T1: Delete the three seam groups (6 SVG paths) from `mouthMaskSvg()`.
-- [ ] T2: Delete `sutureTicks()`, which has no other caller.
-- [ ] T3: Update the comments that describe the seams (the `mouthMaskSvg()` doc comment, the mask block comment in `src/renderer/style.css`).
+- [x] T1: Delete the three seam groups (6 SVG paths) from `mouthMaskSvg()`.
+- [x] T2: Delete `sutureTicks()`, which has no other caller.
+- [x] T3: Update the comments that describe the seams (the `mouthMaskSvg()` doc comment, the mask block comment in `src/renderer/style.css`).
 
 ## Acceptance Criteria
 - `git grep sutureTicks -- src` returns nothing.
@@ -27,3 +27,4 @@ is a faint line plus suture ticks from `sutureTicks()`.
 - [MAINTAINER: in the running app, the mask shows no stitches and nothing else changed.]
 
 ## Implementation Notes
+2026-11-24: removed the cheek and chin seams (6 SVG paths) and `sutureTicks()`; updated both comments. `git grep sutureTicks -- src` is empty. Typecheck and build pass. R1 to R3 stay unticked until the maintainer checks the running app.

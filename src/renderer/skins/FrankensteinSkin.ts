@@ -103,35 +103,12 @@ function pinSvg(id: string, motif: string, label: string): string {
     <span class="fr-pin-tip" aria-hidden="true">${label}</span>`
 }
 
-/** Short suture ticks crossing a quadratic seam, alternating lean — the mask,
- *  like the rest of the monster, is stitched together. */
-function sutureTicks(
-  x0: number,
-  y0: number,
-  cx: number,
-  cy: number,
-  x1: number,
-  y1: number,
-  count: number,
-): string {
-  let d = ''
-  for (let i = 0; i <= count; i++) {
-    const t = i / count
-    const mt = 1 - t
-    const x = mt * mt * x0 + 2 * mt * t * cx + t * t * x1
-    const y = mt * mt * y0 + 2 * mt * t * cy + t * t * y1
-    const lean = i % 2 === 0 ? 5.5 : -5.5
-    d += `M${(x - 4.2).toFixed(1)} ${(y + lean).toFixed(1)}L${(x + 4.2).toFixed(1)} ${(y - lean).toFixed(1)}`
-  }
-  return d
-}
-
 /**
  * The mouth mask: a below-the-eyes half mask, Mortal Kombat style — a dark
  * leather shell that follows the cheekbones and tapers to the chin, its top
  * edge rising into three bolted points around the two eye sockets (outer
- * corner, bridge, outer corner), a steel grille over nose and mouth,
- * stitched cheek and chin seams, studs.
+ * corner, bridge, outer corner), a steel grille over nose and mouth, and
+ * cheek studs.
  * The grille's opening is left empty here: the live playlist screen is an
  * HTML element placed exactly in it.
  *
@@ -172,14 +149,6 @@ function mouthMaskSvg(): string {
         <circle cx="378" cy="10" r="4.4"/>
       </g>
 
-      <!-- Cheek seams, stitched like the rest of him -->
-      <path d="M22 46 Q13 110 28 168" fill="none" stroke="#cbb6a0" stroke-width="1.2" opacity=".32"/>
-      <path d="${sutureTicks(22, 50, 13, 110, 27, 164, 9)}" stroke="#cbb6a0" stroke-width="2.2"
-            stroke-linecap="round" opacity=".55"/>
-      <path d="M398 46 Q407 110 392 168" fill="none" stroke="#cbb6a0" stroke-width="1.2" opacity=".32"/>
-      <path d="${sutureTicks(398, 50, 407, 110, 393, 164, 9)}" stroke="#cbb6a0" stroke-width="2.2"
-            stroke-linecap="round" opacity=".55"/>
-
       <!-- Studs in the cheek margin -->
       <g fill="url(#fr-mask-bolt)" stroke="#090d10" stroke-width=".9">
         <circle cx="28" cy="72" r="4.2"/><circle cx="40" cy="130" r="4.2"/>
@@ -198,10 +167,6 @@ function mouthMaskSvg(): string {
         <circle cx="106" cy="194" r="5"/><circle cx="314" cy="194" r="5"/>
       </g>
 
-      <!-- Chin seam, stitched shut like everything else here -->
-      <path d="M122 228 Q210 242 298 228" fill="none" stroke="#cbb6a0" stroke-width="1.3" opacity=".4"/>
-      <path d="${sutureTicks(122, 228, 210, 242, 298, 228, 9)}" stroke="#cbb6a0" stroke-width="2.2"
-            stroke-linecap="round" opacity=".6"/>
     </svg>`
 }
 
