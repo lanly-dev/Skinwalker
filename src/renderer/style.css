@@ -703,6 +703,44 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-next:hover::after,
 .dracula-skin .dr-prev:focus-visible::after,
 .dracula-skin .dr-next:focus-visible::after { opacity: 0.85; }
+/* Idle: with no input for a while, the two hand glows pulse in turn, like
+   fingers drumming. Same ::after layers as hover; opacity only. */
+@keyframes dr-hand-pulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.8; }
+}
+.dracula-skin.hands-idle:not(.has-heart):not(.mini-mode) .dr-prev::after { animation: dr-hand-pulse 2.4s ease-in-out infinite; }
+.dracula-skin.hands-idle:not(.has-heart):not(.mini-mode) .dr-next::after { animation: dr-hand-pulse 2.4s ease-in-out -1.2s infinite; }
+/* Idle heart: when assets/dracula-hands-heart.webp exists (12 frames in one
+   horizontal strip, each frame cropped to this box of the plate, frame 1 =
+   the painted crossed pose), the strip plays over the hands: fingers form a
+   heart, hold, and relax back. The box is plate px 128,1014 to 865,1303:
+   both hands plus the left nail tip, with headroom above for the heart.
+   z-index 1 keeps it under the visualizer zone (z 2, screen blend), so the
+   bars still paint over the hands while it plays. Never hit-tested, so
+   prev / next stay clickable. */
+@keyframes dr-hands-heart {
+  0%   { background-position: 0% 0; }
+  20%  { background-position: 100% 0; }
+  35%  { background-position: 100% 0; }
+  55%  { background-position: 0% 0; }
+  100% { background-position: 0% 0; }
+}
+.dracula-skin .dr-hands-anim {
+  display: none;
+  left: 12.5%; top: 66.0156%;
+  width: 71.9727%; height: 18.8151%;
+  background: var(--dr-hands-heart-url) 0% 0 / 1200% 100% no-repeat;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.dracula-skin.has-heart .dr-hands-anim { display: block; }
+.dracula-skin.has-heart.hands-idle:not(.mini-mode) .dr-hands-anim {
+  opacity: 1;
+  animation: dr-hands-heart 6s steps(11, end) infinite;
+}
 /* Keyboard focus: the outline is clipped to the same silhouette, so focus
    shows as the hand at full glow rather than as a rectangle. */
 .dracula-skin .dr-prev:focus-visible::after,

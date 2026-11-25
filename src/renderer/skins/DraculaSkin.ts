@@ -27,6 +27,13 @@ import draculaBatUrl from '../assets/dracula-bat.webp'
 import draculaToolsUrl from '../assets/dracula-tools.webp'
 import draculaHandLeftUrl from '../assets/dracula-hand-glow-left.webp'
 import draculaHandRightUrl from '../assets/dracula-hand-glow-right.webp'
+
+/** Optional idle animation: a horizontal strip of 12 frames. The
+ *  glob resolves to nothing while the file is absent, so the build never
+ *  depends on it (see .kiro/specs/dracula-idle-hands.md). */
+const heartStrip = import.meta.glob('../assets/dracula-hands-heart.webp', {
+  eager: true, query: '?url', import: 'default',
+}) as Record<string, string>
 import draculaMedallionFaceUrl from '../assets/dracula-medallion-face.webp'
 import draculaVolMinusUrl from '../assets/dracula-vol-minus.webp'
 import draculaVolPlusUrl from '../assets/dracula-vol-plus.webp'
@@ -152,6 +159,10 @@ interface DraculaEls {
   zone: HTMLElement
 }
 
+/** Quiet time before the crossed hands start to pulse. */
+const IDLE_MS = 6000
+const IDLE_EVENTS = ['pointermove', 'pointerdown', 'keydown', 'wheel'] as const
+
 export class DraculaSkin implements Skin {
   readonly id = 'dracula'
   readonly label = 'Dracula'
@@ -161,6 +172,7 @@ export class DraculaSkin implements Skin {
   private player: Player | null = null
   private els: DraculaEls | null = null
   private rafId = 0
+  private idleTimer = 0
   private mini = false
 
   private freqData: Uint8Array<ArrayBuffer> | null = null
@@ -196,6 +208,11 @@ export class DraculaSkin implements Skin {
     this.container.style.setProperty('--dr-medallion-face-url', `url("${draculaMedallionFaceUrl}")`)
     this.container.style.setProperty('--dr-vol-minus-url', `url("${draculaVolMinusUrl}")`)
     this.container.style.setProperty('--dr-vol-plus-url', `url("${draculaVolPlusUrl}")`)
+    const heartUrl = Object.values(heartStrip)[0]
+    if (heartUrl) {
+      this.container.style.setProperty('--dr-hands-heart-url', `url("${heartUrl}")`)
+      this.container.classList.add('has-heart')
+    }
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
@@ -210,6 +227,8 @@ export class DraculaSkin implements Skin {
   unmount(): void {
     cancelAnimationFrame(this.rafId)
     document.removeEventListener('pointerdown', this.onDocPointerDown)
+    for (const ev of IDLE_EVENTS) document.removeEventListener(ev, this.wake)
+    window.clearTimeout(this.idleTimer)
     const player = this.player
     if (player) {
       player.onTrackChange = null
@@ -290,6 +309,8 @@ export class DraculaSkin implements Skin {
             </div>
           </div>
 
+          <!-- Idle heart: frames laid over the painted hands, never hit-tested -->
+          <div class="dr-hands-anim" aria-hidden="true"></div>
           <!-- Crossed hands = prev / next -->
           <button class="dr-prev" aria-label="Previous track" title="Previous track"></button>
           <button class="dr-next" aria-label="Next track" title="Next track"></button>
@@ -425,6 +446,8 @@ export class DraculaSkin implements Skin {
       els.zone.classList.toggle('revealed')
     })
     document.addEventListener('pointerdown', this.onDocPointerDown)
+    for (const ev of IDLE_EVENTS) document.addEventListener(ev, this.wake, { passive: true })
+    this.wake()
 
     // Track change
     p.onTrackChange = (track, idx) => {
@@ -439,6 +462,12 @@ export class DraculaSkin implements Skin {
     this.buildPlaylist()
   }
 
+  // Idle hands: any input clears `hands-idle` and re-arms the timer
+  private wake = (): void => {
+    this.container?.classList.remove('hands-idle')
+    window.clearTimeout(this.idleTimer)
+    this.idleTimer = window.setTimeout(() => this.container?.classList.add('hands-idle'), IDLE_MS)
+  }
   private onDocPointerDown = (e: PointerEvent): void => {
     const zone = this.els?.zone
     if (!zone) return
