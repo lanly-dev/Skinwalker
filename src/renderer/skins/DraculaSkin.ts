@@ -159,7 +159,7 @@ interface DraculaEls {
   zone: HTMLElement
 }
 
-/** Quiet time before the crossed hands start to pulse. */
+/** Quiet time before the idle heart animation starts. */
 const IDLE_MS = 6000
 const IDLE_EVENTS = ['pointermove', 'pointerdown', 'keydown', 'wheel'] as const
 

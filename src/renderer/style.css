@@ -703,14 +703,6 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-next:hover::after,
 .dracula-skin .dr-prev:focus-visible::after,
 .dracula-skin .dr-next:focus-visible::after { opacity: 0.85; }
-/* Idle: with no input for a while, the two hand glows pulse in turn, like
-   fingers drumming. Same ::after layers as hover; opacity only. */
-@keyframes dr-hand-pulse {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 0.8; }
-}
-.dracula-skin.hands-idle:not(.has-heart):not(.mini-mode) .dr-prev::after { animation: dr-hand-pulse 2.4s ease-in-out infinite; }
-.dracula-skin.hands-idle:not(.has-heart):not(.mini-mode) .dr-next::after { animation: dr-hand-pulse 2.4s ease-in-out -1.2s infinite; }
 /* Idle heart: when assets/dracula-hands-heart.webp exists (12 frames in one
    horizontal strip, each frame cropped to this box of the plate, frame 1 =
    the painted crossed pose), the strip plays over the hands: fingers form a
