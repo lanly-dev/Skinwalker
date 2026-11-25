@@ -1469,23 +1469,37 @@ input[type="range"]::-moz-range-thumb {
   border: 1px solid transparent;
   border-radius: 0.98cqw;
   background: transparent;
-  color: #eee9da;
-  font: 900 clamp(8px, 1.62cqw, 26px) Georgia, "Times New Roman", serif;
+  color: #f6eeda;
+  font: 700 clamp(8px, 1.58cqw, 26px) Cambria, Georgia, "Times New Roman", serif;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
   white-space: nowrap;
-  text-shadow: 1px 1px #000;
+  text-shadow: 0 0 0.1cqw #000, 0 0 0.3cqw #01070b, 0 0 0.6cqw #01070bcc;
   cursor: pointer;
   transition: border-color 0.1s, box-shadow 0.1s;
 }
+/* Row marker: the web build's solid coloured skull, one per row. Sized from
+   the row's type so it always fits the row height. */
 .skeleton-skin .sk-skull {
   flex: none;
-  width: 13%;
-  text-align: center;
-  font-size: 1.35em;
+  display: flex;
+  align-items: center;
   color: var(--row, #35e5ff);
-  text-shadow: 0 0 0.32cqw var(--row, #35e5ff);
 }
-.skeleton-skin .sk-row-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
-.skeleton-skin .sk-row-time { font-size: 0.95em; }
+.skeleton-skin .sk-skull svg {
+  display: block;
+  height: 1.6em;
+  width: auto;
+  filter:
+    drop-shadow(0 0 0.1cqw #000)
+    drop-shadow(0 0 0.28cqw var(--row, #35e5ff))
+    drop-shadow(0 0 0.6cqw var(--row, #35e5ff));
+}
+.skeleton-skin .sk-skull path { fill: var(--row, #35e5ff); }
+.skeleton-skin .sk-row-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+/* Durations keep their full width: the wider face would otherwise squeeze
+   them down to clipped fragments. */
+.skeleton-skin .sk-row-time { flex: none; font-size: 0.95em; }
 .skeleton-skin .sk-row:hover,
 .skeleton-skin .sk-row:focus-visible {
   filter: drop-shadow(0 0 0.45cqw #32dcff);
@@ -1493,8 +1507,10 @@ input[type="range"]::-moz-range-thumb {
 }
 .skeleton-skin .sk-row.active {
   border-color: #63eaff;
+  color: #35e5ff;
   box-shadow: inset 0 0 0.45cqw #28cfff, 0 0 0.45cqw #28cfff;
 }
+.skeleton-skin .sk-row.active .sk-row-time { color: #35e5ff; }
 
 /* Eye sockets = readout: the bloom follows the teeth-line energy */
 .skeleton-skin .sk-eye {
@@ -1513,13 +1529,22 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-eye-left { left: 47.2%; }
 .skeleton-skin .sk-eye-right { left: 52%; }
 
-/* Teeth line = visualizer strip inside the open jaw */
+/* Mouth = visualizer. The web build draws its EQ across the whole dark mouth
+   opening, mirrored around a bright centre line, so the strip covers that
+   cavity rather than a thin band at the teeth. */
 .skeleton-skin .sk-viz {
   position: absolute;
-  left: 47.25%;
-  top: 50.2%;
-  width: 5.8%;
-  height: 1.3%;
+  /* The dark mouth opening itself, read off the plate against a grid: the black
+     cavity runs plate x 545–650, y 463–538 → frame x 47.1–54.0%,
+     y 46.35–53.65%. The box has to be the cavity, not the wider shadowed jaw
+     around it, or the filament pokes out onto the cheeks. */
+  left: 46.8%;
+  top: 47%;
+  width: 6.85%;
+  height: 7.3%;
+  /* Clip to the mouth opening: the bars' bloom would otherwise spill past
+     the jaw's edge and read as a stripe laid over the mouth, not inside it. */
+  clip-path: ellipse(50% 50% at 50% 50%);
   pointer-events: none;
   z-index: 2;
 }
@@ -1733,13 +1758,17 @@ input[type="range"]::-moz-range-thumb {
   justify-content: center;
   padding: 0 1%;
   overflow: hidden;
-  color: #f4e9d0;
-  font: 900 clamp(9px, 2.05cqw, 32px) Georgia, "Times New Roman", serif;
-  letter-spacing: -0.04em;
+  color: #f7efdd;
+  font: 700 clamp(10px, 2.85cqw, 42px) Cambria, Georgia, "Times New Roman", serif;
+  letter-spacing: 0.005em;
   line-height: 1;
+  text-transform: uppercase;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-shadow: 0 0 0.3cqw #01070b, 0 0 0.8cqw #01070bcc;
+  text-shadow:
+    0 0 0.1cqw #000,
+    0 0 0.28cqw #01070b,
+    0 0 0.85cqw #01070bcc;
 }
 .skeleton-skin .sk-artist {
   position: absolute;
@@ -1751,11 +1780,12 @@ input[type="range"]::-moz-range-thumb {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  color: #e8ddc2;
-  font: bold clamp(6px, 1.45cqw, 23px) Georgia, serif;
-  letter-spacing: 0.04em;
+  color: #efe4cb;
+  font: 700 clamp(6px, 1.32cqw, 21px) Cambria, Georgia, serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   white-space: nowrap;
-  text-shadow: 0 0 0.25cqw #01070b, 0 0 0.6cqw #01070bcc;
+  text-shadow: 0 0 0.1cqw #000, 0 0 0.28cqw #01070b, 0 0 0.6cqw #01070bcc;
 }
 .skeleton-skin .sk-artist b { color: #11e2ff; }
 
@@ -1763,9 +1793,9 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-seek {
   position: absolute;
   left: 34.8%;
-  top: 79.9%;
+  top: 80.45%;
   width: 30.7%;
-  height: 2.2%;
+  height: 1.1%;
   margin: 0;
   appearance: none;
   -webkit-appearance: none;
@@ -1774,25 +1804,28 @@ input[type="range"]::-moz-range-thumb {
     90deg,
     #0af6ff 0%,
     #0af6ff var(--progress, 0%),
-    #020e19 var(--progress, 0%),
-    #020e19 100%
+    #0b4254 var(--progress, 0%),
+    #0b4254 100%
   );
-  border: 1px solid #0af6ff;
+  border: 0;
   border-radius: 999px;
-  box-shadow: 0 0 2px #c9fdff, 0 0 5px #0af6ff, 0 0 10px #008cff66;
+  box-shadow:
+    inset 0 0 0.18cqw #d9feff55,
+    0 0 0.15cqw #bffcff99,
+    0 0 0.45cqw #0af6ffaa;
   z-index: 3;
 }
 .skeleton-skin .sk-seek::-webkit-slider-thumb {
   appearance: none;
   -webkit-appearance: none;
-  width: 0.55cqw;
-  height: 0.55cqw;
-  min-width: 5px;
-  min-height: 5px;
+  width: 0.5cqw;
+  height: 0.5cqw;
+  min-width: 4px;
+  min-height: 4px;
   border: 0;
   border-radius: 50%;
-  background: #e4ffff;
-  box-shadow: 0 0 3px #fff, 0 0 7px #0af6ff;
+  background: #eaffff;
+  box-shadow: 0 0 0.2cqw #d9feff, 0 0 0.5cqw #0af6ff;
 }
 .skeleton-skin .sk-times {
   position: absolute;

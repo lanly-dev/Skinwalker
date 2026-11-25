@@ -60,7 +60,7 @@ const PLATE_FRAME = {
 const MINI_SIZE = { width: 340, height: 351, minWidth: 340, minHeight: 351 }
 
 /** Spectrum resolution — the web build's teeth line draws 24 bars */
-const BAR_COUNT = 24
+const BAR_COUNT = 15
 /** Bar colour, matched to the pendant's play glyph blue */
 const BAR_COLOR = '#0af6ff'
 /** Playlist skull colours, taken from the web build's first rows */
@@ -450,7 +450,16 @@ export class SkeletonSkin implements Skin {
 
       const skull = document.createElement('span')
       skull.className = 'sk-skull'
-      skull.textContent = '☠'
+      // The web build's row marker: a solid skull with cut-out eyes, nose and
+      // teeth, tinted per row (--row). Drawn here so the holes show the board.
+      skull.innerHTML = /* html */ `
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path fill-rule="evenodd" d="M32 5C19 5 10 14 10 26.5c0 5.6 2 10 5.2 13.1V47c0 4 2.6 6.4 6.3 6.4h1.1V58h18.8v-4.6h1.1c3.7 0 6.3-2.4 6.3-6.4v-7.4C52 36.5 54 32.1 54 26.5 54 14 45 5 32 5Z
+            M22.5 19a6.5 6.5 0 1 0 0.01 0Z
+            M41.5 19a6.5 6.5 0 1 0 0.01 0Z
+            M32 33.5 36 41h-8Z
+            M24 44h4.2v8H24Z M29.9 44h4.2v9h-4.2Z M35.8 44H40v8h-4.2Z" />
+        </svg>`
 
       const name = document.createElement('span')
       name.className = 'sk-row-name'
@@ -516,9 +525,8 @@ export class SkeletonSkin implements Skin {
   }
 
   /**
-   * The web build's spectrum: twenty-four bars standing on the teeth line,
-   * each growing up from the bottom of its strip, capped with a white
-   * hairline. The same energy sum drives the eye bloom through --eye.
+   * The web build's spectrum: thin bars mirrored around a bright centre line
+   * across the mouth. The same energy sum drives the eye bloom through --eye.
    */
   private drawVisualizer(now: number): void {
     const els = this.els
@@ -535,9 +543,18 @@ export class SkeletonSkin implements Skin {
     const h = 200
     ctx.clearRect(0, 0, w, h)
 
-    // 3% bars spread edge to edge, as the web build's justify-between strip
-    const barWidth = w * 0.03
-    const step = (w - barWidth) / (BAR_COUNT - 1)
+    // Bars are mirrored about the centre line and spread edge to edge, the
+    // way the web build's mouth EQ reads.
+    const mid = h / 2
+    // Keep the strip a hair off the mouth's walls. The canvas is clipped to the
+    // cavity's oval, so the outer bars can run close to the edge and get cut by
+    // the mouth itself instead of stopping short of it.
+    const inset = w * 0.02
+    const usable = w - inset * 2
+    const slot = usable / BAR_COUNT
+    // The mockup's bars leave only a narrow gap, so the strip reads as a band
+    // rather than a row of ticks.
+    const barWidth = slot * 0.54
 
     let energy = 0
     for (let i = 0; i < BAR_COUNT; i++) {
@@ -546,22 +563,27 @@ export class SkeletonSkin implements Skin {
         const bin = Math.min(this.freqData.length - 1, i * 3 + 2)
         value = this.freqData[bin] / 255
       } else {
-        // Idle bars keep breathing while paused
-        value = 0.12 + 0.04 * Math.sin(now / 700 + i * 0.6)
+        // Idle bars keep breathing while paused, tall enough to read like
+        // the web build's mouth strip instead of a flat line
+        value = 0.34 + 0.2 * Math.sin(now / 700 + i * 0.75)
       }
       this.smooth[i] += (value - this.smooth[i]) * 0.15
       energy += this.smooth[i]
 
-      const height = (0.12 + this.smooth[i] * 0.88) * h
-      const x = i * step
+      // Elliptical envelope, held high across most of the span so the strip
+      // reaches the mouth's corners: the clip cuts the last bars to the oval,
+      // the way the mockup's bars run into the opening's edge.
+      const t = i / (BAR_COUNT - 1)
+      const envelope = Math.pow(Math.max(0, 1 - (t * 2 - 1) ** 2), 0.4)
+      const half = (0.12 + this.smooth[i] * 0.88) * envelope * (mid - 4)
+      const x = inset + i * slot + (slot - barWidth) / 2
+      // No per-bar bloom: at this size the glows merged the gaps into one
+      // solid strip.
       ctx.fillStyle = BAR_COLOR
-      ctx.shadowColor = BAR_COLOR
-      ctx.shadowBlur = 6
-      ctx.fillRect(x, h - height, barWidth, height)
       ctx.shadowBlur = 0
-      ctx.fillStyle = '#ffffff'
-      ctx.fillRect(x, h - height, barWidth, 2)
+      ctx.fillRect(x, mid - half, barWidth, half * 2)
     }
+    ctx.shadowBlur = 0
 
     // Mini card: the web build's mouth bars use the raw spectrum, 6% at rest.
     const freq = this.freqData
