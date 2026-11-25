@@ -1132,6 +1132,18 @@ input[type="range"]::-moz-range-thumb {
   pointer-events: none;
   z-index: 4;
 }
+/* The stitched underline itself: the plate's own thread and stitches, cut out
+   as a layer (575×116 art px at 354,1083) so the seek's progress and bead sit
+   on the art instead of on a drawn line over it. */
+.frankenstein-skin .fr-scar-art {
+  position: absolute;
+  left: 27.6562%;
+  top: 61.5341%;
+  width: 44.9219%;
+  height: 6.5909%;
+  background: var(--fr-scar-url) center / 100% 100% no-repeat;
+  pointer-events: none;
+}
 .frankenstein-skin .fr-scar-svg {
   position: absolute;
   inset: 0;
@@ -1140,13 +1152,14 @@ input[type="range"]::-moz-range-thumb {
   overflow: visible;
   pointer-events: none;
 }
-.frankenstein-skin .fr-scar-route { fill: none; stroke: #a28d7d; stroke-width: 4; }
 .frankenstein-skin .fr-scar-progress { fill: none; stroke: #9cff7f; stroke-width: 5; }
+/* The bead is the plate's painted one, live: the plate's baked bead was
+   removed (46px across), so the thumb is that same bead at the same size and
+   colour, with the glow drawn instead of painted. */
 .frankenstein-skin .fr-scar-thumb {
-  fill: #acff8a;
-  stroke: #78c66c;
-  stroke-width: 2;
-  filter: drop-shadow(0 0 6px #78ff7a);
+  fill: #78fd79;
+  stroke: none;
+  filter: drop-shadow(0 0 8px #78ff7a);
 }
 .frankenstein-skin .fr-scar-hit {
   fill: none;

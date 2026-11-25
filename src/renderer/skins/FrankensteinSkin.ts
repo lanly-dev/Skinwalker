@@ -32,6 +32,8 @@ import framePlate from '../assets/frankenstein-frame.webp'
 // data: URL background would be refused.
 import eyeOrb from '../assets/frankenstein-eye.webp?no-inline'
 import eyeOrbRight from '../assets/frankenstein-eye-right.webp?no-inline'
+// The stitched underline the seek rides on, lifted out of the plate.
+import scarLayer from '../assets/frankenstein-scar.webp?no-inline'
 import knobPlate from '../assets/frankenstein-knob-plate.webp'
 import knobFace from '../assets/frankenstein-knob-face.webp'
 import { applySkinShape } from '../windowShape'
@@ -272,6 +274,7 @@ export class FrankensteinSkin implements Skin {
     // diffused out, so both eyes are the art rather than a shape near it.
     this.container.style.setProperty('--fr-eye-url', `url("${eyeOrb}")`)
     this.container.style.setProperty('--fr-eye-right-url', `url("${eyeOrbRight}")`)
+    this.container.style.setProperty('--fr-scar-url', `url("${scarLayer}")`)
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
@@ -346,12 +349,14 @@ export class FrankensteinSkin implements Skin {
         <button class="fr-bolt fr-next" type="button" aria-label="Next track"
                 title="Next track"></button>
 
-        <!-- Stitched scar = seek -->
+        <!-- Stitched scar = seek. The stitched underline is its own layer
+             (cropped from the plate, which no longer paints it); the green
+             progress and the bead ride on top of it. -->
         <div class="fr-scar">
+          <span class="fr-scar-art" aria-hidden="true"></span>
           <svg class="fr-scar-svg" viewBox="0 0 1280 1760" aria-hidden="true">
-            <path class="fr-scar-route" d="${SCAR_PATH}"/>
             <path class="fr-scar-progress" d="${SCAR_PATH}" pathLength="1000"/>
-            <circle class="fr-scar-thumb" r="15"/>
+            <circle class="fr-scar-thumb" r="23"/>
             <path class="fr-scar-hit" d="${SCAR_PATH}"/>
           </svg>
           <input class="fr-seek" type="range" min="0" max="1000" value="0" step="1"
@@ -607,7 +612,9 @@ export class FrankensteinSkin implements Skin {
   // ── Seek ─────────────────────────────────────────────────────────────────────
 
   private buildScar(): void {
-    const route = this.container?.querySelector<SVGPathElement>('.fr-scar-route')
+    // The hit path carries the same d, so the geometry lives on one path now
+    // that the plate's painted underline is a layer instead of a stroke.
+    const route = this.container?.querySelector<SVGPathElement>('.fr-scar-hit')
     if (!route) return
     this.route = route
     this.routeLength = route.getTotalLength()
