@@ -1536,7 +1536,7 @@ input[type="range"]::-moz-range-thumb {
      around it, or the filament pokes out onto the cheeks. */
   left: 46.8%;
   top: 47%;
-  width: 6.85%;
+  width: 6.7%;
   height: 7.3%;
   /* Clip to the mouth opening: the bars' bloom would otherwise spill past
      the jaw's edge and read as a stripe laid over the mouth, not inside it. */
