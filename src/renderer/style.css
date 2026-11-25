@@ -1453,9 +1453,9 @@ input[type="range"]::-moz-range-thumb {
   padding: 0;
   height: 100%;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #2bdfff #03131c;
+  scrollbar-width: none;
 }
+.skeleton-skin .sk-list::-webkit-scrollbar { display: none; }
 .skeleton-skin .sk-row {
   display: flex;
   align-items: center;
@@ -1503,7 +1503,7 @@ input[type="range"]::-moz-range-thumb {
   width: 1.2%;
   height: 2.3%;
   border-radius: 50%;
-  background: #6aeaff;
+  background: #0af6ff;
   filter: blur(0.2cqw);
   opacity: var(--eye, 0.2);
   box-shadow: 0 0 1.2cqw 0.7cqw #008cff;
@@ -1612,8 +1612,8 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 999px;
   background: linear-gradient(
     90deg,
-    #1ce5ff 0%,
-    #1ce5ff var(--level, 80%),
+    #0af6ff 0%,
+    #0af6ff var(--level, 80%),
     #03101d var(--level, 80%),
     #03101d 100%
   );
@@ -1626,18 +1626,18 @@ input[type="range"]::-moz-range-thumb {
   -webkit-appearance: none;
   width: clamp(7px, 2cqw, 30px);
   height: clamp(7px, 2cqw, 30px);
-  border: 1px solid #b5ffff;
+  border: 1px solid #d3fdff;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #94f8ff, #15d7ff 55%, #008ce0);
-  box-shadow: 0 0 3px #bcffff, 0 0 8px #00dfff, 0 0 16px #008cffaa;
+  background: radial-gradient(circle at 35% 30%, #c9fdff, #0af6ff 55%, #008ce0);
+  box-shadow: 0 0 3px #c9fdff, 0 0 8px #0af6ff, 0 0 16px #008cffaa;
 }
 .skeleton-skin .sk-volume::-moz-range-thumb {
   width: clamp(7px, 2cqw, 30px);
   height: clamp(7px, 2cqw, 30px);
-  border: 1px solid #b5ffff;
+  border: 1px solid #d3fdff;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #94f8ff, #15d7ff 55%, #008ce0);
-  box-shadow: 0 0 3px #bcffff, 0 0 8px #00dfff, 0 0 16px #008cffaa;
+  background: radial-gradient(circle at 35% 30%, #c9fdff, #0af6ff 55%, #008ce0);
+  box-shadow: 0 0 3px #c9fdff, 0 0 8px #0af6ff, 0 0 16px #008cffaa;
 }
 
 /* Muted: the arm's neon goes out. The lit run falls back to a dead tube and
@@ -1690,29 +1690,19 @@ input[type="range"]::-moz-range-thumb {
   height: 100%;
   pointer-events: none;
 }
-.skeleton-skin .sk-mute:hover,
+/* Hover only brightens the glyph; no box outline. The keyboard focus ring
+   stays so the speaker is still visible when tabbed to. */
+.skeleton-skin .sk-mute:hover {
+  filter: drop-shadow(0 0 0.5cqw #8ff6ff);
+}
 .skeleton-skin .sk-mute:focus-visible {
   filter: drop-shadow(0 0 0.5cqw #8ff6ff);
   outline: 1px solid #62eaff;
 }
-.skeleton-skin .sk-mute.muted::after {
-  content: '';
-  position: absolute;
-  left: -11%;
-  right: -11%;
-  top: 50%;
-  height: max(1.5px, 0.26cqw);
-  border-radius: 999px;
-  background: #ff4d68;
-  box-shadow: 0 0 0.1cqw #ffd2da, 0 0 0.28cqw #ff6076, 0 0 0.8cqw #ff2d4d;
-  transform: rotate(-38deg);
-  pointer-events: none;
-}
-
 /* Off: the glyph's own neon dies with the channel, so the whole arm reads
    dead. The cone and waves drop to unlit glass and the bloom is pulled back
-   to a faint contact shadow — the red bar keeps its glow as the only live
-   mark. Placed after the hover rule so hovering a muted speaker stays dark. */
+   to a faint contact shadow. Placed after the hover rule so hovering a muted
+   speaker stays dark. */
 .skeleton-skin .sk-mute.muted {
   filter: drop-shadow(0 0 0.06cqw #00cfff2e);
 }
@@ -1782,14 +1772,14 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   background: linear-gradient(
     90deg,
-    #94faff 0%,
-    #16dfff var(--progress, 0%),
+    #0af6ff 0%,
+    #0af6ff var(--progress, 0%),
     #020e19 var(--progress, 0%),
     #020e19 100%
   );
-  border: 1px solid #22e7ff;
+  border: 1px solid #0af6ff;
   border-radius: 999px;
-  box-shadow: 0 0 2px #a3faff, 0 0 5px #00dfff, 0 0 10px #00bfff66;
+  box-shadow: 0 0 2px #c9fdff, 0 0 5px #0af6ff, 0 0 10px #008cff66;
   z-index: 3;
 }
 .skeleton-skin .sk-seek::-webkit-slider-thumb {
@@ -1802,7 +1792,7 @@ input[type="range"]::-moz-range-thumb {
   border: 0;
   border-radius: 50%;
   background: #e4ffff;
-  box-shadow: 0 0 3px #fff, 0 0 7px #00e5ff;
+  box-shadow: 0 0 3px #fff, 0 0 7px #0af6ff;
 }
 .skeleton-skin .sk-times {
   position: absolute;

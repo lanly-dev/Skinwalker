@@ -61,8 +61,8 @@ const MINI_SIZE = { width: 340, height: 351, minWidth: 340, minHeight: 351 }
 
 /** Spectrum resolution — the web build's teeth line draws 24 bars */
 const BAR_COUNT = 24
-/** Bar colour, as in the web build's EQ strip */
-const BAR_COLOR = '#38e5ff'
+/** Bar colour, matched to the pendant's play glyph blue */
+const BAR_COLOR = '#0af6ff'
 /** Playlist skull colours, taken from the web build's first rows */
 const ROW_COLORS = ['#35e5ff', '#b3ef32', '#c397ff']
 
@@ -227,8 +227,8 @@ export class SkeletonSkin implements Skin {
         </div>
 
         <!-- Bone plaques = prev / next -->
-        <button class="sk-prev" aria-label="Previous track" title="Previous track"></button>
-        <button class="sk-next" aria-label="Next track" title="Next track"></button>
+        <button class="sk-prev" aria-label="Previous track"></button>
+        <button class="sk-next" aria-label="Next track"></button>
 
         <!-- Right bone arm = window tools: the five glowing icons from the web
              build's controller sprite, on the plate's bare strip. -->
