@@ -14,6 +14,11 @@
 
 type Rect = { x: number; y: number; width: number; height: number }
 
+/** Where a plate asset sits inside the window, as fractions of it. A skin whose
+ *  art is cropped tighter than its layout frame passes this so the mask is
+ *  sampled from the same inset the CSS draws the art at. */
+export type ShapeFrame = { x: number; y: number; width: number; height: number }
+
 /** Alpha at or below this is outside the painted body. */
 const SHARP_ALPHA = 24
 /** The aura is faint by design; this is where it is effectively invisible. */
@@ -25,6 +30,8 @@ let mask: Uint8Array | null = null
 let maskW = 0
 let maskH = 0
 let source: string | null = null
+/** Inset of the plate inside the window; null means it fills the window. */
+let plate: ShapeFrame | null = null
 let resizeTimer: number | undefined
 /** The silhouette currently applied, so a drag can lift it and put it back. */
 let lastRects: Rect[] = []
@@ -93,10 +100,16 @@ export function isOnSkin(clientX: number, clientY: number): boolean {
 }
 
 /** Load the skin's plate, cache its alpha, and reshape the OS window.
+ *  `plateFrame` is the art's inset inside the window (omit when it fills it).
  *  `attempt` guards the resample loop below against a window that keeps
  *  changing size while the mask is sampled. */
-export async function applySkinShape(url?: string, attempt = 0): Promise<void> {
+export async function applySkinShape(
+  url?: string,
+  plateFrame: ShapeFrame | null = null,
+  attempt = 0,
+): Promise<void> {
   source = url ?? null
+  plate = plateFrame
   if (!url || typeof window.skinwalker?.setWindowShape !== 'function') {
     mask = null
     send([])
@@ -130,15 +143,21 @@ export async function applySkinShape(url?: string, attempt = 0): Promise<void> {
   const ctx = canvas.getContext('2d', { willReadFrequently: true })
   if (!ctx) return
 
+  // The art's own box inside the window, so a cropped plate keeps its place.
+  const dx = (plate?.x ?? 0) * w
+  const dy = (plate?.y ?? 0) * h
+  const dw = (plate?.width ?? 1) * w
+  const dh = (plate?.height ?? 1) * h
+
   // Painted body.
-  ctx.drawImage(img, 0, 0, w, h)
+  ctx.drawImage(img, dx, dy, dw, dh)
   const sharp = ctx.getImageData(0, 0, w, h).data
 
   // The aura around it — a blurred copy — so the shape does not slice the
   // glow off at the silhouette and leave a hard edge.
   ctx.clearRect(0, 0, w, h)
   ctx.filter = 'blur(8px)'
-  ctx.drawImage(img, 0, 0, w, h)
+  ctx.drawImage(img, dx, dy, dw, dh)
   ctx.filter = 'none'
   const glow = ctx.getImageData(0, 0, w, h).data
 
@@ -167,7 +186,7 @@ export async function applySkinShape(url?: string, attempt = 0): Promise<void> {
   // are clipped by the OS against the new window, which cuts whole bands
   // (the wide wing rows) out of the silhouette — resample for the new size.
   if (attempt < 2 && (Math.abs(window.innerWidth - viewW) > 1 || Math.abs(window.innerHeight - viewH) > 1)) {
-    return applySkinShape(url, attempt + 1)
+    return applySkinShape(url, plateFrame, attempt + 1)
   }
 
   maskW = w
@@ -215,6 +234,6 @@ export function installShapeResize(): void {
     // under an open board would clip it again.
     if (!source || lifted) return
     window.clearTimeout(resizeTimer)
-    resizeTimer = window.setTimeout(() => void applySkinShape(source ?? undefined), 150)
+    resizeTimer = window.setTimeout(() => void applySkinShape(source ?? undefined, plate), 150)
   })
 }

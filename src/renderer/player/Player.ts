@@ -101,7 +101,7 @@ export class Player {
     saveLastSkinId(skin.id)
     // The skin owns the window size and shape
     window.skinwalker?.setWindowSize(skin.windowSize ?? { width: 480, height: 720 })
-    void applySkinShape(skin.shapeImage)
+    void applySkinShape(skin.shapeImage, skin.shapeFrame ?? null)
     // Re-notify the fresh skin of the current track so its title, artist
     // and playlist highlight survive a mid-playback swap (the callback is
     // assigned by the skin during mount).

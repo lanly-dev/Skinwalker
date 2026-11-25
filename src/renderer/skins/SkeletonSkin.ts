@@ -44,6 +44,19 @@ import type { Player } from '../player/Player'
 
 /** Full 3:2 stage and the 620:622 face card the window shrinks to. */
 const STAGE_SIZE = { width: 960, height: 640, minWidth: 560, minHeight: 380 }
+/**
+ * The plate asset is cropped to its painted art — 1177×975 taken from the
+ * (178, 12) corner of the 1534×1025 stage it was cut from — while every
+ * control below is positioned on that stage. The art is therefore drawn at
+ * this inset inside the window, and the OS window shape is sampled from the
+ * same inset, so the buttons keep landing on their painted counterparts.
+ */
+const PLATE_FRAME = {
+  x: 178 / 1534,
+  y: 12 / 1025,
+  width: 1177 / 1534,
+  height: 975 / 1025,
+}
 const MINI_SIZE = { width: 340, height: 351, minWidth: 340, minHeight: 351 }
 
 /** Spectrum resolution — the web build's teeth line draws 24 bars */
@@ -75,7 +88,9 @@ export class SkeletonSkin implements Skin {
   readonly id = 'skeleton'
   readonly label = 'Skeleton'
   readonly shapeImage = framePlate
-  /** 3:2, like the web build's stage — the plate is 1534×1025 */
+  readonly shapeFrame = PLATE_FRAME
+  /** 3:2, like the web build's stage — the frame every control sits on is
+   *  1534×1025, and the plate asset is cropped inside it (see PLATE_FRAME) */
   readonly windowSize = { width: 960, height: 640 }
 
   private container: HTMLElement | null = null
@@ -102,6 +117,13 @@ export class SkeletonSkin implements Skin {
     this.container = document.createElement('div')
     this.container.className = 'skin skeleton-skin'
     this.container.style.setProperty('--sk-frame-url', `url("${framePlate}")`)
+    // The plate layer's inset inside the 3:2 frame, from the same numbers the
+    // window shape uses.
+    const plate = this.container.style
+    plate.setProperty('--sk-plate-x', `${PLATE_FRAME.x * 100}%`)
+    plate.setProperty('--sk-plate-y', `${PLATE_FRAME.y * 100}%`)
+    plate.setProperty('--sk-plate-w', `${PLATE_FRAME.width * 100}%`)
+    plate.setProperty('--sk-plate-h', `${PLATE_FRAME.height * 100}%`)
     this.container.innerHTML = this.template()
     app.innerHTML = ''
     app.appendChild(this.container)
@@ -375,7 +397,7 @@ export class SkeletonSkin implements Skin {
     this.mini = false
     this.container.classList.remove('mini-mode')
     window.skinwalker?.setWindowSize?.(STAGE_SIZE)
-    window.setTimeout(() => void applySkinShape(framePlate), 60)
+    window.setTimeout(() => void applySkinShape(framePlate, PLATE_FRAME), 60)
   }
 
   /** Artist line with the web build's cyan bullet */

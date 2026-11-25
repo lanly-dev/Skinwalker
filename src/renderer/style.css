@@ -1396,7 +1396,22 @@ input[type="range"]::-moz-range-thumb {
   height: 100vh;
   margin: 0;
   container-type: inline-size;
+  background: none;
+}
+/* The plate art is cropped tighter than the frame the controls are placed on,
+   so it is drawn as its own layer at --sk-plate-* (the crop's inset and size in
+   the frame) instead of being stretched over the whole window. Every position
+   below is still a percentage of the frame, and the art lines up with them. */
+.skeleton-skin .sk-body::before {
+  content: "";
+  position: absolute;
+  left: var(--sk-plate-x, 0%);
+  top: var(--sk-plate-y, 0%);
+  width: var(--sk-plate-w, 100%);
+  height: var(--sk-plate-h, 100%);
   background: var(--sk-frame-url) center / 100% 100% no-repeat;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Bone board overhead = playlist. Sits inside the plate's painted rim and is
@@ -1873,6 +1888,7 @@ input[type="range"]::-moz-range-thumb {
    it. The card itself stays transparent. */
 .skeleton-skin .sk-mini { display: none; }
 .skeleton-skin.mini-mode .sk-body { background: none; }
+.skeleton-skin.mini-mode .sk-body::before { display: none; }
 .skeleton-skin.mini-mode .sk-body > :not(.sk-mini) { display: none; }
 .skeleton-skin.mini-mode .sk-mini {
   position: absolute;

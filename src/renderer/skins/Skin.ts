@@ -17,6 +17,9 @@ export interface Skin {
   /** Plate artwork whose alpha defines the OS window shape and the drag
    *  area. Omit and the window stays a plain rectangle. */
   readonly shapeImage?: string
+  /** Where the plate art sits inside the window as fractions of it, when the
+   *  asset is cropped tighter than the layout frame (default: fills it). */
+  readonly shapeFrame?: { x: number; y: number; width: number; height: number }
   mount(player: Player): void
   unmount(): void
   /** Called when tracks are added mid-session so the skin can refresh its playlist UI */
