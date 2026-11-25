@@ -1428,6 +1428,25 @@ input[type="range"]::-moz-range-thumb {
   overflow: hidden;
   z-index: 2;
 }
+/* Sockets of the two skulls gripping the board's top corners: dark hollows on
+   the plate, lit as a small dot while the playlist is hovered. Each centre is
+   a measured socket on the piece (178,12 crop origin): 215/50 and 240.5/49 on
+   the left skull, 936/49 and 961.5/50 on the right. */
+.skeleton-skin .sk-board-eye {
+  position: absolute;
+  width: 0.5%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #b5fbff;
+  opacity: 0;
+  transition: opacity 0.18s ease-out;
+  pointer-events: none;
+  z-index: 3;
+}
+.skeleton-skin .sk-body.list-hover .sk-board-eye {
+  opacity: 0.9;
+}
 .skeleton-skin .sk-list {
   list-style: none;
   margin: 0;

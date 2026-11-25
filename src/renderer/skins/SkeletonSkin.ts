@@ -164,6 +164,13 @@ export class SkeletonSkin implements Skin {
           <ol class="sk-list"></ol>
         </div>
 
+        <!-- The two corner skulls holding the board: their sockets light up
+             while the playlist is hovered / focused (CSS :has, no JS) -->
+        <span class="sk-board-eye" style="left: 25.6193%; top: 6.0488%" aria-hidden="true"></span>
+        <span class="sk-board-eye" style="left: 27.2816%; top: 5.9512%" aria-hidden="true"></span>
+        <span class="sk-board-eye" style="left: 72.6206%; top: 5.9512%" aria-hidden="true"></span>
+        <span class="sk-board-eye" style="left: 74.2830%; top: 6.0488%" aria-hidden="true"></span>
+
         <!-- Eye sockets = readout, driven by the jaw's energy -->
         <span class="sk-eye sk-eye-left" aria-hidden="true"></span>
         <span class="sk-eye sk-eye-right" aria-hidden="true"></span>
@@ -287,6 +294,13 @@ export class SkeletonSkin implements Skin {
       miniEyes: Array.from(c.querySelectorAll<HTMLElement>('.sk-mini-eye')),
     }
     this.els = els
+
+    // The two skulls holding the board light their sockets while the playlist
+    // is hovered. A class rather than :has() — the selector matched but the
+    // style engine did not re-invalidate the sockets as the pointer moved.
+    const board = c.querySelector<HTMLElement>('.sk-board')!
+    board.addEventListener('pointerenter', () => els.body.classList.add('list-hover'))
+    board.addEventListener('pointerleave', () => els.body.classList.remove('list-hover'))
 
     // Pendant → play / pause
     els.pendant.addEventListener('click', () => {
