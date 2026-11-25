@@ -1478,7 +1478,7 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   transition: border-color 0.1s, box-shadow 0.1s;
 }
-/* Row marker: the web build's solid coloured skull, one per row. Sized from
+/* Row marker: the maintainer's painted cyan skull, one per row. Sized from
    the row's type so it always fits the row height. */
 .skeleton-skin .sk-skull {
   flex: none;
@@ -1486,16 +1486,12 @@ input[type="range"]::-moz-range-thumb {
   align-items: center;
   color: var(--row, #35e5ff);
 }
-.skeleton-skin .sk-skull svg {
+.skeleton-skin .sk-skull img {
   display: block;
   height: 1.6em;
   width: auto;
-  filter:
-    drop-shadow(0 0 0.1cqw #000)
-    drop-shadow(0 0 0.28cqw var(--row, #35e5ff))
-    drop-shadow(0 0 0.6cqw var(--row, #35e5ff));
+  filter: hue-rotate(var(--row-hue, 0deg)) drop-shadow(0 0 0.1cqw #000);
 }
-.skeleton-skin .sk-skull path { fill: var(--row, #35e5ff); }
 .skeleton-skin .sk-row-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 /* Durations keep their full width: the wider face would otherwise squeeze
    them down to clipped fragments. */

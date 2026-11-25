@@ -36,6 +36,7 @@ import toolSkinIcon from '../assets/skeleton-tool-skin.webp'
 import toolFolderIcon from '../assets/skeleton-tool-folder.webp'
 import toolMinimizeIcon from '../assets/skeleton-tool-minimize.webp'
 import toolCloseIcon from '../assets/skeleton-tool-close.webp'
+import rowSkullIcon from '../assets/skeleton-row-skull.png'
 import { applySkinShape } from '../windowShape'
 import { openLocalFiles } from '../openFiles'
 import { formatTime as fmt, durationLabel, probeDurations } from '../trackDurations'
@@ -65,6 +66,10 @@ const BAR_COUNT = 15
 const BAR_COLOR = '#0af6ff'
 /** Playlist skull colours, taken from the web build's first rows */
 const ROW_COLORS = ['#35e5ff', '#b3ef32', '#c397ff']
+/** Hue rotations that take the skull art's cyan to each row colour above, so the
+ *  rows keep the web build's cyan / lime / violet rhythm. */
+const ROW_HUES = ['0deg', '-102deg', '84deg']
+
 
 interface SkeletonEls {
   body: HTMLElement
@@ -447,19 +452,12 @@ export class SkeletonSkin implements Skin {
       row.setAttribute('tabindex', '0')
       row.setAttribute('aria-label', `Play ${track.title}`)
       row.style.setProperty('--row', ROW_COLORS[i % ROW_COLORS.length])
+      row.style.setProperty('--row-hue', ROW_HUES[i % ROW_HUES.length])
 
       const skull = document.createElement('span')
       skull.className = 'sk-skull'
-      // The web build's row marker: a solid skull with cut-out eyes, nose and
-      // teeth, tinted per row (--row). Drawn here so the holes show the board.
-      skull.innerHTML = /* html */ `
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path fill-rule="evenodd" d="M32 5C19 5 10 14 10 26.5c0 5.6 2 10 5.2 13.1V47c0 4 2.6 6.4 6.3 6.4h1.1V58h18.8v-4.6h1.1c3.7 0 6.3-2.4 6.3-6.4v-7.4C52 36.5 54 32.1 54 26.5 54 14 45 5 32 5Z
-            M22.5 19a6.5 6.5 0 1 0 0.01 0Z
-            M41.5 19a6.5 6.5 0 1 0 0.01 0Z
-            M32 33.5 36 41h-8Z
-            M24 44h4.2v8H24Z M29.9 44h4.2v9h-4.2Z M35.8 44H40v8h-4.2Z" />
-        </svg>`
+      // The maintainer's row marker: the compact cyan skull from the reference.
+      skull.innerHTML = /* html */ `<img src="${rowSkullIcon}" alt="" draggable="false" />`
 
       const name = document.createElement('span')
       name.className = 'sk-row-name'
