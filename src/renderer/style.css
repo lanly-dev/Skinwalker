@@ -1279,14 +1279,17 @@ input[type="range"]::-moz-range-thumb {
 }
 .frankenstein-skin .fr-dial.muted .fr-knob-face { filter: brightness(0.55); }
 .frankenstein-skin .fr-vol {
+  /* Centred on the rotating knob face (its box centre inside .fr-watch),
+     not on the watch box; the text itself does not rotate. */
   position: absolute;
-  left: 0;
-  top: 103%;
-  width: 100%;
-  text-align: center;
+  left: 48.9%;
+  top: 47.95%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  white-space: nowrap;
   color: #fbebb4;
   font: clamp(8px, 1.8cqw, 12px) var(--font-mono);
-  text-shadow: 0 1px 3px #000;
+  text-shadow: 0 0 2px #000, 0 1px 3px #000, 0 0 6px #000;
   pointer-events: none;
 }
 .frankenstein-skin .fr-mute {

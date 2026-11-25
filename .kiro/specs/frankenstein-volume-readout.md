@@ -1,6 +1,6 @@
 # Frankenstein Volume Readout Position
 
-**Status:** In Progress
+**Status:** Implemented; visual check pending
 **Created:** 2026-11-24
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -16,10 +16,11 @@ maintainer asked for it in the centre of the watch face.
 - [ ] R3: The text stays readable over the gold face.
 
 ## Tasks
-- [ ] T1: Change the `.fr-vol` rule only: absolute, centred on 48.9% / 47.95% with `translate(-50%, -50%)`, above the face, stronger dark text shadow.
+- [x] T1: Change the `.fr-vol` rule only: absolute, centred on 48.9% / 47.95% with `translate(-50%, -50%)`, above the face, stronger dark text shadow.
 
 ## Acceptance Criteria
 - `npm run typecheck` and `npm run build` pass.
 - [MAINTAINER: in the running app, the percentage sits in the middle of the watch face at 0%, 50% and 100%, and dragging the dial still works.]
 
 ## Implementation Notes
+2026-11-24: `.fr-vol` in `src/renderer/style.css` now centres on the knob face with `translate(-50%, -50%)`, sits above the face (`z-index: 1`), and has a three-layer dark shadow for contrast on gold. Typecheck and build pass. Not checked visually; R1 to R3 stay unticked until the maintainer confirms.
