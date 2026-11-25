@@ -25,7 +25,7 @@
  *   Neck bolts ─────── previous / next
  *   Stitched scar ──── seek: the bead rides the scar, progress fills it
  *   Gold watch ─────── volume: drag left/right, wheel, arrows; tap = mute
- *   Jacket pins ────── open folder, close, minimize, mini, next skin
+ *   Jacket pins ────── open folder, close, minimize, mini, change skin
  */
 import framePlate from '../assets/frankenstein-frame.webp'
 // Kept as files, never inlined: the renderer's CSP allows 'self' only, so a
@@ -367,7 +367,7 @@ export class FrankensteinSkin implements Skin {
         <button class="fr-pin fr-pin-mini" type="button"
                 aria-label="Mini mode" aria-pressed="false">${pinSvg('mini', PIN_MOTIFS.mini, 'Mini mode')}</button>
         <button class="fr-pin fr-pin-skin" type="button"
-                aria-label="Next skin">${pinSvg('skin', PIN_MOTIFS.skin, 'Next skin')}</button>
+                aria-label="Change skin">${pinSvg('skin', PIN_MOTIFS.skin, 'Change skin')}</button>
 
       </div>
     `

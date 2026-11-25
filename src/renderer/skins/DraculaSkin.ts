@@ -17,7 +17,7 @@
  *                      the tool row is up)
  *   Crossed hands ──── prev / next
  *   Tracklist ──────── playlist rows with probed durations
- *   Tool row ───────── close, minimize, add files, next skin, mini bat (on hover)
+ *   Tool row ───────── close, minimize, add files, change skin, mini bat (on hover)
  *   Bat ────────────── mini player: the window itself becomes the bat
  *
  * Every position in style.css is the web build's own stage percentage.
@@ -285,7 +285,7 @@ export class DraculaSkin implements Skin {
               <button class="dr-tool dr-tool-folder" aria-label="Add audio files" title="Add audio files"></button>
               <button class="dr-tool dr-tool-minimize" aria-label="Minimize" title="Minimize"></button>
               <button class="dr-tool dr-tool-close" aria-label="Close player" title="Close player"></button>
-              <button class="dr-tool dr-tool-skin" aria-label="Next skin" title="Next skin"></button>
+              <button class="dr-tool dr-tool-skin" aria-label="Change skin" title="Change skin"></button>
               <button class="dr-tool dr-tool-bat" aria-label="Mini bat player" title="Mini bat player"></button>
             </div>
           </div>
@@ -402,7 +402,7 @@ export class DraculaSkin implements Skin {
     c.querySelector('.dr-prev')!.addEventListener('click', () => p.prev())
     c.querySelector('.dr-next')!.addEventListener('click', () => p.next())
 
-    // Tool row: close, minimize, add files, next skin, mini bat. The web
+    // Tool row: close, minimize, add files, change skin, mini bat. The web
     // build's fifth tool is a dead "coming soon" stub; here the mask cycles
     // the registry, so no visible control is a no-op.
     c.querySelector('.dr-tool-close')!.addEventListener('click', () => window.skinwalker?.close?.())

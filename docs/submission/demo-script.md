@@ -10,7 +10,7 @@ Rules: public on YouTube, shows the app running on the device it was built for (
 | 0:40-1:05 | Drag along the blood line to seek. Show the time readout. | "The blood line is the seek bar." |
 | 1:05-1:25 | Volume on the jeweled minus/plus crosses. Hands for previous/next. | "The jeweled minus and plus set volume. The hands skip tracks." |
 | 1:25-1:45 | Drag the window by the monster. Show click-through at the edges. | "The window is cut to the silhouette. Clicks outside the monster fall through to the desktop." [YOU: only say this if it works on your machine.] |
-| 1:45-2:15 | Click "next skin" to show Skeleton, then Frankenstein, then back to Dracula. Show one mini version. | "Each skin maps its own anatomy to the same controls." |
+| 1:45-2:15 | Click "Change skin" to show Skeleton, then Frankenstein, then back to Dracula. Show one mini version. | "Each skin maps its own anatomy to the same controls." |
 | 2:15-2:45 | Cut to repo: `.kiro/` folder, `.kiro/INDEX.md`, a spec, a hook. | "Built with Kiro. Steering, hooks and specs are in the repo. [YOU: one true sentence about what Kiro did.]" |
 
 Checklist before upload: audio is only the bundled tracks, video under 3:00, no personal info on screen.
