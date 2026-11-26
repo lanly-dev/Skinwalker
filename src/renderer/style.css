@@ -1828,7 +1828,7 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-artist {
   position: absolute;
   left: 36%;
-  top: 76.55%;
+  top: 76%;
   width: 28%;
   height: 2.45%;
   box-sizing: border-box;
