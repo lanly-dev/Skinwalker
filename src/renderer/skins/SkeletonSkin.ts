@@ -186,7 +186,7 @@ export class SkeletonSkin implements Skin {
         <!-- Pendant at the throat = play / pause. The disc's own triangle was
              taken off the plate, so the glyph is drawn here and toggles to the
              pause bars while playing. -->
-        <button class="sk-pendant" aria-label="Play" aria-pressed="false" title="Play / Pause">
+        <button class="sk-pendant" aria-label="Play" aria-pressed="false">
           <span class="sk-pendant-glow" aria-hidden="true"></span>
           <svg class="sk-pendant-icon" viewBox="0 0 100 100" aria-hidden="true">
             <!-- Placed by its ink: the curve only reaches x 68.25 although its
@@ -266,7 +266,7 @@ export class SkeletonSkin implements Skin {
             <div class="sk-mini-eq" aria-hidden="true">${miniBars}</div>
             <i class="sk-mini-eye sk-mini-eye-left" aria-hidden="true"></i>
             <i class="sk-mini-eye sk-mini-eye-right" aria-hidden="true"></i>
-            <button class="sk-mini-play" aria-label="Play" aria-pressed="false" title="Play / Pause">▶</button>
+            <button class="sk-mini-play" aria-label="Play" aria-pressed="false">▶</button>
             <button class="sk-mini-restore" aria-label="Back to the full player" title="Back to the full player"></button>
             <button class="sk-mini-close" aria-label="Close player" title="Close player"></button>
           </div>
