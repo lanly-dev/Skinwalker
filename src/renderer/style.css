@@ -1464,6 +1464,10 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-body.list-hover .sk-board-eye {
   opacity: 0.9;
 }
+/* While the track plays the corner skulls are lit too, not just on hover. */
+.skeleton-skin .sk-body.playing .sk-board-eye {
+  opacity: 0.9;
+}
 .skeleton-skin .sk-list {
   list-style: none;
   margin: 0;
@@ -1565,6 +1569,37 @@ input[type="range"]::-moz-range-thumb {
   clip-path: ellipse(50% 50% at 50% 50%);
   pointer-events: none;
   z-index: 2;
+}
+/* At rest the skull stays dead: no socket bloom and no mouth EQ until the
+   track first plays. The same class drives the pendant's breathe. */
+.skeleton-skin .sk-body:not(.playing) .sk-eye,
+.skeleton-skin .sk-body:not(.playing) .sk-viz {
+  opacity: 0;
+}
+/* ...but the plate itself paints both sockets lit. Before the first play each
+   overlay shrinks to a dark disc over just the bright pupil (the painted cores
+   are 1.76% x 3.32% at 48.01% and 1.89% x 3.12% at 52.18%, both centred on
+   y 40%). Keeping it small leaves the nose between the sockets untouched. */
+.skeleton-skin .sk-body:not(.playing):not(.has-played) .sk-eye {
+  opacity: 1;
+  top: 38.1%;
+  width: 2.2%;
+  height: 3.8%;
+  background: #04090d;
+  border: 0;
+  border-radius: 50%;
+  filter: none;
+}
+.skeleton-skin .sk-body:not(.playing):not(.has-played) .sk-eye-left { left: 46.91%; }
+.skeleton-skin .sk-body:not(.playing):not(.has-played) .sk-eye-right { left: 51.08%; }
+/* Once the track has played, a pause keeps the skull awake: the sockets hold
+   their dim rest bloom and the mouth falls back to its default strip. The
+   corner skulls are not part of this — they need a hover, or playback. */
+.skeleton-skin .sk-body.has-played:not(.playing) .sk-eye {
+  opacity: var(--eye, 0.2);
+}
+.skeleton-skin .sk-body.has-played:not(.playing) .sk-viz {
+  opacity: 1;
 }
 
 /* Pendant at the throat = play / pause. The button is the disc opening itself:

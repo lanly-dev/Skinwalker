@@ -237,23 +237,23 @@ export class SkeletonSkin implements Skin {
 
         <!-- Right bone arm = window tools: the five glowing icons from the web
              build's controller sprite, on the plate's bare strip. -->
-        <button class="sk-tool sk-tool-minimize" aria-label="Minimize" title="Minimize">
+        <button class="sk-tool sk-tool-minimize" aria-label="Minimize">
           <img class="sk-tool-icon" src="${toolMinimizeIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Minimize</span>
         </button>
-        <button class="sk-tool sk-tool-skin" aria-label="Change skin" title="Change skin">
+        <button class="sk-tool sk-tool-skin" aria-label="Change skin">
           <img class="sk-tool-icon" src="${toolSkinIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Change skin</span>
         </button>
-        <button class="sk-tool sk-tool-folder" aria-label="Open audio folder" title="Open audio folder">
+        <button class="sk-tool sk-tool-folder" aria-label="Open audio folder">
           <img class="sk-tool-icon" src="${toolFolderIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Open audio folder</span>
         </button>
-        <button class="sk-tool sk-tool-mini" aria-label="Mini version" title="Mini version">
+        <button class="sk-tool sk-tool-mini" aria-label="Mini version">
           <img class="sk-tool-icon" src="${toolMiniIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Mini version</span>
         </button>
-        <button class="sk-tool sk-tool-close" aria-label="Close player" title="Close player">
+        <button class="sk-tool sk-tool-close" aria-label="Close player">
           <img class="sk-tool-icon" src="${toolCloseIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Close player</span>
         </button>
@@ -561,6 +561,9 @@ export class SkeletonSkin implements Skin {
     const playing = this.player?.audio.isPlaying ?? false
     if (body.classList.contains('playing') === playing) return
     body.classList.toggle('playing', playing)
+    // Latched: a pause after playback keeps the mouth's default strip and the
+    // dim sockets, while a fresh launch stays fully dark.
+    if (playing) body.classList.add('has-played')
     pendant.setAttribute('aria-pressed', String(playing))
     pendant.setAttribute('aria-label', playing ? 'Pause' : 'Play')
     const miniPlay = this.els?.miniPlay
