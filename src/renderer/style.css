@@ -2140,21 +2140,25 @@ input[type="range"]::-moz-range-thumb {
   background: #27eaff0c;
 }
 .skeleton-skin .sk-mini-face .sk-mini-play {
-  left: 41.2%;
-  top: 78%;
+  /* The painted pendant's inner face: 99 px circle centred on (299, 529) in
+     the 620x622 card, i.e. a 51 px disc at 40.2% / 77%. Matching that circle
+     and its blue shading keeps the button invisible against the art. */
+  left: 40.2%;
+  top: 77%;
   width: 16%;
-  height: 15%;
-  background: #03202d;
-  color: #e0ffff;
-  font: 9.375cqw Arial, sans-serif;
-  text-shadow: 0 0 0.9375cqw #fff, 0 0 2.1875cqw #0ff, 0 0 5cqw #008cff;
-  box-shadow: 0 0 2.8125cqw #00dfff40;
+  height: 15.9%;
+  background: radial-gradient(circle at 50% 48%, #033149 0%, #022a42 60%, #021a2a 100%);
 }
-.skeleton-skin .sk-mini-face .sk-mini-play.isPlaying {
-  background: transparent;
-  color: transparent;
-  box-shadow: none;
-  text-shadow: none;
+/* Same painted glyph as the big pendant, scaled into the mini disc. */
+.skeleton-skin .sk-mini-play-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 0 1px #cdffff)
+    drop-shadow(0 0 3px #1ee6ff)
+    drop-shadow(0 0 7px #008cff);
 }
 .skeleton-skin .sk-mini-restore { left: 63%; top: 51.6%; width: 20%; height: 20%; }
 .skeleton-skin .sk-mini-close { left: 18.6%; top: 69%; width: 16%; height: 16%; }

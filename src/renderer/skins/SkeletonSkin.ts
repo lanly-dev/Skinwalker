@@ -266,7 +266,16 @@ export class SkeletonSkin implements Skin {
             <div class="sk-mini-eq" aria-hidden="true">${miniBars}</div>
             <i class="sk-mini-eye sk-mini-eye-left" aria-hidden="true"></i>
             <i class="sk-mini-eye sk-mini-eye-right" aria-hidden="true"></i>
-            <button class="sk-mini-play" aria-label="Play" aria-pressed="false">▶</button>
+            <button class="sk-mini-play" aria-label="Play" aria-pressed="false">
+              <svg class="sk-mini-play-icon" viewBox="0 0 100 100" aria-hidden="true">
+                <path class="sk-glyph sk-glyph-play"
+                      d="M48.46 32.80 Q36.25 25.25 36.25 39.61 L36.25 60.39 Q36.25 74.75 48.46 67.20 L65.26 56.80 Q76.25 50 65.26 43.20 Z" />
+                <g class="sk-glyph sk-glyph-pause">
+                  <rect x="31.75" y="25.25" width="12.5" height="49.5" rx="5" />
+                  <rect x="55.75" y="25.25" width="12.5" height="49.5" rx="5" />
+                </g>
+              </svg>
+            </button>
             <button class="sk-mini-restore" aria-label="Back to the full player" title="Back to the full player"></button>
             <button class="sk-mini-close" aria-label="Close player" title="Close player"></button>
           </div>
@@ -568,8 +577,6 @@ export class SkeletonSkin implements Skin {
     pendant.setAttribute('aria-label', playing ? 'Pause' : 'Play')
     const miniPlay = this.els?.miniPlay
     if (miniPlay) {
-      miniPlay.textContent = playing ? 'Ⅱ' : '▶'
-      miniPlay.classList.toggle('isPlaying', playing)
       miniPlay.setAttribute('aria-pressed', String(playing))
       miniPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play')
     }
