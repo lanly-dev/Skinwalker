@@ -130,6 +130,12 @@ input[type="range"]::-moz-range-thumb {
 /* ── Reduced motion ──────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition-duration: 0.01ms !important; }
+  /* The one exception: a readout wider than its window cannot be read at all
+     without the slow drift, so it keeps sliding even when the OS asks for
+     reduced motion. Nothing else in the player animates. */
+  .skeleton-skin .sk-line.is-marquee {
+    animation: sk-slide var(--slide-dur, 8s) ease-in-out infinite alternate !important;
+  }
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
