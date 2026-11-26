@@ -1896,8 +1896,11 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-tool-mini { left: 65.15%; top: 56.29%; width: 2.86%; }
 .skeleton-skin .sk-tool-skin { left: 68.54%; top: 55.72%; width: 3.16%; }
 .skeleton-skin .sk-tool-folder { left: 72.26%; top: 55.19%; width: 3.12%; }
-.skeleton-skin .sk-tool-minimize { left: 75.93%; top: 55.63%; width: 4.36%; height: 3.38%; }
+.skeleton-skin .sk-tool-minimize { left: 76.13%; top: 55.52%; width: 4.01%; height: 4.76%; }
 .skeleton-skin .sk-tool-close { left: 80.84%; top: 54.16%; width: 3.56%; }
+/* The painted arm strip rises ~4.7° to the right, so the bone bar is tilted
+   onto that line instead of cutting across it. */
+.skeleton-skin .sk-tool-minimize .sk-tool-icon { transform: rotate(-6deg); }
 /* The five glowing icons from the web build's controller sprite: skull = mini,
    half-mask = change skin, coffin = open folder, bone bar = minimize, bones = close. */
 .skeleton-skin .sk-tool-icon {
