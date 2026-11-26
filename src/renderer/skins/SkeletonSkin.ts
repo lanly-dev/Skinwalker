@@ -30,6 +30,7 @@
  * plain rectangle while it is up.
  */
 import framePlate from '../assets/skeleton-frame.webp'
+import eyePair from '../assets/skeleton-eye-pair.webp'
 import miniFace from '../assets/skeleton-mini-face.webp'
 import toolMiniIcon from '../assets/skeleton-tool-mini.webp'
 import toolSkinIcon from '../assets/skeleton-tool-skin.webp'
@@ -176,9 +177,9 @@ export class SkeletonSkin implements Skin {
         <span class="sk-board-eye" style="left: 72.6206%; top: 5.9512%" aria-hidden="true"></span>
         <span class="sk-board-eye" style="left: 74.2830%; top: 6.0488%" aria-hidden="true"></span>
 
-        <!-- Eye sockets = readout, driven by the jaw's energy -->
-        <span class="sk-eye sk-eye-left" aria-hidden="true"></span>
-        <span class="sk-eye sk-eye-right" aria-hidden="true"></span>
+        <!-- Eyes = the cutout pair laid over the plate's hollow sockets; CSS
+             keeps it dark until the first play and pulses it with the jaw. -->
+        <img class="sk-eyes" src="${eyePair}" alt="" draggable="false" aria-hidden="true" />
 
         <!-- Jaw = visualizer -->
         <canvas class="sk-viz" width="320" height="200" aria-hidden="true"></canvas>

@@ -1529,27 +1529,20 @@ input[type="range"]::-moz-range-thumb {
 }
 .skeleton-skin .sk-row.active .sk-row-time { color: #35e5ff; }
 
-/* Eye sockets = readout: the bloom follows the teeth-line energy */
-.skeleton-skin .sk-eye {
+/* Eyes = the cutout pair laid over the plate's hollow sockets. It is dark
+   until the first play, then pulses on the same --eye energy as the jaw. */
+.skeleton-skin .sk-eyes {
   position: absolute;
-  top: 38.4%;
-  width: 1.2%;
-  height: 2.3%;
-  border-radius: 50%;
-  /* The play glyph's own paint — flat cyan, pale stroke, its three-step bloom */
-  background: #0af6ff;
-  border: 1px solid #d6ffff;
-  box-sizing: border-box;
-  opacity: var(--eye, 0.2);
-  filter:
-    drop-shadow(0 0 0.16cqw #cdffff)
-    drop-shadow(0 0 0.44cqw #1ee6ff)
-    drop-shadow(0 0 1.05cqw #008cff);
+  left: 46.09%;
+  top: 36.98%;
+  width: 8.15%;
+  height: 4.88%;
   pointer-events: none;
+  user-select: none;
   z-index: 2;
+  opacity: 0;
 }
-.skeleton-skin .sk-eye-left { left: 47.2%; }
-.skeleton-skin .sk-eye-right { left: 52%; }
+.skeleton-skin .sk-body.playing .sk-eyes { opacity: var(--eye, 0.2); }
 
 /* Mouth = visualizer. The web build draws its EQ across the whole dark mouth
    opening, mirrored around a bright centre line, so the strip covers that
@@ -1572,30 +1565,15 @@ input[type="range"]::-moz-range-thumb {
 }
 /* At rest the skull stays dead: no socket bloom and no mouth EQ until the
    track first plays. The same class drives the pendant's breathe. */
-.skeleton-skin .sk-body:not(.playing) .sk-eye,
 .skeleton-skin .sk-body:not(.playing) .sk-viz {
   opacity: 0;
 }
-/* ...but the plate itself paints both sockets lit. Before the first play each
-   overlay shrinks to a dark disc over just the bright pupil (the painted cores
-   are 1.76% x 3.32% at 48.01% and 1.89% x 3.12% at 52.18%, both centred on
-   y 40%). Keeping it small leaves the nose between the sockets untouched. */
-.skeleton-skin .sk-body:not(.playing):not(.has-played) .sk-eye {
-  opacity: 1;
-  top: 38.1%;
-  width: 2.2%;
-  height: 3.8%;
-  background: #04090d;
-  border: 0;
-  border-radius: 50%;
-  filter: none;
-}
-.skeleton-skin .sk-body:not(.playing):not(.has-played) .sk-eye-left { left: 46.91%; }
-.skeleton-skin .sk-body:not(.playing):not(.has-played) .sk-eye-right { left: 51.08%; }
+/* The plate's sockets are hollow now, so before the first play there is
+   nothing to cover: the pair stays dark and the skull reads as dead. */
 /* Once the track has played, a pause keeps the skull awake: the sockets hold
    their dim rest bloom and the mouth falls back to its default strip. The
    corner skulls are not part of this — they need a hover, or playback. */
-.skeleton-skin .sk-body.has-played:not(.playing) .sk-eye {
+.skeleton-skin .sk-body.has-played:not(.playing) .sk-eyes {
   opacity: var(--eye, 0.2);
 }
 .skeleton-skin .sk-body.has-played:not(.playing) .sk-viz {
