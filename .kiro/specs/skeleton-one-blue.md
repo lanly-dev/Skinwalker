@@ -1,6 +1,6 @@
 # Skeleton Skin: One Blue
 
-**Status:** In Progress (revision 3: brighter blue)
+**Status:** Revision 3 implemented (brighter blue, `#40a9ff`); visual check pending
 **Created:** 2026-11-25
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -69,3 +69,9 @@ Revision 2 results (2026-11-25):
 The maintainer asked for a brighter blue. Neon colours are already at full brightness value (1.0), so the blue is lifted by lowering saturation toward white, keeping hue 207.
 - R10: Skeleton colours and pixels with hue 200-215, saturation above 0.15 and brightness value above 0.5 get saturation x 0.75. `--sk-blue` becomes `#40a9ff` (`#008cff` at 0.75 saturation). Dark panels (value 0.5 or less) are not touched, so backgrounds stay deep.
 - Same scope as revision 2: Skeleton CSS rules, `SkeletonSkin.ts` canvas colours, the seven Skeleton webps. Alpha must stay identical.
+
+Revision 3 results (2026-11-25):
+- CSS: 58 edits inside Skeleton rules (0 lines outside); `--sk-blue: #40a9ff`. Dark panels unchanged.
+- TS: `#0a91ff` -> `#47acff`, `#35a4ff` -> `#68bbff`, `#b7dfff` -> `#c9e7ff`, `#66baff` -> `#8ccbff`.
+- Images: the CSS rule (bright pixels only) moved just 0.2% of the plate, because its blue glows are dim (value 0.5 or less). So images use a different rule: every blue pixel gets saturation x0.75 and value x1.3 (clamped at 1). Pixels moved per file: plate not counted (run interrupted, re-run once from `HEAD`), mini face 15.9%, tools 1.7% to 37.9%. Alpha max diff 0 in all seven files.
+- `npm run typecheck` and `npm run build` pass. Not checked in the running app.
