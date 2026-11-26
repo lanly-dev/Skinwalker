@@ -65,7 +65,7 @@ const BAR_COUNT = 15
 /** Bar colour, matched to the pendant's play glyph blue */
 const BAR_COLOR = '#0af6ff'
 /** Playlist skull colours, taken from the web build's first rows */
-const ROW_COLORS = ['#35e5ff', '#b3ef32', '#c397ff']
+const ROW_COLORS = ['#35f8ff', '#b3ef32', '#c397ff']
 /** Hue rotations that take the skull art's cyan to each row colour above, so the
  *  rows keep the web build's cyan / lime / violet rhythm. */
 const ROW_HUES = ['0deg', '-102deg', '84deg']
@@ -212,7 +212,7 @@ export class SkeletonSkin implements Skin {
           <svg viewBox="0 0 48 48" aria-hidden="true">
             <path class="sk-mute-cone" d="M7 17.5h8.6L26.4 7v34L15.6 30.5H7z" fill="#b7f5ff" stroke="#eaffff"
                   stroke-width="1.6" stroke-linejoin="round" />
-            <path class="sk-mute-waves" d="M31.2 16.2q6.4 7.8 0 15.6M36.4 9.6q11 14.4 0 28.8" fill="none" stroke="#66eaff"
+            <path class="sk-mute-waves" d="M31.2 16.2q6.4 7.8 0 15.6M36.4 9.6q11 14.4 0 28.8" fill="none" stroke="#66f9ff"
                   stroke-width="3.2" stroke-linecap="round" />
           </svg>
         </button>

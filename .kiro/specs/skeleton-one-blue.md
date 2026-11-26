@@ -1,6 +1,6 @@
 # Skeleton Skin: One Blue
 
-**Status:** In Progress
+**Status:** Implemented; visual check pending
 **Created:** 2026-11-25
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -33,9 +33,9 @@ alpha, so dark panels stay dark and glows stay soft; only the hue changes.
 - [ ] R5: No other skin's colours change.
 
 ## Tasks
-- [ ] T1: Script the CSS change (only inside Skeleton-scoped rules) and the TS canvas colours.
-- [ ] T2: Hue-shift the five Skeleton webp assets with PIL (pixels with hue 170-230 and saturation above 0.15).
-- [ ] T3: Measure: re-run the hue census; report remaining distinct hues.
+- [x] T1: Script the CSS change (only inside Skeleton-scoped rules) and the TS canvas colours.
+- [x] T2: Hue-shift the five Skeleton webp assets with PIL (pixels with hue 170-230 and saturation above 0.15).
+- [x] T3: Measure: re-run the hue census; report remaining distinct hues.
 
 ## Acceptance Criteria
 - Census of Skeleton CSS rules shows one hue (182, within rounding).
@@ -43,3 +43,10 @@ alpha, so dark panels stay dark and glows stay soft; only the hue changes.
 - [MAINTAINER: in the running app, Skeleton reads as one blue and nothing looks washed out.]
 
 ## Implementation Notes
+2026-11-25:
+- CSS: 85 colour edits inside Skeleton-scoped rules only (checked: 0 changed lines fall outside them). `--sk-blue: #0af6ff` sits on `.skeleton-skin`; 12 uses go through it (`var(--sk-blue)`, or `color-mix(..., transparent)` where the old colour had alpha). Every other blue keeps its own saturation, brightness and alpha at hue 182.4.
+- Census after: 65 uses at hue 182; 9 near-black panel colours (brightness 0.04 to 0.18) read as 180 or 183 because 8-bit rounding cannot hold the hue that dark. They are visually black.
+- TS: `#35e5ff` -> `#35f8ff`, `#66eaff` -> `#66f9ff` in `SkeletonSkin.ts`; `#0af6ff` already matched; the green and violet EQ colours are untouched.
+- Assets: blue pixels in `skeleton-mini-face`, `skeleton-tool-{close,folder,mini,minimize,skin}.webp` shifted to hue 182.4 (4% to 53% of pixels per file). Alpha unchanged (max diff 0). Other pixels moved 0.6 to 1.6 of 255 on average from WebP re-encoding (quality 92). Files are 2% to 38% smaller. `skeleton-tool-close` has almost no blue; its remaining tint reads at hue 167-171 and was left alone (below the 0.45 saturation used for the census).
+- `npm run typecheck` and `npm run build` pass. Not checked in the running app; R1 to R5 stay unticked until the maintainer confirms.
+- Not changed: `skeleton-frame.webp` (the plate has few saturated blue pixels; its median is hue 189).
