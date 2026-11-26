@@ -1,6 +1,6 @@
 # Skeleton Skin: One Blue
 
-**Status:** Implemented; visual check pending
+**Status:** In Progress (revision 2: cyan to blue)
 **Created:** 2026-11-25
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -50,3 +50,11 @@ alpha, so dark panels stay dark and glows stay soft; only the hue changes.
 - Assets: blue pixels in `skeleton-mini-face`, `skeleton-tool-{close,folder,mini,minimize,skin}.webp` shifted to hue 182.4 (4% to 53% of pixels per file). Alpha unchanged (max diff 0). Other pixels moved 0.6 to 1.6 of 255 on average from WebP re-encoding (quality 92). Files are 2% to 38% smaller. `skeleton-tool-close` has almost no blue; its remaining tint reads at hue 167-171 and was left alone (below the 0.45 saturation used for the census).
 - `npm run typecheck` and `npm run build` pass. Not checked in the running app; R1 to R5 stay unticked until the maintainer confirms.
 - Not changed: `skeleton-frame.webp` (the plate has few saturated blue pixels; its median is hue 189).
+
+## Revision 2 (2026-11-25): cyan to blue
+The maintainer asked for the cyan to become blue. New target: **`#008cff`, hue 207.1**, the deeper azure the skin already used on its glows before revision 1.
+
+- R7: Every Skeleton colour with hue 170-230 and saturation above 0.15 moves to hue 207.1, keeping its own saturation, brightness and alpha. This now also covers pale tints (saturation 0.15-0.4), so no cyan-white remains next to the blue. `--sk-blue` becomes `#008cff`.
+- R8: Same shift in `SkeletonSkin.ts` canvas colours and the six Skeleton icon/mini assets.
+- R9: The plate `skeleton-frame.webp` is shifted too: 58% of its opaque pixels are in the cyan range (measured at `28c15b8`), so leaving it would keep a cyan skeleton under blue controls. Alpha must stay identical, because the window shape is built from it.
+- Known effect: at the same brightness value, blue looks darker than cyan, so the skin will read darker overall. [MAINTAINER: say if a lighter blue is wanted, e.g. `#3aa0ff`.]
