@@ -179,7 +179,10 @@ export class SkeletonSkin implements Skin {
 
         <!-- Eyes = the cutout pair laid over the plate's hollow sockets; CSS
              keeps it dark until the first play and pulses it with the jaw. -->
-        <img class="sk-eyes" src="${eyePair}" alt="" draggable="false" aria-hidden="true" />
+        <span class="sk-eyes" aria-hidden="true">
+          <img class="sk-eyes-art" src="${eyePair}" alt="" draggable="false" />
+          <img class="sk-eyes-glow" src="${eyePair}" alt="" draggable="false" />
+        </span>
 
         <!-- Jaw = visualizer -->
         <canvas class="sk-viz" width="320" height="200" aria-hidden="true"></canvas>
@@ -657,6 +660,8 @@ export class SkeletonSkin implements Skin {
     const miniEye = playing ? 0.2 + miniEnergy / 48 : 0.12
     for (const eyeEl of els.miniEyes) eyeEl.style.opacity = String(miniEye)
 
+    // The sockets glow with the track's smoothed level: loud passages fill
+    // them, quiet ones dim them, and a pause keeps the dim ember.
     const eye = playing ? Math.min(1, 0.3 + (energy / BAR_COUNT) * 1.9) : 0.2
     const quantized = Math.round(eye * 20) / 20
     if (quantized !== this.eyeLevel) {
