@@ -107,6 +107,11 @@ export class SkeletonSkin implements Skin {
   private freqData: Uint8Array<ArrayBuffer> | null = null
   private smooth = new Float32Array(BAR_COUNT)
   private eyeLevel = -1
+  private prevFreq: Uint8Array<ArrayBuffer> = new Uint8Array(0)
+  private beatEnv = 0
+  private lastBeatAt = 0
+  private lastFrameAt = 0
+  private beatLevel = -1
 
   private seeking = false
   private activeIndex = -1
@@ -135,6 +140,9 @@ export class SkeletonSkin implements Skin {
     app.appendChild(this.container)
 
     this.freqData = new Uint8Array(
+      player.audio.analyser.frequencyBinCount,
+    ) as Uint8Array<ArrayBuffer>
+    this.prevFreq = new Uint8Array(
       player.audio.analyser.frequencyBinCount,
     ) as Uint8Array<ArrayBuffer>
 
@@ -182,6 +190,7 @@ export class SkeletonSkin implements Skin {
         <span class="sk-eyes" aria-hidden="true">
           <img class="sk-eyes-art" src="${eyePair}" alt="" draggable="false" />
           <img class="sk-eyes-glow" src="${eyePair}" alt="" draggable="false" />
+          <img class="sk-eyes-beat" src="${eyePair}" alt="" draggable="false" />
         </span>
 
         <!-- Jaw = visualizer -->
@@ -659,6 +668,35 @@ export class SkeletonSkin implements Skin {
     })
     const miniEye = playing ? 0.2 + miniEnergy / 48 : 0.12
     for (const eyeEl of els.miniEyes) eyeEl.style.opacity = String(miniEye)
+
+    // Second, faster layer: a short bloom on low-band attacks. --eye keeps
+    // following the level; --eye-beat only adds the kick on top, so a loud
+    // passage still breathes without strobing the whole socket.
+    const dt = Math.min(0.05, Math.max(0.001, (now - this.lastFrameAt) / 1000))
+    this.lastFrameAt = now
+    if (playing && freq && this.prevFreq.length === freq.length) {
+      const bands = Math.min(48, freq.length)
+      let flux = 0
+      for (let i = 0; i < bands; i++) {
+        const d = freq[i] - this.prevFreq[i]
+        if (d > 0) flux += d
+        this.prevFreq[i] = freq[i]
+      }
+      flux /= bands * 255
+      if (flux > 0.009 && energy / BAR_COUNT > 0.08 && now - this.lastBeatAt > 120) {
+        this.beatEnv = 1
+        this.lastBeatAt = now
+      }
+      this.beatEnv = Math.max(0, this.beatEnv - dt / 0.2)
+    } else {
+      this.beatEnv = 0
+      this.prevFreq.fill(0)
+    }
+    const beatLevel = Math.round(this.beatEnv * 20) / 20
+    if (beatLevel !== this.beatLevel) {
+      this.beatLevel = beatLevel
+      els.eyeGlowHost.style.setProperty('--eye-beat', String(beatLevel))
+    }
 
     // The sockets glow with the track's smoothed level: loud passages fill
     // them, quiet ones dim them, and a pause keeps the dim ember.
