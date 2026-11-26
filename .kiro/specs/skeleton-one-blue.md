@@ -1,6 +1,6 @@
 # Skeleton Skin: One Blue
 
-**Status:** Revision 2 implemented (cyan to blue, `#008cff`); visual check pending
+**Status:** In Progress (revision 3: brighter blue)
 **Created:** 2026-11-25
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -64,3 +64,8 @@ Revision 2 results (2026-11-25):
 - TS: `#0af6ff` -> `#0a91ff`, `#35f8ff` -> `#35a4ff`, `#b7f5ff` -> `#b7dfff`, `#66f9ff` -> `#66baff`.
 - Assets: all seven Skeleton webps, including the plate (34% of its pixels moved). Every file: same size in pixels, alpha max diff 0 against `HEAD`, saturated blue now peaks at hue 205-208. The plate went from 287,688 to 182,270 bytes at WebP quality 92.
 - `npm run typecheck` and `npm run build` pass. Not checked in the running app; R1 to R9 stay unticked until the maintainer confirms.
+
+## Revision 3 (2026-11-25): brighter blue
+The maintainer asked for a brighter blue. Neon colours are already at full brightness value (1.0), so the blue is lifted by lowering saturation toward white, keeping hue 207.
+- R10: Skeleton colours and pixels with hue 200-215, saturation above 0.15 and brightness value above 0.5 get saturation x 0.75. `--sk-blue` becomes `#40a9ff` (`#008cff` at 0.75 saturation). Dark panels (value 0.5 or less) are not touched, so backgrounds stay deep.
+- Same scope as revision 2: Skeleton CSS rules, `SkeletonSkin.ts` canvas colours, the seven Skeleton webps. Alpha must stay identical.
