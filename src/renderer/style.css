@@ -1515,10 +1515,15 @@ input[type="range"]::-moz-range-thumb {
   width: 1.2%;
   height: 2.3%;
   border-radius: 50%;
+  /* The play glyph's own paint — flat cyan, pale stroke, its three-step bloom */
   background: #0af6ff;
-  filter: blur(0.2cqw);
+  border: 1px solid #d6ffff;
+  box-sizing: border-box;
   opacity: var(--eye, 0.2);
-  box-shadow: 0 0 1.2cqw 0.7cqw #008cff;
+  filter:
+    drop-shadow(0 0 0.16cqw #cdffff)
+    drop-shadow(0 0 0.44cqw #1ee6ff)
+    drop-shadow(0 0 1.05cqw #008cff);
   pointer-events: none;
   z-index: 2;
 }
@@ -1629,7 +1634,7 @@ input[type="range"]::-moz-range-thumb {
   transform: rotate(6deg);
   appearance: none;
   -webkit-appearance: none;
-  border: 1px solid #17566d;
+  border: 1px solid #d6ffff;
   border-radius: 999px;
   background: linear-gradient(
     90deg,
@@ -1638,7 +1643,10 @@ input[type="range"]::-moz-range-thumb {
     #03101d var(--level, 80%),
     #03101d 100%
   );
-  box-shadow: inset 0 2px 4px #000c, 0 1px 1px #69c8e530;
+  box-shadow:
+    0 0 0.16cqw #cdffff,
+    0 0 0.44cqw #1ee6ff,
+    0 0 1.05cqw #008cff;
   cursor: pointer;
   z-index: 3;
 }
@@ -1789,26 +1797,29 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-seek {
   position: absolute;
   left: 34.8%;
-  top: 80.45%;
+  top: 79.37%;
   width: 30.7%;
-  height: 1.1%;
+  height: 1cqw;
   margin: 0;
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
+  /* A capsule as thick as the bone thumb, stroked in neon cyan. The played run
+     fills solid cyan; the rest stays a dark channel, as in the reference. */
   background: linear-gradient(
     90deg,
     #0af6ff 0%,
     #0af6ff var(--progress, 0%),
-    #0b4254 var(--progress, 0%),
-    #0b4254 100%
+    #02121f var(--progress, 0%),
+    #02121f 100%
   );
-  border: 0;
+  border: 1px solid #10ecf6;
   border-radius: 999px;
   box-shadow:
-    inset 0 0 0.18cqw #d9feff55,
-    0 0 0.15cqw #bffcff99,
-    0 0 0.45cqw #0af6ffaa;
+    inset 0 0 0.18cqw #0af6ff4d,
+    0 0 0.18cqw #0af6ffcc,
+    0 0 0.55cqw #12dcf080,
+    0 0 1.15cqw #0070cc5c;
   z-index: 3;
 }
 /* The thumb is an upright cartoon bone, as in the reference art: a shaft with
@@ -1824,8 +1835,10 @@ input[type="range"]::-moz-range-thumb {
   min-width: 11px;
   min-height: 15px;
   border: 0;
+  /* the shared range-thumb defaults would ring the bone in a circle */
+  border-radius: 0;
+  box-shadow: none;
   background: url("./assets/skeleton-seek-thumb.png") center / contain no-repeat;
-  filter: drop-shadow(0 0 0.3cqw #0af6ffb3);
   cursor: grab;
 }
 .skeleton-skin .sk-seek:active::-webkit-slider-thumb { cursor: grabbing; }
