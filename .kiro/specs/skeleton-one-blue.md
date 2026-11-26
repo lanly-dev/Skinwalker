@@ -1,6 +1,6 @@
 # Skeleton Skin: One Blue
 
-**Status:** Revision 3 implemented (brighter blue, `#40a9ff`); visual check pending
+**Status:** Reverted 2026-11-26 at the maintainer's request. All three revisions undone; the skin is back to its original colours for re-evaluation.
 **Created:** 2026-11-25
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -75,3 +75,11 @@ Revision 3 results (2026-11-25):
 - TS: `#0a91ff` -> `#47acff`, `#35a4ff` -> `#68bbff`, `#b7dfff` -> `#c9e7ff`, `#66baff` -> `#8ccbff`.
 - Images: the CSS rule (bright pixels only) moved just 0.2% of the plate, because its blue glows are dim (value 0.5 or less). So images use a different rule: every blue pixel gets saturation x0.75 and value x1.3 (clamped at 1). Pixels moved per file: plate not counted (run interrupted, re-run once from `HEAD`), mini face 15.9%, tools 1.7% to 37.9%. Alpha max diff 0 in all seven files.
 - `npm run typecheck` and `npm run build` pass. Not checked in the running app.
+
+## Reverted (2026-11-26)
+The maintainer judged the blue change a bad call and asked for the original colours back, to evaluate again. The colour diffs of the three revision commits (`5a433e9`, `af000dd`, `b75fed4`) were reverse-applied to `src/` only. Verified against `5a433e9~1` (the state before revision 1):
+- Six Skeleton webps are byte-identical to the originals.
+- `skeleton-tool-minimize.webp` is the maintainer's later version from `28c15b8` (left as is; it was made after revision 1).
+- `SkeletonSkin.ts` is identical to the original.
+- `style.css` differs from the original only by the maintainer's later edits: the `28c15b8` minimize position and the bone seek thumb (`032d172`). The thumb's glow used `var(--sk-blue)`, which no longer exists, so it now uses the original neon `#0af6ff` at 70% alpha.
+Open idea from the maintainer, not started: a glossier outline on the neon elements.
