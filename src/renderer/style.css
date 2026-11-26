@@ -1602,7 +1602,8 @@ input[type="range"]::-moz-range-thumb {
    their dim rest bloom and the mouth falls back to its default strip. The
    corner skulls are not part of this — they need a hover, or playback. */
 .skeleton-skin .sk-body.has-played:not(.playing) .sk-eyes {
-  opacity: var(--eye, 0.2);
+  /* A pause keeps the pair visibly lit, not a 0.2 ember that reads as gone. */
+  opacity: 0.8;
 }
 .skeleton-skin .sk-body.has-played:not(.playing) .sk-viz {
   opacity: 1;
