@@ -2096,8 +2096,12 @@ input[type="range"]::-moz-range-thumb {
   align-items: flex-end;
   justify-content: space-between;
   pointer-events: none;
+  /* Silent mouth until the track actually plays; the art's own dotted tooth
+     line stays, the live bars do not idle. */
+  opacity: 0;
   clip-path: polygon(0 0, 65% 15%, 100% 60%, 95% 85%, 45% 100%, 0 90%);
 }
+.skeleton-skin .sk-body.playing .sk-mini-eq { opacity: 1; }
 .skeleton-skin .sk-mini-eq i {
   width: 3%;
   height: 6%;
@@ -2141,13 +2145,13 @@ input[type="range"]::-moz-range-thumb {
 }
 .skeleton-skin .sk-mini-face .sk-mini-play {
   /* The painted pendant's inner face: 99 px circle centred on (299, 529) in
-     the 620x622 card, i.e. a 51 px disc at 40.2% / 77%. Matching that circle
-     and its blue shading keeps the button invisible against the art. */
+     the 620x622 card, i.e. a 51 px disc at 40.2% / 77%. The button is only the
+     glyph's hit area — the face and its shading stay in the art, which no
+     longer carries the painted pause bars. */
   left: 40.2%;
   top: 77%;
   width: 16%;
   height: 15.9%;
-  background: radial-gradient(circle at 50% 48%, #033149 0%, #022a42 60%, #021a2a 100%);
 }
 /* Same painted glyph as the big pendant, scaled into the mini disc. */
 .skeleton-skin .sk-mini-play-icon {
