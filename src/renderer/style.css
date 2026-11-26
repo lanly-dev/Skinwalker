@@ -1387,7 +1387,7 @@ input[type="range"]::-moz-range-thumb {
 
 .skeleton-skin {
   /* The one Skeleton blue (spec: .kiro/specs/skeleton-one-blue.md). */
-  --sk-blue: #0af6ff;
+  --sk-blue: #008cff;
   filter: none;
 }
 
@@ -1426,9 +1426,9 @@ input[type="range"]::-moz-range-thumb {
   top: 8.7%;
   width: 37.7%;
   height: 23.2%;
-  background: #021516;
+  background: #020d16;
   border-radius: 1.1cqw;
-  box-shadow: inset 0 0 0 1px #38f8ff2e, inset 0 0 1.6cqw #001718;
+  box-shadow: inset 0 0 0 1px #38a5ff2e, inset 0 0 1.6cqw #000d18;
   overflow: hidden;
   z-index: 2;
 }
@@ -1442,7 +1442,7 @@ input[type="range"]::-moz-range-thumb {
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: #b5fbff;
+  background: #b5deff;
   opacity: 0;
   transition: opacity 0.18s ease-out;
   pointer-events: none;
@@ -1478,7 +1478,7 @@ input[type="range"]::-moz-range-thumb {
   letter-spacing: 0.01em;
   text-transform: uppercase;
   white-space: nowrap;
-  text-shadow: 0 0 0.1cqw #000, 0 0 0.3cqw #010b0b, 0 0 0.6cqw #010b0bcc;
+  text-shadow: 0 0 0.1cqw #000, 0 0 0.3cqw #01060b, 0 0 0.6cqw #01060bcc;
   cursor: pointer;
   transition: border-color 0.1s, box-shadow 0.1s;
 }
@@ -1488,7 +1488,7 @@ input[type="range"]::-moz-range-thumb {
   flex: none;
   display: flex;
   align-items: center;
-  color: var(--row, #35f8ff);
+  color: var(--row, #35a4ff);
 }
 .skeleton-skin .sk-skull img {
   display: block;
@@ -1502,15 +1502,15 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-row-time { flex: none; font-size: 0.95em; }
 .skeleton-skin .sk-row:hover,
 .skeleton-skin .sk-row:focus-visible {
-  filter: drop-shadow(0 0 0.45cqw #32f7ff);
-  outline: 1px solid #62f9ff;
+  filter: drop-shadow(0 0 0.45cqw #32a3ff);
+  outline: 1px solid #62b8ff;
 }
 .skeleton-skin .sk-row.active {
-  border-color: #63f9ff;
-  color: #35f8ff;
-  box-shadow: inset 0 0 0.45cqw #28f7ff, 0 0 0.45cqw #28f7ff;
+  border-color: #63b9ff;
+  color: #35a4ff;
+  box-shadow: inset 0 0 0.45cqw #289eff, 0 0 0.45cqw #289eff;
 }
-.skeleton-skin .sk-row.active .sk-row-time { color: #35f8ff; }
+.skeleton-skin .sk-row.active .sk-row-time { color: #35a4ff; }
 
 /* Eye sockets = readout: the bloom follows the teeth-line energy */
 .skeleton-skin .sk-eye {
@@ -1522,7 +1522,7 @@ input[type="range"]::-moz-range-thumb {
   background: var(--sk-blue);
   filter: blur(0.2cqw);
   opacity: var(--eye, 0.2);
-  box-shadow: 0 0 1.2cqw 0.7cqw #00f6ff;
+  box-shadow: 0 0 1.2cqw 0.7cqw #008cff;
   pointer-events: none;
   z-index: 2;
 }
@@ -1576,9 +1576,9 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    #00f6ff8c 0%,
-    #00f6ff4d 40%,
-    #00d0d81f 64%,
+    #008cff8c 0%,
+    #008cff4d 40%,
+    #0077d81f 64%,
     transparent 80%
   );
   filter: blur(0.22cqw);
@@ -1591,13 +1591,13 @@ input[type="range"]::-moz-range-thumb {
   height: 100%;
   pointer-events: none;
   filter:
-    drop-shadow(0 0 0.16cqw #cdffff)
-    drop-shadow(0 0 0.44cqw #1ef7ff)
-    drop-shadow(0 0 1.05cqw #00f6ff);
+    drop-shadow(0 0 0.16cqw #cde8ff)
+    drop-shadow(0 0 0.44cqw #1e9aff)
+    drop-shadow(0 0 1.05cqw #008cff);
 }
 .skeleton-skin .sk-glyph {
   fill: var(--sk-blue);
-  stroke: #d6ffff;
+  stroke: #d6edff;
   stroke-width: 4.5;
   stroke-linejoin: round;
 }
@@ -1606,10 +1606,10 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-body.playing .sk-glyph-pause { display: block; }
 .skeleton-skin .sk-body.playing .sk-pendant {
   box-shadow:
-    inset 0 0 0.59cqw #00f6ff99,
-    0 0 0.33cqw #10f6ffaa,
-    0 0 0.91cqw #00f6ff99,
-    0 0 1.96cqw #00f6ff70;
+    inset 0 0 0.59cqw #008cff99,
+    0 0 0.33cqw #1093ffaa,
+    0 0 0.91cqw #008cff99,
+    0 0 1.96cqw #008cff70;
   animation: sk-breathe 1.6s ease-in-out infinite;
 }
 @keyframes sk-breathe {
@@ -1633,16 +1633,16 @@ input[type="range"]::-moz-range-thumb {
   transform: rotate(6deg);
   appearance: none;
   -webkit-appearance: none;
-  border: 1px solid #176a6d;
+  border: 1px solid #17466d;
   border-radius: 999px;
   background: linear-gradient(
     90deg,
     var(--sk-blue) 0%,
     var(--sk-blue) var(--level, 80%),
-    #031c1d var(--level, 80%),
-    #031c1d 100%
+    #03111d var(--level, 80%),
+    #03111d 100%
   );
-  box-shadow: inset 0 2px 4px #000c, 0 1px 1px #69e0e530;
+  box-shadow: inset 0 2px 4px #000c, 0 1px 1px #69ade530;
   cursor: pointer;
   z-index: 3;
 }
@@ -1651,18 +1651,18 @@ input[type="range"]::-moz-range-thumb {
   -webkit-appearance: none;
   width: clamp(7px, 2cqw, 30px);
   height: clamp(7px, 2cqw, 30px);
-  border: 1px solid #d3fdff;
+  border: 1px solid #d3ebff;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #c9fdff, var(--sk-blue) 55%, #00d8e0);
-  box-shadow: 0 0 3px #c9fdff, 0 0 8px var(--sk-blue), 0 0 16px #00f6ffaa;
+  background: radial-gradient(circle at 35% 30%, #c9e7ff, var(--sk-blue) 55%, #007be0);
+  box-shadow: 0 0 3px #c9e7ff, 0 0 8px var(--sk-blue), 0 0 16px #008cffaa;
 }
 .skeleton-skin .sk-volume::-moz-range-thumb {
   width: clamp(7px, 2cqw, 30px);
   height: clamp(7px, 2cqw, 30px);
-  border: 1px solid #d3fdff;
+  border: 1px solid #d3ebff;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #c9fdff, var(--sk-blue) 55%, #00d8e0);
-  box-shadow: 0 0 3px #c9fdff, 0 0 8px var(--sk-blue), 0 0 16px #00f6ffaa;
+  background: radial-gradient(circle at 35% 30%, #c9e7ff, var(--sk-blue) 55%, #007be0);
+  box-shadow: 0 0 3px #c9e7ff, 0 0 8px var(--sk-blue), 0 0 16px #008cffaa;
 }
 
 /* Muted: the arm's neon goes out. The lit run falls back to a dead tube and
@@ -1671,22 +1671,22 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-volume.muted {
   background: linear-gradient(
     90deg,
-    #176a6d 0%,
-    #176a6d var(--level, 80%),
-    #031c1d var(--level, 80%),
-    #031c1d 100%
+    #17466d 0%,
+    #17466d var(--level, 80%),
+    #03111d var(--level, 80%),
+    #03111d 100%
   );
-  border-color: #0d4244;
+  border-color: #0d2b44;
   box-shadow: inset 0 2px 4px #000c;
 }
 .skeleton-skin .sk-volume.muted::-webkit-slider-thumb {
-  border-color: #2d6a6c;
-  background: radial-gradient(circle at 35% 30%, #4a6a76, #1e5052 55%, #0b3233);
+  border-color: #2d506c;
+  background: radial-gradient(circle at 35% 30%, #4a6276, #1e3b52 55%, #0b2133);
   box-shadow: 0 1px 2px #000c;
 }
 .skeleton-skin .sk-volume.muted::-moz-range-thumb {
-  border-color: #2d6a6c;
-  background: radial-gradient(circle at 35% 30%, #4a6a76, #1e5052 55%, #0b3233);
+  border-color: #2d506c;
+  background: radial-gradient(circle at 35% 30%, #4a6276, #1e3b52 55%, #0b2133);
   box-shadow: 0 1px 2px #000c;
 }
 
@@ -1706,7 +1706,7 @@ input[type="range"]::-moz-range-thumb {
   background: transparent;
   transform: rotate(6deg);
   cursor: pointer;
-  filter: drop-shadow(0 0 0.26cqw #00f6ff);
+  filter: drop-shadow(0 0 0.26cqw #008cff);
   z-index: 3;
 }
 .skeleton-skin .sk-mute svg {
@@ -1718,25 +1718,25 @@ input[type="range"]::-moz-range-thumb {
 /* Hover only brightens the glyph; no box outline. The keyboard focus ring
    stays so the speaker is still visible when tabbed to. */
 .skeleton-skin .sk-mute:hover {
-  filter: drop-shadow(0 0 0.5cqw #8ffbff);
+  filter: drop-shadow(0 0 0.5cqw #8fccff);
 }
 .skeleton-skin .sk-mute:focus-visible {
-  filter: drop-shadow(0 0 0.5cqw #8ffbff);
-  outline: 1px solid #62f9ff;
+  filter: drop-shadow(0 0 0.5cqw #8fccff);
+  outline: 1px solid #62b8ff;
 }
 /* Off: the glyph's own neon dies with the channel, so the whole arm reads
    dead. The cone and waves drop to unlit glass and the bloom is pulled back
    to a faint contact shadow. Placed after the hover rule so hovering a muted
    speaker stays dark. */
 .skeleton-skin .sk-mute.muted {
-  filter: drop-shadow(0 0 0.06cqw #00f6ff2e);
+  filter: drop-shadow(0 0 0.06cqw #008cff2e);
 }
 .skeleton-skin .sk-mute.muted .sk-mute-cone {
-  fill: #386d6f;
-  stroke: #4a898b;
+  fill: #38566f;
+  stroke: #4a6e8b;
 }
 .skeleton-skin .sk-mute.muted .sk-mute-waves {
-  stroke: #2f6264;
+  stroke: #2f4c64;
 }
 
 /* Title block = live title + artist, each over the painted line it replaces */
@@ -1767,8 +1767,8 @@ input[type="range"]::-moz-range-thumb {
   text-overflow: ellipsis;
   text-shadow:
     0 0 0.1cqw #000,
-    0 0 0.28cqw #010b0b,
-    0 0 0.85cqw #010b0bcc;
+    0 0 0.28cqw #01060b,
+    0 0 0.85cqw #01060bcc;
 }
 .skeleton-skin .sk-artist {
   position: absolute;
@@ -1785,9 +1785,9 @@ input[type="range"]::-moz-range-thumb {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   white-space: nowrap;
-  text-shadow: 0 0 0.1cqw #000, 0 0 0.28cqw #010b0b, 0 0 0.6cqw #010b0bcc;
+  text-shadow: 0 0 0.1cqw #000, 0 0 0.28cqw #01060b, 0 0 0.6cqw #01060bcc;
 }
-.skeleton-skin .sk-artist b { color: #11f6ff; }
+.skeleton-skin .sk-artist b { color: #1194ff; }
 
 /* Blood line = seek */
 .skeleton-skin .sk-seek {
@@ -1804,14 +1804,14 @@ input[type="range"]::-moz-range-thumb {
     90deg,
     var(--sk-blue) 0%,
     var(--sk-blue) var(--progress, 0%),
-    #0b5154 var(--progress, 0%),
-    #0b5154 100%
+    #0b3354 var(--progress, 0%),
+    #0b3354 100%
   );
   border: 0;
   border-radius: 999px;
   box-shadow:
     inset 0 0 0.18cqw #d9feff55,
-    0 0 0.15cqw #bffcff99,
+    0 0 0.15cqw #bfe2ff99,
     0 0 0.45cqw color-mix(in srgb, var(--sk-blue) 67%, transparent);
   z-index: 3;
 }
@@ -1841,10 +1841,10 @@ input[type="range"]::-moz-range-thumb {
   /* No backdrop: the plate is already black here, and an opaque strip cut
      the tops off the painted PREV / NEXT plaques below it. */
   background: none;
-  color: #32f7ff;
+  color: #32a3ff;
   font: bold clamp(6px, 1.2cqw, 19px) monospace;
   line-height: 1.1;
-  text-shadow: 0 0 2px #00f6ff80;
+  text-shadow: 0 0 2px #008cff80;
   pointer-events: none;
   z-index: 3;
 }
@@ -1865,7 +1865,7 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-prev { left: 34.7%; width: 9.7%; }
 .skeleton-skin .sk-next { left: 56.2%; width: 9.2%; }
 .skeleton-skin .sk-prev:hover,
-.skeleton-skin .sk-next:hover { background: #36f8ff18; }
+.skeleton-skin .sk-next:hover { background: #36a4ff18; }
 .skeleton-skin .sk-prev:active,
 .skeleton-skin .sk-next:active { transform: scale(0.97); }
 
@@ -1912,9 +1912,9 @@ input[type="range"]::-moz-range-thumb {
 }
 .skeleton-skin .sk-tool:hover,
 .skeleton-skin .sk-tool:focus-visible {
-  filter: drop-shadow(0 0 0.45cqw #32f7ff);
+  filter: drop-shadow(0 0 0.45cqw #32a3ff);
 }
-.skeleton-skin .sk-tool:focus-visible { outline: 1px solid #62f9ff; }
+.skeleton-skin .sk-tool:focus-visible { outline: 1px solid #62b8ff; }
 .skeleton-skin .sk-tool:active { transform: scale(0.94); }
 .skeleton-skin .sk-tip {
   position: absolute;
@@ -1923,10 +1923,10 @@ input[type="range"]::-moz-range-thumb {
   transform: translateX(-50%);
   display: none;
   padding: 0.7cqw 0.9cqw;
-  border: 1px solid #43f8ff;
+  border: 1px solid #43aaff;
   border-radius: 0.5cqw;
-  background: #031e1f;
-  color: #bdf6ff;
+  background: #03121f;
+  color: #bde1ff;
   font: clamp(9px, 1.15cqw, 13px) Georgia, serif;
   letter-spacing: 0.06em;
   white-space: nowrap;
@@ -1965,7 +1965,7 @@ input[type="range"]::-moz-range-thumb {
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
-  filter: drop-shadow(0 0 4px #00f6ff88);
+  filter: drop-shadow(0 0 4px #008cff88);
   /* The source crop touches its top and bottom edges; feather those edges
      into the transparent margin instead of showing a hard cut. */
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16px, #000 calc(100% - 10px), transparent 100%);
@@ -1986,16 +1986,16 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-mini-eq i {
   width: 3%;
   height: 6%;
-  background: #29f7ff;
+  background: #299eff;
   border-top: 1px solid #fff;
-  box-shadow: 0 0 4px #00f6ff;
+  box-shadow: 0 0 4px #008cff;
 }
 .skeleton-skin .sk-mini-eye {
   position: absolute;
   width: 5%;
   height: 5%;
   border-radius: 50%;
-  background: #b1ffff;
+  background: #b1dcff;
   filter: blur(1.25cqw);
   pointer-events: none;
   mix-blend-mode: screen;
@@ -2016,24 +2016,24 @@ input[type="range"]::-moz-range-thumb {
 }
 .skeleton-skin .sk-mini-face button:hover,
 .skeleton-skin .sk-mini-face button:focus-visible {
-  filter: drop-shadow(0 0 2.1875cqw #2ef7ff);
+  filter: drop-shadow(0 0 2.1875cqw #2ea1ff);
 }
 .skeleton-skin .sk-mini-restore:hover,
 .skeleton-skin .sk-mini-restore:focus-visible,
 .skeleton-skin .sk-mini-close:hover,
 .skeleton-skin .sk-mini-close:focus-visible {
-  background: #27f7ff0c;
+  background: #279eff0c;
 }
 .skeleton-skin .sk-mini-face .sk-mini-play {
   left: 41.2%;
   top: 78%;
   width: 16%;
   height: 15%;
-  background: #032b2d;
+  background: #031a2d;
   color: #e0ffff;
   font: 9.375cqw Arial, sans-serif;
-  text-shadow: 0 0 0.9375cqw #fff, 0 0 2.1875cqw #00f6ff, 0 0 5cqw #00f6ff;
-  box-shadow: 0 0 2.8125cqw #00f6ff40;
+  text-shadow: 0 0 0.9375cqw #fff, 0 0 2.1875cqw #008cff, 0 0 5cqw #008cff;
+  box-shadow: 0 0 2.8125cqw #008cff40;
 }
 .skeleton-skin .sk-mini-face .sk-mini-play.isPlaying {
   background: transparent;

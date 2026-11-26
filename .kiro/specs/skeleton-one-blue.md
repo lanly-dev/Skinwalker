@@ -1,6 +1,6 @@
 # Skeleton Skin: One Blue
 
-**Status:** In Progress (revision 2: cyan to blue)
+**Status:** Revision 2 implemented (cyan to blue, `#008cff`); visual check pending
 **Created:** 2026-11-25
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -58,3 +58,9 @@ The maintainer asked for the cyan to become blue. New target: **`#008cff`, hue 2
 - R8: Same shift in `SkeletonSkin.ts` canvas colours and the six Skeleton icon/mini assets.
 - R9: The plate `skeleton-frame.webp` is shifted too: 58% of its opaque pixels are in the cyan range (measured at `28c15b8`), so leaving it would keep a cyan skeleton under blue controls. Alpha must stay identical, because the window shape is built from it.
 - Known effect: at the same brightness value, blue looks darker than cyan, so the skin will read darker overall. [MAINTAINER: say if a lighter blue is wanted, e.g. `#3aa0ff`.]
+
+Revision 2 results (2026-11-25):
+- CSS: 88 edits, all inside Skeleton rules (0 changed lines outside). `--sk-blue: #008cff`. Census of Skeleton blue-range colours (brightness above 0.25): 70 at hue 207, 1 at 206, 1 at 208 (rounding).
+- TS: `#0af6ff` -> `#0a91ff`, `#35f8ff` -> `#35a4ff`, `#b7f5ff` -> `#b7dfff`, `#66f9ff` -> `#66baff`.
+- Assets: all seven Skeleton webps, including the plate (34% of its pixels moved). Every file: same size in pixels, alpha max diff 0 against `HEAD`, saturated blue now peaks at hue 205-208. The plate went from 287,688 to 182,270 bytes at WebP quality 92.
+- `npm run typecheck` and `npm run build` pass. Not checked in the running app; R1 to R9 stay unticked until the maintainer confirms.
