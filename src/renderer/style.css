@@ -1881,6 +1881,25 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-next { left: 56.2%; width: 9.2%; }
 .skeleton-skin .sk-prev:hover,
 .skeleton-skin .sk-next:hover { background: #36deff18; }
+/* The words are painted into the plate, so each plaque carries a cyan copy of
+   its own word — cut from the plate at the button's exact pixels — and fades
+   it in on hover, letting the lettering itself glow. */
+.skeleton-skin .sk-prev::after,
+.skeleton-skin .sk-next::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: center / 100% 100% no-repeat;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+  pointer-events: none;
+}
+.skeleton-skin .sk-prev::after { background-image: url("./assets/skeleton-prev-glow.png"); }
+.skeleton-skin .sk-next::after { background-image: url("./assets/skeleton-next-glow.png"); }
+.skeleton-skin .sk-prev:hover::after,
+.skeleton-skin .sk-next:hover::after,
+.skeleton-skin .sk-prev:focus-visible::after,
+.skeleton-skin .sk-next:focus-visible::after { opacity: 1; }
 .skeleton-skin .sk-prev:active,
 .skeleton-skin .sk-next:active { transform: scale(0.97); }
 
