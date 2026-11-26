@@ -219,8 +219,8 @@ export class SkeletonSkin implements Skin {
 
         <!-- Title block = live title + artist -->
         <div class="sk-meta">
-          <span class="sk-track">—</span>
-          <span class="sk-artist">—</span>
+          <span class="sk-track"><span class="sk-line">—</span></span>
+          <span class="sk-artist"><span class="sk-line">—</span></span>
         </div>
 
         <!-- Blood line = seek -->
@@ -389,12 +389,27 @@ export class SkeletonSkin implements Skin {
 
     // Track change
     p.onTrackChange = (track, idx) => {
-      els.track.textContent = track.title
+      const line = els.track.firstElementChild as HTMLElement
+      line.textContent = track.title
       els.track.title = track.title
       this.setArtist(track.artist)
+      this.fitReadout(els.track)
       this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }
+
+    // The readout windows narrow with the stage, and the font may land after
+    // the first track does, so re-test the fit on both.
+    const refit = (): void => {
+      this.fitReadout(els.track)
+      this.fitReadout(els.artist)
+    }
+    let fitTimer: number | undefined
+    window.addEventListener('resize', () => {
+      window.clearTimeout(fitTimer)
+      fitTimer = window.setTimeout(refit, 150)
+    })
+    void document.fonts.ready.then(refit)
 
     this.buildPlaylist()
   }
@@ -423,19 +438,54 @@ export class SkeletonSkin implements Skin {
   private setArtist(text: string): void {
     const el = this.els?.artist
     if (!el) return
-    el.replaceChildren()
+    const line = el.firstElementChild as HTMLElement | null
+    if (!line) return
+    line.replaceChildren()
     const parts = text.split('•')
     if (parts.length < 2) {
-      el.textContent = text
-      return
+      line.textContent = text
+    } else {
+      const bullet = document.createElement('b')
+      bullet.textContent = '•'
+      line.append(
+        document.createTextNode(`${parts[0].trim()} `),
+        bullet,
+        document.createTextNode(` ${parts.slice(1).join('•').trim()}`),
+      )
     }
-    const bullet = document.createElement('b')
-    bullet.textContent = '•'
-    el.append(
-      document.createTextNode(`${parts[0].trim()} `),
-      bullet,
-      document.createTextNode(` ${parts.slice(1).join('•').trim()}`),
-    )
+    this.fitReadout(el)
+  }
+
+  /** A readout window clips its line of words. When they are wider than the
+   *  window, slide them just far enough for the tail to clear the edge, then
+   *  slide back — a drifting title reads better than a cut-off one. */
+  private fitReadout(el: HTMLElement): void {
+    const line = el.firstElementChild as HTMLElement | null
+    if (!line) return
+    el.classList.remove('is-marquee')
+    line.classList.remove('is-marquee')
+    line.style.removeProperty('--slide')
+    line.style.removeProperty('--slide-dur')
+    if (el.clientWidth === 0) return
+    const cs = getComputedStyle(el)
+    const avail =
+      el.clientWidth - parseFloat(cs.paddingLeft || '0') - parseFloat(cs.paddingRight || '0')
+    // Any padding on the line is decoration, not words: measure the glyphs
+    // alone so a title that just fits is not pushed into a slide.
+    const lcs = getComputedStyle(line)
+    const words =
+      line.scrollWidth - parseFloat(lcs.paddingLeft || '0') - parseFloat(lcs.paddingRight || '0')
+    const over = Math.ceil(words - avail)
+    if (over <= 1) return
+    // A few px of lead-out, so the last letter never rests on the edge.
+    const travel = over + 8
+    line.style.setProperty('--slide', `-${travel}px`)
+    // ~40px a second reads comfortably; the clamps keep a small overflow from
+    // flicking past and a long one from taking forever.
+    const dur = Math.min(14, Math.max(3.5, travel / 40))
+    line.style.setProperty('--slide-dur', `${dur.toFixed(2)}s`)
+    el.classList.add('is-marquee')
+    line.classList.add('is-marquee')
   }
 
   private buildPlaylist(): void {

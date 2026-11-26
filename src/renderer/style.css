@@ -1,6 +1,17 @@
 /* ── Base reset ──────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* The skeleton title's blackletter face, taken from the reference art and kept
+   local so the player never needs a network font. Pirata One is (c) 2012
+   Rodrigo Fuenzalida and Nicolas Massi, SIL OFL 1.1: assets/fonts/OFL.txt. */
+@font-face {
+  font-family: "Pirata One";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./assets/fonts/pirata-one.woff2") format("woff2");
+}
+
 :root {
   /* Shared night chrome */
   --color-bg:      #08070d;
@@ -1760,38 +1771,66 @@ input[type="range"]::-moz-range-thumb {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 1%;
+  padding: 0;
   overflow: hidden;
-  color: #f7efdd;
-  font: 700 clamp(10px, 2.85cqw, 42px) Cambria, Georgia, "Times New Roman", serif;
-  letter-spacing: 0.005em;
+  /* Cream blackletter in title case, as painted in the reference. */
+  color: #e9d6a6;
+  font-family: "Pirata One", Cambria, Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(10px, 3.5cqw, 52px);
+  letter-spacing: 0;
   line-height: 1;
-  text-transform: uppercase;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-shadow:
-    0 0 0.1cqw #000,
-    0 0 0.28cqw #01070b,
-    0 0 0.85cqw #01070bcc;
+  text-shadow: none;
 }
 .skeleton-skin .sk-artist {
   position: absolute;
-  left: 38%;
+  left: 36%;
   top: 76.55%;
-  width: 24%;
+  width: 28%;
   height: 2.45%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
   overflow: hidden;
-  color: #efe4cb;
-  font: 700 clamp(6px, 1.32cqw, 21px) Cambria, Georgia, serif;
-  letter-spacing: 0.18em;
+  color: #c9c6ad;
+  font: 700 clamp(6px, 1.32cqw, 21px) Georgia, "Times New Roman", serif;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
-  text-shadow: 0 0 0.1cqw #000, 0 0 0.28cqw #01070b, 0 0 0.6cqw #01070bcc;
 }
 .skeleton-skin .sk-artist b { color: #11e2ff; }
+
+/* The words live in their own line box, so an over-long readout can slide
+   inside the clipped window instead of losing its tail. */
+.skeleton-skin .sk-line {
+  display: block;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  /* No box at all: a dark stroke is drawn along each glyph's own outline and
+     painted behind the fill, so the black wraps the letters and the cream face
+     stays untouched. It travels with the words when the readout slides. */
+  -webkit-text-stroke: 0.11em #04090d;
+  paint-order: stroke fill;
+  line-height: 1.1;
+}
+/* Sliding: start at the window's left edge and drift out until the tail has
+   cleared it, then drift back. `--slide` / `--slide-dur` come from
+   SkeletonSkin.fitReadout(), measured against the real text width. */
+.skeleton-skin .sk-track.is-marquee,
+.skeleton-skin .sk-artist.is-marquee {
+  justify-content: flex-start;
+}
+.skeleton-skin .sk-line.is-marquee {
+  animation: sk-slide var(--slide-dur, 8s) ease-in-out infinite alternate;
+}
+@keyframes sk-slide {
+  0%, 9% { transform: translateX(0); }
+  91%, 100% { transform: translateX(var(--slide, 0px)); }
+}
 
 /* Blood line = seek */
 .skeleton-skin .sk-seek {
@@ -1845,9 +1884,10 @@ input[type="range"]::-moz-range-thumb {
 .skeleton-skin .sk-times {
   position: absolute;
   left: 34.5%;
-  top: 82.7%;
+  /* Tucked under the seek: the bar's own height plus the bone thumb's
+     overhang, so the numbers never float in the empty band below it. */
+  top: calc(79.37% + 1.1cqw);
   width: 31.5%;
-  height: 2.2%;
   box-sizing: border-box;
   display: flex;
   align-items: center;
