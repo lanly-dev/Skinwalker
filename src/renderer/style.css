@@ -1815,18 +1815,24 @@ input[type="range"]::-moz-range-thumb {
     0 0 0.45cqw color-mix(in srgb, var(--sk-blue) 67%, transparent);
   z-index: 3;
 }
+/* The thumb is an upright cartoon bone, as in the reference art: a shaft with
+   two round knobs at each end. Image: assets/skeleton-seek-thumb.png (swap it
+   for another upright PNG of the same name). Drawn as a dark outline pass with
+   a cream fill on top, so no outline crosses the inside of the shape. The
+   glow is a drop-shadow, so it follows the bone, not a box. */
 .skeleton-skin .sk-seek::-webkit-slider-thumb {
   appearance: none;
   -webkit-appearance: none;
-  width: 0.5cqw;
-  height: 0.5cqw;
-  min-width: 4px;
-  min-height: 4px;
+  width: 1.57cqw;
+  height: 2.2cqw;
+  min-width: 11px;
+  min-height: 15px;
   border: 0;
-  border-radius: 50%;
-  background: #eaffff;
-  box-shadow: 0 0 0.2cqw #d9feff, 0 0 0.5cqw var(--sk-blue);
+  background: url("./assets/skeleton-seek-thumb.png") center / contain no-repeat;
+  filter: drop-shadow(0 0 0.3cqw color-mix(in srgb, var(--sk-blue) 70%, transparent));
+  cursor: grab;
 }
+.skeleton-skin .sk-seek:active::-webkit-slider-thumb { cursor: grabbing; }
 .skeleton-skin .sk-times {
   position: absolute;
   left: 34.5%;
