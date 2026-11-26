@@ -1,18 +1,19 @@
-# Demo Video Script — "The Costume Is the Player" (draft, target 2:30, hard limit 3:00)
+# Demo Video Script — "How the Player Got Its Skin" (Halloween story cut, target 2:30, hard limit 3:00)
 
 Rules: public on YouTube, shows the app running on the device it was built for (Windows), no copyrighted music, no third-party trademarks. Use only the bundled tracks. Do not show your desktop paths, username or other windows. Record the real app, not mockups. Say only what the app does on camera.
 [YOU: record, upload, set to public.]
 
-Premise: every media player lets you change its skin — Skinwalker's skin is alive, and the monster's body IS the player. A pre-rendered narration track (skinwalker-demo-narration.mp3) follows the lines below; re-record any line in your own voice where you want it personal.
+Shape: a Halloween story told in four illustrated cards, and every time a monster says "play it through me," the video cuts to the real app wearing that monster — the story is how the three skins came to be. A pre-rendered narration track (skinwalker-demo-story-narration.mp3) follows the VO lines below.
 
-| Time | Shot | Narration (edit to your voice) |
-|------|------|-------------------------------|
-| 0:00-0:12 | Bare desktop, then the app launches — Dracula standing on the desktop, no window frame. | "Every media player looks the same — a rectangle with buttons. This one wears a costume." |
-| 0:12-0:40 | Click Dracula's medallion. Track plays, eyes bloom with the beat, visualizer moves. | "Skinwalker is a media player where the monster's body is the interface. The medallion is play. His eyes light up with the music — the visualizer is driven by the live audio signal." |
-| 0:40-1:00 | Drag along the blood line to seek; show the time readout; tap the volume buttons at the ends of the line; click a track in the cape playlist. | "The blood line is the seek bar. Volume lives at its ends. The playlist sits in his cape." |
-| 1:00-1:30 | Change skin mid-song to Frankenstein (playlist in his mouth, neck bolts skip tracks, spin the brass volume dial), then to Skeleton (board playlist, bone pendant pauses). The music never stops. | "Change the skin and the song keeps playing. New monster, new anatomy, new controls. Frankenstein keeps his playlist in his mouth; Skeleton's hangs from a bone pendant." |
-| 1:30-1:50 | Drag the monster around the desktop by its body. Then mini mode: Dracula's mini bat, Skeleton's mini skull. Restore to full size. | "The window is cut to the silhouette — drag him anywhere. Clicks outside the monster fall through to the desktop. And when you need your desktop back, he shrinks." [YOU: only claim click-through if it works on your machine.] |
-| 1:50-2:05 | Folder tool, native file picker, add one of your own tracks; it plays. | "Your files, played locally. No account, no cloud, no uploads." |
-| 2:05-2:30 | Cut to repo: `.kiro/` folder, `.kiro/INDEX.md`, a spec, a hook. End card: SKINWALKER + repo URL. | "Built with Kiro — steering, hooks and specs are all in the repo. [YOU: one true sentence about what Kiro did.] Skinwalker: the media player that wears monsters." |
+| Time | Shot | Narration |
+|------|------|-----------|
+| 0:00-0:18 | STORY CARD 1 — a dusty gray rectangle player in a dark room, moonlight through one window. Slow push-in. | "Once, in a house at the end of Graveyard Lane, there was a music player nobody played. Just a gray rectangle, humming to an empty room." |
+| 0:18-0:32 | STORY CARD 2 — a castle door at night; a tall figure in a cape, seen from behind. A knock. | "On Halloween night, the first knock came. The Count had listened to silence for a hundred years. 'Play it through me,' he said. 'My cape has room for all your songs.'" |
+| 0:32-0:58 | APP — Dracula. Medallion press: music starts, eyes bloom with the beat, playlist in the cape, drag the blood line to seek. | "So the music moved into the Count." (then let the music carry it) |
+| 0:58-1:12 | STORY CARD 3 — a heavier knock; a stitched giant in a doorway, smiling with borrowed teeth, bolts in his neck. | "The second knock was heavier. The stitched man smiled with borrowed teeth. 'I am made of other people's parts,' he said. 'One more borrowed thing will not hurt. Play it through me.'" |
+| 1:12-1:34 | APP — change skin mid-song to Frankenstein. The song never stops. Mouth playlist, neck bolts skip tracks, spin the brass volume dial. | "And the song never stopped. It just changed bodies." |
+| 1:34-1:48 | STORY CARD 4 — the door again; nothing there but a skeleton, one hand raised to knock, bones rattling softly. | "The last knock was barely a knock at all — just bones on the door. 'I have nothing left,' the skeleton said, 'except rhythm. Bones keep time. Play it through me.'" |
+| 1:48-2:08 | APP — change skin to Skeleton: bone pendant pauses and resumes, board playlist. Quick cuts: Dracula's mini bat, Skeleton's mini skull — the monsters, travel-sized. | (music only; one line over the minis:) "Small enough to follow you home." |
+| 2:08-2:30 | STORY CARD 5 — the house at dawn, music drifting from a lit window. Title card: SKINWALKER + repo URL. Small caption: "Built with Kiro — steering, hooks and specs in the repo." | "Three monsters. One song. And a player that was never a rectangle again. Skinwalker — the media player that wears monsters." |
 
 Checklist before upload: audio is only the bundled tracks, video under 3:00, no personal info on screen, Kevin MacLeod credited (CC BY) in the YouTube description for the bundled tracks.
