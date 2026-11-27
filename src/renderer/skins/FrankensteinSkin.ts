@@ -677,7 +677,22 @@ export class FrankensteinSkin implements Skin {
     els.mouthCount.textContent = String(p.playlist.length).padStart(2, '0')
 
     this.highlightPlaylistItem(this.activeIndex)
-    probeDurations(this.player?.playlist ?? [], () => this.buildPlaylist())
+    probeDurations(this.player?.playlist ?? [], () => this.refreshDurations())
+  }
+
+  /** Durations that arrive after the rows were built only retitle their time
+   *  cell. Rebuilding the whole list per batch made a folder-sized playlist
+   *  flicker and stutter while the probes ran. */
+  private refreshDurations(): void {
+    const p = this.player
+    const ol = this.els?.mouthList
+    if (!p || !ol) return
+    ol.querySelectorAll<HTMLElement>('.fr-track-time').forEach((el, i) => {
+      const track = p.playlist[i]
+      if (!track) return
+      const label = durationLabel(track.url)
+      if (el.textContent !== label) el.textContent = label
+    })
   }
 
   /** Renders the mouth monitor's track list. Its rows are the playlist's
@@ -729,9 +744,6 @@ export class FrankensteinSkin implements Skin {
       if (i === idx) row.scrollIntoView({ block: 'nearest' })
     })
   }
-
-  /** Read each track's duration with a throwaway <audio> so the screen can
-   *  show a time before the engine has ever decoded that track. */
 
   // ── RAF loops ────────────────────────────────────────────────────────────────
 

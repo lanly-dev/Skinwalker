@@ -518,7 +518,22 @@ export class DraculaSkin implements Skin {
     })
 
     this.highlightPlaylistItem(this.activeIndex)
-    probeDurations(this.player?.playlist ?? [], () => this.buildPlaylist())
+    probeDurations(this.player?.playlist ?? [], () => this.refreshDurations())
+  }
+
+  /** Durations that arrive after the rows were built only retitle their time
+   *  cell. Rebuilding the whole list per batch made a folder-sized playlist
+   *  flicker and stutter while the probes ran. */
+  private refreshDurations(): void {
+    const p = this.player
+    const ol = this.els?.playlist
+    if (!p || !ol) return
+    ol.querySelectorAll<HTMLElement>('.dr-track-time').forEach((el, i) => {
+      const track = p.playlist[i]
+      if (!track) return
+      const label = `• ${durationLabel(track.url)}`
+      if (el.textContent !== label) el.textContent = label
+    })
   }
 
   private highlightPlaylistItem(idx: number): void {
@@ -529,9 +544,6 @@ export class DraculaSkin implements Skin {
       li.setAttribute('aria-current', i === idx ? 'true' : 'false')
     })
   }
-
-  /** Read each track's duration with a throwaway <audio> so the playlist can
-   *  show "• mm:ss" before the track has ever been decoded by the engine. */
 
   // ── RAF loop ─────────────────────────────────────────────────────────────────
 
