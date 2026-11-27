@@ -619,6 +619,11 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-zone:focus-within .dr-tools,
 .dracula-skin .dr-zone.revealed .dr-tools { opacity: 1; visibility: visible; }
 .dracula-skin .dr-zone:focus-visible { outline: 1px dashed rgba(229, 200, 140, 0.8); }
+/* Nothing playing: the curtain would only be a flat hairline, so the cape
+   interior is just the five tool buttons. They stay put while idle instead of
+   waiting for a hover, and the curtain comes back the moment a track starts. */
+.dracula-skin:not(.is-playing) .dr-viz { opacity: 0; }
+.dracula-skin:not(.is-playing) .dr-tools { opacity: 1; visibility: visible; }
 .dracula-skin .dr-tool {
   position: relative;
   width: 10.55cqw; height: 12.2cqw;

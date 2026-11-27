@@ -543,6 +543,15 @@ export class DraculaSkin implements Skin {
       li.classList.toggle('active', i === idx)
       li.setAttribute('aria-current', i === idx ? 'true' : 'false')
     })
+    // The board is a five-row window onto a longer list, so skipping to the
+    // sixth track (or any row past the window) used to highlight a row nobody
+    // could see. Scroll only the list, and only as far as the row needs.
+    const row = ol.querySelectorAll<HTMLElement>('li')[idx]
+    if (!row) return
+    const top = row.offsetTop
+    const bottom = top + row.offsetHeight
+    if (top < ol.scrollTop) ol.scrollTop = top
+    else if (bottom > ol.scrollTop + ol.clientHeight) ol.scrollTop = bottom - ol.clientHeight
   }
 
   // ── RAF loop ─────────────────────────────────────────────────────────────────
@@ -561,6 +570,8 @@ export class DraculaSkin implements Skin {
     const els = this.els
     if (!els) return
     if (els.medallion.classList.contains('playing') === playing) return
+    // Idle cape: CSS hides the dead curtain and leaves the five tool buttons.
+    this.container?.classList.toggle('is-playing', playing)
     for (const btn of [els.medallion, els.miniPlay]) {
       btn.classList.toggle('playing', playing)
       btn.setAttribute('aria-pressed', String(playing))
