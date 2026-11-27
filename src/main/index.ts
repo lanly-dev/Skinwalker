@@ -4,7 +4,7 @@
  */
 import { app, BrowserWindow, ipcMain, dialog, shell, protocol, net } from 'electron'
 import { join } from 'path'
-import { readdir, readFile } from 'fs/promises'
+import { readdir, readFile, stat } from 'fs/promises'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { is } from '@electron-toolkit/utils'
 
@@ -271,10 +271,22 @@ ipcMain.handle('audio:read', async (_e, url: string) => {
 
 app.whenReady().then(() => {
   // skinwalker-media:?u=<file URL>  ->  that file, if it came from Open folder.
-  protocol.handle(MEDIA_SCHEME, (req) => {
+  protocol.handle(MEDIA_SCHEME, async (req) => {
     const fileUrl = new URL(req.url).searchParams.get('u') ?? ''
     if (!openedFiles.has(fileUrl)) return new Response(null, { status: 403 })
-    return net.fetch(fileUrl, { headers: req.headers })
+    try {
+      // net.fetch of a file: URL answers without Content-Length, so Chromium
+      // treats the audio as an endless stream and reports duration Infinity —
+      // the row then never leaves --:--. Take the length from the file itself.
+      const { size } = await stat(fileURLToPath(fileUrl))
+      const res = await net.fetch(fileUrl, { headers: req.headers })
+      const headers = new Headers(res.headers)
+      headers.set('Content-Length', String(size))
+      return new Response(res.body, { headers })
+    } catch (err) {
+      console.error('skinwalker: cannot serve media', fileUrl, err)
+      return new Response(null, { status: 404 })
+    }
   })
   createWindow()
   app.on('activate', () => {
