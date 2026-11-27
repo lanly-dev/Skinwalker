@@ -405,7 +405,7 @@ input[type="range"]::-moz-range-thumb {
   content: '';
   position: absolute;
   inset: 0;
-  background: url('./assets/dracula-blood-line.png') center / 100% 100% no-repeat;
+  background: url('./assets/dracula-blood-line.webp') center / 100% 100% no-repeat;
   pointer-events: none;
 }
 .dracula-skin .dr-blood::before { filter: brightness(0.48) saturate(0.85); }
@@ -1982,8 +1982,8 @@ input[type="range"]::-moz-range-thumb {
   transition: opacity 0.16s ease;
   pointer-events: none;
 }
-.skeleton-skin .sk-prev::after { background-image: url("./assets/skeleton-prev-glow.png"); }
-.skeleton-skin .sk-next::after { background-image: url("./assets/skeleton-next-glow.png"); }
+.skeleton-skin .sk-prev::after { background-image: url("./assets/skeleton-prev-glow.webp"); }
+.skeleton-skin .sk-next::after { background-image: url("./assets/skeleton-next-glow.webp"); }
 .skeleton-skin .sk-prev:hover::after,
 .skeleton-skin .sk-next:hover::after,
 .skeleton-skin .sk-prev:focus-visible::after,

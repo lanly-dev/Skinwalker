@@ -1,6 +1,6 @@
 # Asset Optimization, Pass 2
 
-**Status:** In Progress
+**Status:** Complete (2026-11-26); visual check pending
 **Created:** 2026-11-26
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -24,18 +24,23 @@ Second optimization pass, measured at `9de2e28`. Pass 1 is
 | `skeleton-row-skull.png` | 5,355 B | 3,490 B (lossless) | 0 | 0 |
 
 ## Requirements
-- [ ] R1: The four PNGs above become lossless WebP; references updated; pixel-identical.
-- [ ] R2: The two large Skeleton webps are re-encoded at quality 92 with exact alpha (window shape unchanged); mean RGB difference stays under 2 of 255.
-- [ ] R3: `skeleton-seek-thumb.png` stays a PNG with the same name: it is the maintainer's swappable image.
-- [ ] R4: No visible or behavioural change. Typecheck and build pass.
+- [x] R1: The four PNGs above become lossless WebP; references updated; pixel-identical.
+- [x] R2: The two large Skeleton webps are re-encoded at quality 92 with exact alpha (window shape unchanged); mean RGB difference stays under 2 of 255.
+- [x] R3: `skeleton-seek-thumb.png` stays a PNG with the same name: it is the maintainer's swappable image.
+- [x] R4: No visible or behavioural change. Typecheck and build pass.
 
 ## Out of scope (flagged)
 - Demo tracks (26 MB) are most of the renderer payload. Shrinking them needs an encoder that is not installed and changes audio.
 - Downscaling plates drawn below their native size (for example `dracula-bat.webp` 1254 px for a 380 px mini window) would save more but changes the shape-mask sampling; needs the maintainer's visual check.
 
 ## Tasks
-- [ ] T1: Convert the four PNGs, update imports and CSS `url()`s, delete the PNGs.
-- [ ] T2: Re-encode the two Skeleton webps.
-- [ ] T3: Rebuild and fill the Results.
+- [x] T1: Convert the four PNGs, update imports and CSS `url()`s, delete the PNGs.
+- [x] T2: Re-encode the two Skeleton webps.
+- [x] T3: Rebuild and fill the Results.
 
 ## Results
+- Four PNGs to lossless WebP: pixel-identical (checked pixel by pixel), 50,608 B -> 38,750 B. References updated in `style.css` and `SkeletonSkin.ts`; one path in `docs/AGENTS.md`.
+- `skeleton-frame.webp` 285,198 -> 180,388 B and `skeleton-mini-face.webp` 215,640 -> 67,706 B at quality 92; alpha max diff 0, so the window shape is unchanged. Mean RGB diff 1.14 and 1.89 of 255.
+- `src/renderer/assets/`: 1,250 KB -> 992 KB (-21%). `out/renderer/`: 27,410 KB -> 27,153 KB (about -1%; the demo tracks dominate).
+- `npm run typecheck` and `npm run build` pass.
+- Found while auditing: `style.css` credits Pirata One under SIL OFL 1.1 at `assets/fonts/OFL.txt`, but that file does not exist. The OFL requires the licence to ship with the font. [MAINTAINER: add the OFL.txt from the font's source.]
