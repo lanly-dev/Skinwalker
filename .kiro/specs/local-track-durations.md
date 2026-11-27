@@ -1,6 +1,6 @@
 # Durations for Tracks From Open Folder
 
-**Status:** In Progress
+**Status:** Implemented; in-app check pending
 **Created:** 2026-11-26
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -19,14 +19,14 @@ affected. Playback works because it already reads bytes through the
 `audio:read` IPC (`window.skinwalker.readAudioFile`).
 
 ## Requirements
-- [ ] R1: For `file:` URLs, the probe reads the bytes through `readAudioFile`, wraps them in a Blob URL, reads the duration from that, and revokes the Blob URL afterwards.
-- [ ] R2: At most 2 local files are read at a time, so a large folder does not read hundreds of files at once.
-- [ ] R3: The renderer CSP allows `blob:` for media (`media-src 'self' file: blob:`). Nothing else in the CSP changes.
-- [ ] R4: Relative URLs (bundled tracks) keep the current path.
+- [x] R1: For `file:` URLs, the probe reads the bytes through `readAudioFile`, wraps them in a Blob URL, reads the duration from that, and revokes the Blob URL afterwards.
+- [x] R2: At most 2 local files are read at a time, so a large folder does not read hundreds of files at once.
+- [x] R3: The renderer CSP allows `blob:` for media (`media-src 'self' file: blob:`). Nothing else in the CSP changes.
+- [x] R4: Relative URLs (bundled tracks) keep the current path.
 
 ## Tasks
-- [ ] T1: `trackDurations.ts`: blob path with a 2-slot queue.
-- [ ] T2: CSP in `src/renderer/index.html`.
+- [x] T1: `trackDurations.ts`: blob path with a 2-slot queue.
+- [x] T2: CSP in `src/renderer/index.html`.
 
 ## Acceptance Criteria
 - Typecheck and build pass.
@@ -36,3 +36,4 @@ affected. Playback works because it already reads bytes through the
 Each local track is read in full once to get its duration (playback reads it in full anyway). A custom streaming protocol would avoid that, but needs an allow-list of picked files to be safe; not done here.
 
 ## Implementation Notes
+2026-11-26: isolated Electron test, page served over http with the new CSP: a `file://` src fails with MediaError 4 (the bug); the same file as a Blob URL reports duration 169.7 s (`darkling.mp3`). Implemented in `trackDurations.ts` with a 2-slot queue; CSP gains `blob:` for media only. Typecheck and build pass. Not checked inside the running app.
