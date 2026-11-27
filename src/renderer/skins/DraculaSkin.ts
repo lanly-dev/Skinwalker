@@ -501,7 +501,7 @@ export class DraculaSkin implements Skin {
 
       const name = document.createElement('span')
       name.className = 'dr-track-name'
-      name.textContent = track.title
+      name.textContent = `${String(i + 1).padStart(2, '0')}. ${track.title}`
 
       const time = document.createElement('span')
       time.className = 'dr-track-time'

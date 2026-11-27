@@ -1,6 +1,6 @@
 # Dracula Playlist Index
 
-**Status:** In Progress
+**Status:** Implemented; visual check pending
 **Created:** 2026-11-26
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -16,10 +16,11 @@ the index back: `01. Title • mm:ss`, as before.
 - [ ] R3: Only `buildPlaylist()` in `src/renderer/skins/DraculaSkin.ts` changes.
 
 ## Tasks
-- [ ] T1: Restore `` `${String(i + 1).padStart(2, '0')}. ${track.title}` ``.
+- [x] T1: Restore `` `${String(i + 1).padStart(2, '0')}. ${track.title}` ``.
 
 ## Acceptance Criteria
 - Typecheck and build pass.
 - [MAINTAINER: in the running app, Dracula rows read `01. Nocturne In Blood • 00:54` and long titles still fit.]
 
 ## Implementation Notes
+2026-11-26: restored the line removed in d060991. The aria-label is unchanged. Typecheck and build pass. Not checked in the running app.
