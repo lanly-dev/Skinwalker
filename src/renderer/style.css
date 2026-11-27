@@ -2116,19 +2116,42 @@ input[type="range"]::-moz-range-thumb {
   border-top: 1px solid #fff;
   box-shadow: 0 0 4px #00dfff;
 }
-.skeleton-skin .sk-mini-eye {
+/* Painted-eye blooms: copies of the face card, masked down to the two eye
+   orbs and screened on top. Level drives the steady glow; the flux detector
+   drives the hotter flash. Eye centres in the 620x622 art: (215,108) and
+   (357,131). No extra art needed. */
+.skeleton-skin .sk-mini-glow,
+.skeleton-skin .sk-mini-beat {
   position: absolute;
-  width: 5%;
-  height: 5%;
-  border-radius: 50%;
-  background: #b1ffff;
-  filter: blur(1.25cqw);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
   pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
   mix-blend-mode: screen;
-  opacity: 0.12;
+  -webkit-mask-image:
+    radial-gradient(ellipse 11% 11% at 34.7% 17.4%, #000 0 52%, transparent 100%),
+    radial-gradient(ellipse 11% 11% at 57.6% 21.1%, #000 0 52%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 11% 11% at 34.7% 17.4%, #000 0 52%, transparent 100%),
+    radial-gradient(ellipse 11% 11% at 57.6% 21.1%, #000 0 52%, transparent 100%);
 }
-.skeleton-skin .sk-mini-eye-left { left: 36.5%; top: 17.5%; }
-.skeleton-skin .sk-mini-eye-right { left: 56.8%; top: 19.5%; }
+.skeleton-skin .sk-mini-glow {
+  opacity: var(--mini-glow, 0);
+  filter: blur(1.3cqw) brightness(0.79) saturate(1.35);
+}
+.skeleton-skin .sk-mini-beat {
+  opacity: var(--mini-beat, 0);
+  filter: blur(2.4cqw) brightness(0.92) saturate(1.45);
+  -webkit-mask-image:
+    radial-gradient(ellipse 15% 15% at 34.7% 17.4%, #000 0 45%, transparent 100%),
+    radial-gradient(ellipse 15% 15% at 57.6% 21.1%, #000 0 45%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 15% 15% at 34.7% 17.4%, #000 0 45%, transparent 100%),
+    radial-gradient(ellipse 15% 15% at 57.6% 21.1%, #000 0 45%, transparent 100%);
+}
 .skeleton-skin .sk-mini-face button {
   position: absolute;
   min-width: 0;

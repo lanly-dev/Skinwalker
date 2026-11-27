@@ -87,7 +87,7 @@ interface SkeletonEls {
   playlist: HTMLOListElement
   miniPlay: HTMLButtonElement
   miniBars: HTMLElement[]
-  miniEyes: HTMLElement[]
+  miniFace: HTMLElement
 }
 
 export class SkeletonSkin implements Skin {
@@ -108,10 +108,8 @@ export class SkeletonSkin implements Skin {
   private smooth = new Float32Array(BAR_COUNT)
   private eyeLevel = -1
   private prevFreq: Uint8Array<ArrayBuffer> = new Uint8Array(0)
-  private beatEnv = 0
+  private beatPulses: number[] = []
   private lastBeatAt = 0
-  private lastFrameAt = 0
-  private beatLevel = -1
 
   private seeking = false
   private activeIndex = -1
@@ -276,9 +274,11 @@ export class SkeletonSkin implements Skin {
         <div class="sk-mini" role="complementary" aria-label="Mini player">
           <div class="sk-mini-face">
             <img class="sk-mini-art" src="${miniFace}" alt="" draggable="false" />
+            <!-- Two masked copies of the face: only the painted eye orbs
+                 survive the mask, so they bloom on top of the art itself. -->
+            <img class="sk-mini-glow" src="${miniFace}" alt="" draggable="false" aria-hidden="true" />
+            <img class="sk-mini-beat" src="${miniFace}" alt="" draggable="false" aria-hidden="true" />
             <div class="sk-mini-eq" aria-hidden="true">${miniBars}</div>
-            <i class="sk-mini-eye sk-mini-eye-left" aria-hidden="true"></i>
-            <i class="sk-mini-eye sk-mini-eye-right" aria-hidden="true"></i>
             <button class="sk-mini-play" aria-label="Play" aria-pressed="false">
               <svg class="sk-mini-play-icon" viewBox="0 0 100 100" aria-hidden="true">
                 <path class="sk-glyph sk-glyph-play"
@@ -318,7 +318,7 @@ export class SkeletonSkin implements Skin {
       playlist: c.querySelector('.sk-list')!,
       miniPlay: c.querySelector('.sk-mini-play')!,
       miniBars: Array.from(c.querySelectorAll<HTMLElement>('.sk-mini-eq i')),
-      miniEyes: Array.from(c.querySelectorAll<HTMLElement>('.sk-mini-eye')),
+      miniFace: c.querySelector('.sk-mini-face')!,
     }
     this.els = els
 
@@ -666,14 +666,21 @@ export class SkeletonSkin implements Skin {
       miniEnergy += raw
       bar.style.height = `${6 + raw * 94}%`
     })
-    const miniEye = playing ? 0.2 + miniEnergy / 48 : 0.12
-    for (const eyeEl of els.miniEyes) eyeEl.style.opacity = String(miniEye)
+    // A pause after playback holds the mini sockets lit, like the main pair;
+    // a fresh launch keeps the faint resting dots.
+    // Painted-eye blooms: level drives the steady one, the track's flux the
+    // flash. A pause after playback keeps the steady bloom lit; a fresh launch
+    // leaves the art's own eyes alone.
+    const miniStarted = els.body.classList.contains('has-played')
+    const miniGlow = playing
+      ? Math.min(1, 0.3 + (miniEnergy / BAR_COUNT) * 1.9)
+      : miniStarted
+        ? 0.55
+        : 0
 
-    // Second, faster layer: a short bloom on low-band attacks. --eye keeps
-    // following the level; --eye-beat only adds the kick on top, so a loud
-    // passage still breathes without strobing the whole socket.
-    const dt = Math.min(0.05, Math.max(0.001, (now - this.lastFrameAt) / 1000))
-    this.lastFrameAt = now
+    // Second layer: each detected attack starts a 120 ms rise / 450 ms fall
+    // swell; overlapping swells add and pass through a soft ceiling. The main
+    // sockets and the mini face share this one pulse, so both breathe alike.
     if (playing && freq && this.prevFreq.length === freq.length) {
       const bands = Math.min(48, freq.length)
       let flux = 0
@@ -684,19 +691,28 @@ export class SkeletonSkin implements Skin {
       }
       flux /= bands * 255
       if (flux > 0.009 && energy / BAR_COUNT > 0.08 && now - this.lastBeatAt > 120) {
-        this.beatEnv = 1
+        this.beatPulses.push(now)
         this.lastBeatAt = now
       }
-      this.beatEnv = Math.max(0, this.beatEnv - dt / 0.2)
     } else {
-      this.beatEnv = 0
+      this.beatPulses.length = 0
       this.prevFreq.fill(0)
     }
-    const beatLevel = Math.round(this.beatEnv * 20) / 20
-    if (beatLevel !== this.beatLevel) {
-      this.beatLevel = beatLevel
-      els.eyeGlowHost.style.setProperty('--eye-beat', String(beatLevel))
+
+    // Each hit starts its own swell; the swells add, so a busy passage builds
+    // a continuous pulse instead of restarting one envelope and flashing.
+    this.beatPulses = this.beatPulses.filter((t) => now - t < 600)
+    let beatPulse = 0
+    for (const t of this.beatPulses) {
+      const age = now - t
+      beatPulse += Math.min(1, age / 120) * Math.max(0, 1 - Math.max(0, age - 120) / 450) * 0.8
     }
+    // Soft ceiling: dense hits keep room to move instead of pinning at 1.
+    beatPulse = 1 - Math.exp(-beatPulse)
+
+    els.miniFace.style.setProperty('--mini-glow', miniGlow.toFixed(3))
+    els.miniFace.style.setProperty('--mini-beat', Math.max(0, beatPulse).toFixed(3))
+    els.eyeGlowHost.style.setProperty('--eye-beat', Math.max(0, beatPulse).toFixed(3))
 
     // The sockets glow with the track's smoothed level: loud passages fill
     // them, quiet ones dim them, and a pause keeps the dim ember.
