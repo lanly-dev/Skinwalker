@@ -98,5 +98,6 @@ MIT — See [LICENSE](LICENSE) file for details.
 ## Credits
 
 - **Demo Music:** Kevin MacLeod (incompetech.com) — Licensed under CC BY 4.0
+- **Font:** Pirata One by Rodrigo Fuenzalida and Nicolas Massi, SIL Open Font License 1.1 [MAINTAINER: add `src/renderer/assets/fonts/OFL.txt`]
 - **Synthesis Algorithm:** Inspired by boba.page reference implementation
 - **Built With:** Kiro (steering, hooks, workflow, and spec-guided feature work) alongside other development tools

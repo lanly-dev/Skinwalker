@@ -27,7 +27,7 @@ UNVERIFIED = could not be checked here.
 | 14 | Third-party music licensed | PASS (attribution in app UNVERIFIED) | `public/tracks/README.md` and README credit Kevin MacLeod, CC BY 4.0, with source URLs. The track list in `src/renderer/main.ts` shows "Kevin MacLeod" as artist. Whether the license text is shown in the packaged app was not checked. |
 | 15 | Synthetic track artist label | UNVERIFIED (risk) | `src/renderer/main.ts` labels a track "Bathory • Eternal Night". Bathory is a real band. The tracks README says it is "fictional styling". Cheapest fix: rename the label. |
 | 16 | Art and image provenance | UNVERIFIED | No license or source for the five plate/layer images in `src/renderer/assets/`. [MAINTAINER: state source and tool.] |
-| 17 | Fonts | UNVERIFIED | `src/renderer/style.css` names `'Cinzel Decorative'` with no `@font-face` and no font file in the repo. It falls back to system fonts on machines without it. |
+| 17 | Fonts | FAIL | 2026-11-26: Pirata One is bundled (`src/renderer/assets/fonts/pirata-one.woff2`, `@font-face` in `style.css`) and the CSS credits SIL OFL 1.1 at `assets/fonts/OFL.txt`, but that file does not exist; the OFL requires the licence text to ship with the font. `Cinzel Decorative` is still named without a font file and falls back to system fonts. |
 | 18 | Typecheck passes | PASS | `npm run typecheck` exit 0 (re-run 2026-11-22 at `9c67d6d`). |
 | 19 | Build passes | PASS | `npm run build` exit 0 (re-run 2026-11-22 at `9c67d6d`). |
 | 20 | Tests pass | N/A | The repo has no test script and no tests. |

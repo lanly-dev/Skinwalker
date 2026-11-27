@@ -1,6 +1,6 @@
 # Skeleton Seek Thumb as a Bone
 
-**Status:** Revision 2 implemented (swappable PNG); in-app check pending
+**Status:** Implemented with the maintainer's own image (27 x 34 px, commit 032d172); in-app check pending
 **Created:** 2026-11-26
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -38,3 +38,5 @@ maintainer.
 The maintainer wants an image file they can swap. The bone moves from the inline SVG to `src/renderer/assets/skeleton-seek-thumb.png`, 80 x 112 px (4x the 20:28 drawing, so it stays sharp), transparent background. The CSS points at that file and uses `background-size: contain`, so a replacement PNG with the same name and any similar upright shape works without a code change. Size, glow and centring stay as in revision 1.
 
 Revision 2 results (2026-11-26): `src/renderer/assets/skeleton-seek-thumb.png` (80 x 112, 1,079 bytes) drawn with PIL from the same shapes and gradient as the SVG. `style.css` now uses `url("./assets/skeleton-seek-thumb.png")`. Vite inlines it as a data URI at build time because it is under 4 KB; a replacement file is picked up the same way on the next build. Isolated Electron render with the PNG matches revision 1. Typecheck and build pass.
+
+Update 2026-11-26: the maintainer replaced the generated 80 x 112 bone with their own 27 x 34 PNG at the same path (commit 032d172), and refined the slider in commit d474c0f. The CSS still scales it with `background-size: contain`.
