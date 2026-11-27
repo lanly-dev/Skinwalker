@@ -16,6 +16,9 @@ export class AudioEngine {
 
   private buffer: AudioBuffer | null = null
   private _isPlaying = false
+  /** Latched for the session so skins can keep post-playback states (the
+   *  skeleton's eye light) when the app remounts them. */
+  private _hasPlayed = false
 
   onEnded: (() => void) | null = null
 
@@ -32,6 +35,10 @@ export class AudioEngine {
 
   get isPlaying() {
     return this._isPlaying
+  }
+
+  get hasPlayed() {
+    return this._hasPlayed
   }
 
   /** Current playback position in seconds */
@@ -92,6 +99,7 @@ export class AudioEngine {
     this.startTime = this.ctx.currentTime
     this.source.start(0, this.startOffset)
     this._isPlaying = true
+    this._hasPlayed = true
   }
 
   pause(): void {

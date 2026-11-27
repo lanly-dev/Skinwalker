@@ -321,6 +321,9 @@ export class SkeletonSkin implements Skin {
       miniFace: c.querySelector('.sk-mini-face')!,
     }
     this.els = els
+    // The session's played-once latch lives on the shared engine, so a skin
+    // swap remounts with the sockets still lit after a pause.
+    if (p.audio.hasPlayed) els.body.classList.add('has-played')
 
     // The two skulls holding the board light their sockets while the playlist
     // is hovered. A class rather than :has() — the selector matched but the
