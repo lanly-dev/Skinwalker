@@ -2,7 +2,7 @@
  * Electron main process.
  * Creates a frameless, transparent window — the monster IS the window chrome.
  */
-import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, shell, protocol, net } from 'electron'
 import { join } from 'path'
 import { readdir, readFile } from 'fs/promises'
 import { fileURLToPath, pathToFileURL } from 'url'
@@ -194,6 +194,15 @@ const AUDIO_EXTENSIONS = [
   'aiff', 'aif', 'alac', 'wma', 'ape', 'm4b', 'mp4', 'webm', 'caf',
 ]
 
+/** Duration probes load local files through this scheme: a page served over
+ *  http (dev) may not load file:// media directly. Only files from the last
+ *  Open folder are served. */
+const MEDIA_SCHEME = 'skinwalker-media'
+const openedFiles = new Set<string>()
+protocol.registerSchemesAsPrivileged([
+  { scheme: MEDIA_SCHEME, privileges: { secure: true, stream: true, supportFetchAPI: true } },
+])
+
 /** Limits for the folder walk, so a huge or looping tree cannot hang the app. */
 const MAX_FOLDER_FILES = 5000
 const MAX_FOLDER_DEPTH = 20
@@ -237,7 +246,10 @@ ipcMain.handle('dialog:openFolder', async () => {
   await collectAudio(root, 0, files)
   const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
   files.sort((a, b) => collator.compare(a.slice(root.length), b.slice(root.length)))
-  return files.map((p) => pathToFileURL(p).href)
+  const urls = files.map((p) => pathToFileURL(p).href)
+  openedFiles.clear()
+  urls.forEach((u) => openedFiles.add(u))
+  return urls
 })
 
 /** Hand an audio file's bytes to the renderer — Chromium blocks fetch on
@@ -258,6 +270,12 @@ ipcMain.handle('audio:read', async (_e, url: string) => {
 // ── App lifecycle ─────────────────────────────────────────────────────────────
 
 app.whenReady().then(() => {
+  // skinwalker-media:?u=<file URL>  ->  that file, if it came from Open folder.
+  protocol.handle(MEDIA_SCHEME, (req) => {
+    const fileUrl = new URL(req.url).searchParams.get('u') ?? ''
+    if (!openedFiles.has(fileUrl)) return new Response(null, { status: 403 })
+    return net.fetch(fileUrl, { headers: req.headers })
+  })
   createWindow()
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
