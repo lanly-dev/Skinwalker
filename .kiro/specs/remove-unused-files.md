@@ -1,6 +1,6 @@
 # Remove Unused Files
 
-**Status:** In Progress
+**Status:** Complete (2026-11-26)
 **Created:** 2026-11-26
 **Owner:** Maintainer
 **Implementation:** Kiro
@@ -18,12 +18,15 @@ The maintainer asked to remove files that are not used. Audit at `36414a2`:
 | `window:maximize` IPC (`src/main/index.ts`), `maximize` in `src/preload/index.ts` and `src/renderer/env.d.ts` | **no caller** since the generic title bar was removed (`1e1fc21`) |
 
 ## Requirements
-- [ ] R1: Delete `_arm_on.png` and `_lit.png`.
-- [ ] R2: Delete the unused `maximize` API: main-process handler, preload method, type. Keep `win.unmaximize()` in the `window:set-size` handler (still used).
-- [ ] R3: Nothing else changes. Typecheck and build pass.
+- [x] R1: Delete `_arm_on.png` and `_lit.png`.
+- [x] R2: Delete the unused `maximize` API: main-process handler, preload method, type. Keep `win.unmaximize()` in the `window:set-size` handler (still used).
+- [x] R3: Nothing else changes. Typecheck and build pass.
 
 ## Tasks
-- [ ] T1: R1.
-- [ ] T2: R2.
+- [x] T1: R1.
+- [x] T2: R2.
 
 ## Implementation Notes
+2026-11-26: deleted the two root PNGs (1,558 KB) and the `maximize` handler, preload method and type. `git grep maximize -- src` now finds only the `unmaximize()` call in `window:set-size`. Typecheck and build pass.
+
+Found while auditing, not changed: `package-lock.json` is back in `.gitignore` and untracked (it was tracked on 2026-11-24, audit row 13). [MAINTAINER: decide whether to track it again.]

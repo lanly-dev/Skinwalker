@@ -12,7 +12,6 @@ interface SkinwalkerAPI {
   ) => void
   minimize: () => void
   close: () => void
-  maximize: () => void
   openAudioFiles: () => Promise<string[]>
   readAudioFile: (url: string) => Promise<ArrayBuffer | null>
 }

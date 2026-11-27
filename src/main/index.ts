@@ -185,10 +185,6 @@ ipcMain.on('window:set-shape', (
 
 ipcMain.on('window:minimize', () => win?.minimize())
 ipcMain.on('window:close',    () => win?.close())
-ipcMain.on('window:maximize', () => {
-  if (!win) return
-  win.isMaximized() ? win.unmaximize() : win.maximize()
-})
 
 /** Open a native file-picker for local audio files. Returns file:// URLs —
  *  pathToFileURL keeps spaces, '%' and '#' in a filename intact, so the read

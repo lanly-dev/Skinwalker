@@ -28,7 +28,6 @@ contextBridge.exposeInMainWorld('skinwalker', {
 
   minimize: () => ipcRenderer.send('window:minimize'),
   close:    () => ipcRenderer.send('window:close'),
-  maximize: () => ipcRenderer.send('window:maximize'),
 
   /** Open native file picker, returns array of file:// URLs */
   openAudioFiles: async (): Promise<string[]> =>
