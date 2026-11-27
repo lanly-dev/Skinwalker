@@ -7,7 +7,7 @@ import { Player, type Track } from './player/Player'
 import { SKINS } from './skins/index'
 import { installShapeResize } from './windowShape'
 import { installSkinDrag } from './skinDrag'
-import { openLocalFiles } from './openFiles'
+import { openFolder } from './openFiles'
 import { loadLastSkinId } from './lastSkin'
 import './style.css'
 
@@ -39,9 +39,9 @@ installShapeResize()
 function renderOpenButton(): void {
   const btn = document.createElement('button')
   btn.id = 'open-files'
-  btn.textContent = '+ Add files'
-  btn.setAttribute('aria-label', 'Add local audio files')
-  btn.addEventListener('click', () => void openLocalFiles(player))
+  btn.textContent = 'Open folder'
+  btn.setAttribute('aria-label', 'Open a music folder')
+  btn.addEventListener('click', () => void openFolder(player))
   document.body.appendChild(btn)
 }
 

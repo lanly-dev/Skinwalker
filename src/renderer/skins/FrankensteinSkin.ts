@@ -37,7 +37,7 @@ import scarLayer from '../assets/frankenstein-scar.webp?no-inline'
 import knobPlate from '../assets/frankenstein-knob-plate.webp'
 import knobFace from '../assets/frankenstein-knob-face.webp'
 import { applySkinShape } from '../windowShape'
-import { openLocalFiles } from '../openFiles'
+import { openFolder } from '../openFiles'
 import { formatTime as fmt, durationLabel, probeDurations } from '../trackDurations'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
@@ -416,7 +416,7 @@ export class FrankensteinSkin implements Skin {
     this.bindVolume(els)
 
     // Jacket pins
-    c.querySelector('.fr-pin-folder')!.addEventListener('click', () => void openLocalFiles(p))
+    c.querySelector('.fr-pin-folder')!.addEventListener('click', () => void openFolder(p))
     els.minimizePin.addEventListener('click', () => window.skinwalker?.minimize?.())
     c.querySelector('.fr-pin-close')!.addEventListener('click', () => window.skinwalker?.close?.())
     els.miniPin.addEventListener('click', () => {

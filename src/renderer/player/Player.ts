@@ -125,10 +125,26 @@ export class Player {
     if (next && next.id !== current.id) this.mountSkin(next)
   }
 
-  /** Append tracks from the native file picker and notify the active skin */
+  /** Append tracks and notify the active skin */
   addTracks(newTracks: Track[]): void {
     this.tracks = [...this.tracks, ...newTracks]
     this.activeSkin?.onPlaylistUpdate?.()
+  }
+
+  /** Swap in a new playlist (Open folder). Playback continues with the first
+   *  new track if something was playing; otherwise track 1 is only selected. */
+  async replacePlaylist(newTracks: Track[]): Promise<void> {
+    if (!newTracks.length) return
+    const wasPlaying = this.audio.isPlaying
+    this.audio.unload()
+    this.tracks = [...newTracks]
+    this.currentIndex = 0
+    this.activeSkin?.onPlaylistUpdate?.()
+    if (wasPlaying) {
+      await this.playIndex(0)
+    } else {
+      this.onTrackChange?.(this.tracks[0], 0)
+    }
   }
 
   get playlist(): readonly Track[] {

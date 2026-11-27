@@ -4,7 +4,7 @@
  */
 import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron'
 import { join } from 'path'
-import { readFile } from 'fs/promises'
+import { readdir, readFile } from 'fs/promises'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { is } from '@electron-toolkit/utils'
 
@@ -194,20 +194,50 @@ const AUDIO_EXTENSIONS = [
   'aiff', 'aif', 'alac', 'wma', 'ape', 'm4b', 'mp4', 'webm', 'caf',
 ]
 
-ipcMain.handle('dialog:openAudio', async () => {
+/** Limits for the folder walk, so a huge or looping tree cannot hang the app. */
+const MAX_FOLDER_FILES = 5000
+const MAX_FOLDER_DEPTH = 20
+const AUDIO_EXTENSION_SET = new Set(AUDIO_EXTENSIONS)
+
+/** Audio files under `dir` and its subfolders, as absolute paths. Symlinks
+ *  are not followed (Dirent reports them as neither file nor directory). */
+async function collectAudio(dir: string, depth: number, out: string[]): Promise<void> {
+  if (depth > MAX_FOLDER_DEPTH || out.length >= MAX_FOLDER_FILES) return
+  let entries
+  try {
+    entries = await readdir(dir, { withFileTypes: true })
+  } catch {
+    return // unreadable folder: skip it, keep the rest
+  }
+  for (const entry of entries) {
+    if (out.length >= MAX_FOLDER_FILES) return
+    const full = join(dir, entry.name)
+    if (entry.isDirectory()) {
+      await collectAudio(full, depth + 1, out)
+    } else if (entry.isFile()) {
+      const ext = entry.name.slice(entry.name.lastIndexOf('.') + 1).toLowerCase()
+      if (entry.name.includes('.') && AUDIO_EXTENSION_SET.has(ext)) out.push(full)
+    }
+  }
+}
+
+/** Pick a folder; return its audio files (subfolders included) as file://
+ *  URLs, sorted by path relative to the folder. pathToFileURL keeps spaces,
+ *  '%' and '#' in a name intact for audio:read. */
+ipcMain.handle('dialog:openFolder', async () => {
   if (!win) return []
   const result = await dialog.showOpenDialog(win, {
-    title: 'Add audio files',
-    // Open where music lives; the default (Downloads) is usually all folders.
+    title: 'Open music folder',
     defaultPath: app.getPath('music'),
-    filters: [
-      { name: 'Audio', extensions: AUDIO_EXTENSIONS },
-      // Escape hatch: a format missing from the list must still be pickable.
-      { name: 'All files', extensions: ['*'] },
-    ],
-    properties: ['openFile', 'multiSelections'],
+    properties: ['openDirectory'],
   })
-  return result.canceled ? [] : result.filePaths.map((p) => pathToFileURL(p).href)
+  const root = result.filePaths[0]
+  if (result.canceled || !root) return []
+  const files: string[] = []
+  await collectAudio(root, 0, files)
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
+  files.sort((a, b) => collator.compare(a.slice(root.length), b.slice(root.length)))
+  return files.map((p) => pathToFileURL(p).href)
 })
 
 /** Hand an audio file's bytes to the renderer — Chromium blocks fetch on

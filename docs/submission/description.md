@@ -11,16 +11,16 @@
 Skinwalker is a Windows desktop media player where the skin is a monster and its anatomy is the interface. The window has no title bar. It is cut to the silhouette of the character, so the desktop shows through everywhere the monster is not.
 
 ### What it does
-- Plays local MP3 and WAV files through a native file picker, with a playlist, seek, volume, and previous/next.
+- Plays local audio: "Open folder" loads every audio file in a folder and its subfolders, sorted by name, replacing the playlist. Seek, volume, and previous/next.
 - Ships six demo tracks: three synthesized WAVs and three Kevin MacLeod MP3s (CC BY 4.0).
 - Draws a live visualizer from the Web Audio API `AnalyserNode`, not a canned animation.
 - Three skins (anatomy mapped to controls, from the skin source files):
 
 | Skin | Anatomy to control |
 |------|--------------------|
-| Dracula | medallion: play/pause. Cape: visualizer. Blood line: seek, painted from the plate art with six animated drops. Jeweled minus/plus: volume. Crossed hands: previous/next. Hover tool row: close, minimize, add files, change skin, mini bat. |
+| Dracula | medallion: play/pause. Cape: visualizer. Blood line: seek, painted from the plate art with six animated drops. Jeweled minus/plus: volume. Crossed hands: previous/next. Hover tool row: close, minimize, open folder, change skin, mini bat. |
 | Frankenstein | forehead EQ: visualizer. Right eye: play/pause (the left eye follows the pointer). Neck bolts: previous/next. Stitched scar: seek. Gold watch: volume, tap to mute. Brass jacket pins: open folder, close, minimize, mini, change skin. Playlist: scrolled inside the mouth mask's monitor. |
-| Skeleton | pendant: play/pause. Jaw: visualizer. Bone board: playlist. Blood line: seek. Left bone arm: volume, speaker: mute. Bone plaques: previous/next. Right bone icons: mini, change skin, add files, minimize, close. |
+| Skeleton | pendant: play/pause. Jaw: visualizer. Bone board: playlist. Blood line: seek. Left bone arm: volume, speaker: mute. Bone plaques: previous/next. Right bone icons: mini, change skin, open folder, minimize, close. |
 
 On first launch the app opens on Dracula; after that it reopens on the last skin used. Every skin has a "Change skin" control, and the order wraps: Dracula, Skeleton, Frankenstein, Dracula. Every skin also has a mini version, and every skin has a minimize button.
 

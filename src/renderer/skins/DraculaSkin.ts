@@ -17,7 +17,7 @@
  *                      the tool row is up)
  *   Crossed hands ──── prev / next
  *   Tracklist ──────── playlist rows with probed durations
- *   Tool row ───────── close, minimize, add files, change skin, mini bat (on hover)
+ *   Tool row ───────── close, minimize, open folder, change skin, mini bat (on hover)
  *   Bat ────────────── mini player: the window itself becomes the bat
  *
  * Every position in style.css is the web build's own stage percentage.
@@ -31,7 +31,7 @@ import draculaMedallionFaceUrl from '../assets/dracula-medallion-face.webp'
 import draculaVolMinusUrl from '../assets/dracula-vol-minus.webp'
 import draculaVolPlusUrl from '../assets/dracula-vol-plus.webp'
 import { applySkinShape } from '../windowShape'
-import { openLocalFiles } from '../openFiles'
+import { openFolder } from '../openFiles'
 import { formatTime as fmt, durationLabel, probeDurations } from '../trackDurations'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
@@ -282,7 +282,7 @@ export class DraculaSkin implements Skin {
                aria-label="Player controls; hover, focus or click to reveal">
             <canvas class="dr-viz" aria-hidden="true"></canvas>
             <div class="dr-tools">
-              <button class="dr-tool dr-tool-folder" aria-label="Add audio files" title="Add audio files"></button>
+              <button class="dr-tool dr-tool-folder" aria-label="Open folder" title="Open folder"></button>
               <button class="dr-tool dr-tool-minimize" aria-label="Minimize" title="Minimize"></button>
               <button class="dr-tool dr-tool-close" aria-label="Close player" title="Close player"></button>
               <button class="dr-tool dr-tool-skin" aria-label="Change skin" title="Change skin"></button>
@@ -402,12 +402,12 @@ export class DraculaSkin implements Skin {
     c.querySelector('.dr-prev')!.addEventListener('click', () => p.prev())
     c.querySelector('.dr-next')!.addEventListener('click', () => p.next())
 
-    // Tool row: close, minimize, add files, change skin, mini bat. The web
+    // Tool row: close, minimize, open folder, change skin, mini bat. The web
     // build's fifth tool is a dead "coming soon" stub; here the mask cycles
     // the registry, so no visible control is a no-op.
     c.querySelector('.dr-tool-close')!.addEventListener('click', () => window.skinwalker?.close?.())
     c.querySelector('.dr-tool-minimize')!.addEventListener('click', () => window.skinwalker?.minimize?.())
-    c.querySelector('.dr-tool-folder')!.addEventListener('click', () => void openLocalFiles(p))
+    c.querySelector('.dr-tool-folder')!.addEventListener('click', () => void openFolder(p))
     c.querySelector('.dr-tool-skin')!.addEventListener('click', () => p.nextSkin())
     c.querySelector('.dr-tool-bat')!.addEventListener('click', () => this.enterMini())
     c.querySelector('.dr-mini-restore')!.addEventListener('click', () => this.exitMini())

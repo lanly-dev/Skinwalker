@@ -72,7 +72,7 @@ This is the Skinwalker media player — a Kiroween 2026 **Costume Contest** entr
 ## Scope & Constraints
 
 ### In Scope (v1)
-- ✅ Local audio playback (file picker + bundled demo tracks)
+- ✅ Local audio playback (Open folder, subfolders included, replaces the playlist; plus bundled demo tracks)
 - ✅ Core controls: play/pause, seek, volume, next/prev, playlist
 - ✅ Real-time visualizer driven by audio signal
 - ✅ Dracula skin (flagship; painted blood line with six animated drops)

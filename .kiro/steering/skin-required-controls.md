@@ -24,7 +24,7 @@ part or painted element, never a generic widget stuck on top.
 7. **Minimize**: minimizes the window.
 8. **Switch skin**: moves to the next skin in `SKINS`.
 9. **Mini version**: collapses the window to the compact player.
-10. **Open folder**: opens the native picker to add local audio files to the playlist.
+10. **Open folder**: opens a native folder picker; the folder's audio files (subfolders included, sorted by name) replace the playlist.
 
 ## Rules for implementing
 - Wire controls through `Player` and the `window.skinwalker` API. Do not call Electron directly from a skin.

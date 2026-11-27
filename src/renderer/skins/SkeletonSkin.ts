@@ -39,7 +39,7 @@ import toolMinimizeIcon from '../assets/skeleton-tool-minimize.webp'
 import toolCloseIcon from '../assets/skeleton-tool-close.webp'
 import rowSkullIcon from '../assets/skeleton-row-skull.webp'
 import { applySkinShape } from '../windowShape'
-import { openLocalFiles } from '../openFiles'
+import { openFolder } from '../openFiles'
 import { formatTime as fmt, durationLabel, probeDurations } from '../trackDurations'
 import type { Skin } from './Skin'
 import type { Player } from '../player/Player'
@@ -256,9 +256,9 @@ export class SkeletonSkin implements Skin {
           <img class="sk-tool-icon" src="${toolSkinIcon}" alt="" draggable="false" />
           <span class="sk-tip" aria-hidden="true">Change skin</span>
         </button>
-        <button class="sk-tool sk-tool-folder" aria-label="Open audio folder">
+        <button class="sk-tool sk-tool-folder" aria-label="Open folder">
           <img class="sk-tool-icon" src="${toolFolderIcon}" alt="" draggable="false" />
-          <span class="sk-tip" aria-hidden="true">Open audio folder</span>
+          <span class="sk-tip" aria-hidden="true">Open folder</span>
         </button>
         <button class="sk-tool sk-tool-mini" aria-label="Mini version">
           <img class="sk-tool-icon" src="${toolMiniIcon}" alt="" draggable="false" />
@@ -400,7 +400,7 @@ export class SkeletonSkin implements Skin {
     // build's own stubs; here each one does the desktop job.
     c.querySelector('.sk-tool-minimize')!.addEventListener('click', () => window.skinwalker?.minimize?.())
     c.querySelector('.sk-tool-skin')!.addEventListener('click', () => p.nextSkin())
-    c.querySelector('.sk-tool-folder')!.addEventListener('click', () => void openLocalFiles(p))
+    c.querySelector('.sk-tool-folder')!.addEventListener('click', () => void openFolder(p))
     c.querySelector('.sk-tool-mini')!.addEventListener('click', () => this.enterMini())
     c.querySelector('.sk-tool-close')!.addEventListener('click', () => window.skinwalker?.close?.())
 

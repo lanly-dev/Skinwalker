@@ -53,7 +53,7 @@ npm run package
 - [ ] Current track highlighted
 - [ ] Duration shown for each track
 - [ ] Scroll works if list exceeds height
-- [ ] Add files button opens file picker (if implemented)
+- [ ] Open folder loads the folder and its subfolders and replaces the playlist
 
 ### Window Controls
 - [ ] Drag character silhouette → window moves
@@ -162,7 +162,7 @@ All items from AGENTS.md must pass:
 - [ ] Every visible control in every skin works
 - [ ] Visualizer driven by real audio signal
 - [ ] Frameless window drags/minimizes/maximizes/closes
-- [ ] Native file picker adds local tracks
+- [ ] Open folder replaces the playlist with that folder's tracks
 - [ ] `npm run build` produces working binary
 - [ ] App runs from clean install with no dependencies
 

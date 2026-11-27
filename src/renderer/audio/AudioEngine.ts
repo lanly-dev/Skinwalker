@@ -109,6 +109,14 @@ export class AudioEngine {
     this._isPlaying = false
   }
 
+  /** Stop and drop the decoded track, so the next play loads a fresh one
+   *  (used when the playlist is replaced). */
+  unload(): void {
+    this.stop()
+    this.buffer = null
+    this.startOffset = 0
+  }
+
   stop(): void {
     if (this.source) {
       this.source.onended = null
