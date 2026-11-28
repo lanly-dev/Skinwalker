@@ -130,6 +130,15 @@ const SPECTRUM_STOPS: ReadonlyArray<readonly [number, readonly [number, number, 
 const DROP_X = [22.0, 30.2, 43.3, 57.0, 67.4, 77.0]
 const DROP_Y = [34, 80, 46, 40, 50, 42]
 
+/** Title drift: px per second of visible glide, and the share of the leg the
+ *  dr-slide keyframes spend moving (they hold 9% at each end). */
+const DRIFT_SPEED = 30
+const DRIFT_GLIDE = 0.82
+/** Share of the panel's width the info panel's mask fades to nothing at each
+ *  edge — the 0.5% → 8.5% stops in style.css. A drifting line starts and ends
+ *  outside this band, so its first and last glyphs always reach full glow. */
+const EDGE_FADE = 0.085
+
 /** The 2:3 stage, and the square bat the window shrinks to. */
 const STAGE_SIZE = { width: 480, height: 720, minWidth: 380, minHeight: 560 }
 const MINI_SIZE = { width: 380, height: 380, minWidth: 320, minHeight: 320 }
@@ -162,6 +171,7 @@ export class DraculaSkin implements Skin {
   private els: DraculaEls | null = null
   private rafId = 0
   private mini = false
+  private fitTimer: number | undefined
 
   private freqData: Uint8Array<ArrayBuffer> | null = null
   private waveData: Uint8Array<ArrayBuffer> | null = null
@@ -209,6 +219,8 @@ export class DraculaSkin implements Skin {
 
   unmount(): void {
     cancelAnimationFrame(this.rafId)
+    window.clearTimeout(this.fitTimer)
+    window.removeEventListener('resize', this.onResize)
     document.removeEventListener('pointerdown', this.onDocPointerDown)
     const player = this.player
     if (player) {
@@ -432,27 +444,17 @@ export class DraculaSkin implements Skin {
       els.title.title = track.title
       els.artist.textContent = track.artist
       els.artist.title = track.artist
-      // A title wider than the panel drifts out until its tail clears the edge,
-      // then drifts back; both rows ride one duration so the block moves as a
-      // piece. ~60px a second, the same read as the other skins.
-      const titleTravel = this.fitRow(els.title)
-      const artistTravel = this.fitRow(els.artist)
-      const travel = Math.max(titleTravel, artistTravel)
-      if (travel > 0) {
-        const dur = `${Math.min(10, Math.max(2.4, travel / 60)).toFixed(2)}s`
-        const rows: Array<[HTMLElement, number]> = [
-          [els.title, titleTravel],
-          [els.artist, artistTravel],
-        ]
-        for (const [row, dist] of rows) {
-          if (dist <= 0) continue
-          row.style.setProperty('--slide-dur', dur)
-          row.classList.add('is-marquee')
-        }
-      }
+      this.fitTrackInfo()
       this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }
+
+    // The info panel narrows with the stage and the display face can land after
+    // the first track does, so re-test both rows on either. Without this the
+    // travel measured at the old size outlives the resize: the drift stops
+    // short of the tail (or runs past where the crop now ends).
+    window.addEventListener('resize', this.onResize)
+    void document.fonts.ready.then(() => this.fitTrackInfo())
 
     this.buildPlaylist()
   }
@@ -554,22 +556,63 @@ export class DraculaSkin implements Skin {
     })
   }
 
-  /** A title row wider than the info panel drifts out just far enough for its
-   *  tail to clear the edge, then drifts back. Returns the distance to travel;
-   *  the animation is `--slide` / `--slide-dur` against `dr-slide`. */
+  private onResize = (): void => {
+    window.clearTimeout(this.fitTimer)
+    this.fitTimer = window.setTimeout(() => this.fitTrackInfo(), 150)
+  }
+
+  /** A title row wider than the panel drifts out until its tail clears the
+   *  edge, then drifts back; both rows ride one duration so the block moves as
+   *  a piece. The glide runs at ~30px a second — slower than the readout skins'
+   *  60–65, because the title is set in display caps and a fast slide reads as
+   *  a jitter. Called on track change and after every resize, since the panel
+   *  moves with the stage. */
+  private fitTrackInfo(): void {
+    const els = this.els
+    if (!els) return
+    const titleTravel = this.fitRow(els.title)
+    const artistTravel = this.fitRow(els.artist)
+    const travel = Math.max(titleTravel, artistTravel)
+    if (travel <= 0) return
+    // dr-slide holds for 9% at each end, so the leg has to be long enough for
+    // the 82% that moves to cover the travel at the glide speed.
+    const leg = travel / (DRIFT_SPEED * DRIFT_GLIDE)
+    const dur = `${Math.min(14, Math.max(3.6, leg)).toFixed(2)}s`
+    const rows: Array<[HTMLElement, number]> = [
+      [els.title, titleTravel],
+      [els.artist, artistTravel],
+    ]
+    for (const [row, dist] of rows) {
+      if (dist <= 0) continue
+      row.style.setProperty('--slide-dur', dur)
+      row.classList.add('is-marquee')
+    }
+  }
+
+  /** A title row wider than the info panel's lit band drifts out just far
+   *  enough for its tail to clear the edge fade, then drifts back. Returns the
+   *  distance to travel; the animation is `--slide-from` / `--slide-to` /
+   *  `--slide-dur` against `dr-slide`. */
   private fitRow(el: HTMLElement): number {
     el.classList.remove('is-marquee')
-    el.style.removeProperty('--slide')
+    el.style.removeProperty('--slide-from')
+    el.style.removeProperty('--slide-to')
     el.style.removeProperty('--slide-dur')
     if (el.clientWidth === 0) return 0
+    const panelW = el.parentElement?.clientWidth ?? 0
+    if (panelW === 0) return 0
     // Measured while the row is still clipped to the panel, so its scroll width
-    // is the whole line and its client width is the window it has to fit in.
-    const over = Math.ceil(el.scrollWidth - el.clientWidth)
-    if (over <= 1) return 0
-    // A few px of lead-out, so the last glyph never rests on the edge.
-    const travel = over + 8
-    el.style.setProperty('--slide', `-${travel}px`)
-    return travel
+    // is the whole line. The panel masks its outer EDGE_FADE to nothing, so a
+    // line that starts or ends inside that band never reaches full brightness:
+    // drift from past the left band to past the right one.
+    const fade = Math.round(panelW * EDGE_FADE)
+    const from = fade
+    const to = panelW - el.scrollWidth - fade
+    // Under a few px there is nothing worth animating; the row keeps its clip.
+    if (from - to < 6) return 0
+    el.style.setProperty('--slide-from', `${from}px`)
+    el.style.setProperty('--slide-to', `${to}px`)
+    return from - to
   }
 
   private highlightPlaylistItem(idx: number): void {

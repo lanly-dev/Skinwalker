@@ -206,6 +206,7 @@ export class FrankensteinSkin implements Skin {
   private rafId = 0
   private eyeRaf = 0
   private mini = false
+  private fitTimer: number | undefined
 
   private freqData: Uint8Array<ArrayBuffer> | null = null
 
@@ -257,6 +258,8 @@ export class FrankensteinSkin implements Skin {
   unmount(): void {
     cancelAnimationFrame(this.rafId)
     cancelAnimationFrame(this.eyeRaf)
+    window.clearTimeout(this.fitTimer)
+    window.removeEventListener('resize', this.onStageResize)
     document.removeEventListener('pointermove', this.onPointerAim)
     document.removeEventListener('pointerdown', this.onPointerAim)
     if (this.player) this.player.onTrackChange = null
@@ -386,6 +389,40 @@ export class FrankensteinSkin implements Skin {
    *  for the tail to clear the edge, then drifts back — slowly, so a long title
    *  is read rather than raced. Returns the distance the row has to travel; the
    *  animation itself is `--slide` / `--slide-dur` against `fr-slide`. */
+  /** The band is a percentage of the stage while `--slide` is in px, so travel
+   *  measured at one stage size goes stale when the window changes size — the
+   *  launch window is resized after the first track mounts, which left the
+   *  drift stopping short of the tail. Re-fit once the new size settles; the
+   *  same event covers mini mode and a dragged window edge. */
+  private onStageResize = (): void => {
+    window.clearTimeout(this.fitTimer)
+    this.fitTimer = window.setTimeout(() => this.fitRows(), 150)
+  }
+
+  /** Both chest rows, fitted together: on track change and after a resize. Both
+   *  ride one duration, so the block drifts as a single piece. */
+  private fitRows(): void {
+    const els = this.els
+    if (!els) return
+    const titleTravel = this.fitRow(els.nowTitle)
+    const artistTravel = this.fitRow(els.nowArtist)
+    const travel = Math.max(titleTravel, artistTravel)
+    if (travel <= 0) return
+    // ~60px a second, not the old 24: a 115px trip used to take the full 6s
+    // floor each way, which read as frozen. The clamps still keep a long title
+    // readable and a small one from flicking past.
+    const dur = `${Math.min(10, Math.max(2.4, travel / 60)).toFixed(2)}s`
+    const rows: [HTMLElement, number][] = [
+      [els.nowTitle, titleTravel],
+      [els.nowArtist, artistTravel],
+    ]
+    for (const [row, dist] of rows) {
+      if (dist <= 0) continue
+      row.style.setProperty('--slide-dur', dur)
+      row.classList.add('is-marquee')
+    }
+  }
+
   private fitRow(el: HTMLElement): number {
     el.classList.remove('is-marquee')
     el.style.removeProperty('--slide')
@@ -465,28 +502,14 @@ export class FrankensteinSkin implements Skin {
       els.nowTitle.title = track.title
       els.nowArtist.textContent = track.artist
       els.nowArtist.title = track.artist
-      const titleTravel = this.fitRow(els.nowTitle)
-      const artistTravel = this.fitRow(els.nowArtist)
-      const travel = Math.max(titleTravel, artistTravel)
-      if (travel > 0) {
-        // Both rows ride one duration, so the block drifts as a single piece.
-        // ~60px a second, not the old 24: a 115px trip used to take the full
-        // 6s floor each way, which read as frozen. The clamps still keep a
-        // long title readable and a small one from flicking past.
-        const dur = `${Math.min(10, Math.max(2.4, travel / 60)).toFixed(2)}s`
-        const rows: [HTMLElement, number][] = [
-          [els.nowTitle, titleTravel],
-          [els.nowArtist, artistTravel],
-        ]
-        for (const [row, dist] of rows) {
-          if (dist <= 0) continue
-          row.style.setProperty('--slide-dur', dur)
-          row.classList.add('is-marquee')
-        }
-      }
+      this.fitRows()
       this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }
+
+    // Travel is px against a band that follows the stage, so re-test both rows
+    // whenever the window settles at a new size.
+    window.addEventListener('resize', this.onStageResize)
 
     this.buildPlaylist()
     this.applyVolume(p.currentVolume)

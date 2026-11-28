@@ -135,7 +135,7 @@ input[type="range"]::-moz-range-thumb {
      reduced motion. Nothing else in the player animates. */
   .dracula-skin .dr-title.is-marquee,
   .dracula-skin .dr-artist.is-marquee {
-    animation: dr-slide var(--slide-dur, 8s) ease-in-out infinite alternate !important;
+    animation: dr-slide var(--slide-dur, 8s) cubic-bezier(0.45, 0, 0.25, 1) infinite alternate !important;
   }
   .skeleton-skin .sk-line.is-marquee {
     animation: sk-slide var(--slide-dur, 8s) ease-in-out infinite alternate !important;
@@ -227,8 +227,9 @@ input[type="range"]::-moz-range-thumb {
      artist's line and the velvet is flat — so a hard crop would slice drifting
      words at an arbitrary line. Let them sink into the cape's shadow instead,
      fading out just inside the opening (27%–73% panel against a ~29.8%–70.2%
-     opening) so nothing runs onto the robe. */
-  mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%);
+     opening) so nothing runs onto the robe. The outer 8% is the fade band:
+     fitRow() keeps every drifting line out of it, so no word is ever left dim. */
+  mask-image: linear-gradient(to right, transparent 0.5%, #000 8.5%, #000 91.5%, transparent 99.5%);
 }
 .dracula-skin .dr-title {
   max-width: 96%;
@@ -252,21 +253,24 @@ input[type="range"]::-moz-range-thumb {
   text-overflow: ellipsis;
   color: #e96668;
 }
-/* A title wider than the panel drifts out just far enough for its tail to
-   clear the edge, then drifts back. `--slide` / `--slide-dur` come from
-   DraculaSkin.fitRow(); while a row drifts it releases its own clip and is
-   clipped by the info panel instead, so the words travel whole. */
+/* A title wider than the panel's lit band drifts out just far enough for its
+   tail to clear the edge fade, then drifts back. `--slide-from` / `--slide-to`
+   / `--slide-dur` come from DraculaSkin.fitRow(); while a row drifts it
+   releases its own clip and is clipped by the info panel instead, so the words
+   travel whole. */
 .dracula-skin .dr-title.is-marquee,
 .dracula-skin .dr-artist.is-marquee {
   align-self: flex-start;
   max-width: none;
   overflow: visible;
   text-overflow: clip;
-  animation: dr-slide var(--slide-dur, 8s) ease-in-out infinite alternate;
+  /* A long, soft landing at each end and a beat of stillness there, so the
+     line glides rather than ping-pongs. */
+  animation: dr-slide var(--slide-dur, 8s) cubic-bezier(0.45, 0, 0.25, 1) infinite alternate;
 }
 @keyframes dr-slide {
-  0%, 9% { transform: translateX(0); }
-  91%, 100% { transform: translateX(var(--slide, 0px)); }
+  0%, 9% { transform: translateX(var(--slide-from, 0px)); }
+  91%, 100% { transform: translateX(var(--slide-to, 0px)); }
 }
 
 /* Eyes = audio readout riding the painted sockets */
