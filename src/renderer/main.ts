@@ -16,7 +16,7 @@ import './style.css'
 // local files via the native file picker.
 const DEMO_TRACKS: Track[] = [
   { title: 'Nocturne In Blood',   artist: 'Bathory • Eternal Night',        url: './tracks/nocturne-in-blood.wav' },
-  { title: 'Coffin Dream',        artist: 'Synthesized Ambient • Demo II',  url: './tracks/coffin-dream.wav' },
+  { title: 'The Extraordinarily Long Ballad of the Midnight Count', artist: 'Synthesized Ambient • Demo II',  url: './tracks/coffin-dream.wav' },
   { title: 'Widow’s Kiss',        artist: 'Synthesized Ambient • Demo III', url: './tracks/widows-kiss.wav' },
   { title: 'Baba Yaga',           artist: 'Kevin MacLeod',                  url: './tracks/baba-yaga.mp3' },
   { title: 'Darkling',            artist: 'Kevin MacLeod',                  url: './tracks/darkling.mp3' },

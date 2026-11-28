@@ -505,9 +505,10 @@ export class SkeletonSkin implements Skin {
     // A few px of lead-out, so the last letter never rests on the edge.
     const travel = over + 8
     line.style.setProperty('--slide', `-${travel}px`)
-    // ~40px a second reads comfortably; the clamps keep a small overflow from
-    // flicking past and a long one from taking forever.
-    const dur = Math.min(14, Math.max(3.5, travel / 40))
+    // ~65px a second keeps a long readout moving: the old 40px/s made a 250px
+    // overflow drift for 6.3s each way, which read as stuck. The clamps keep a
+    // small overflow from flicking past and a long one from taking forever.
+    const dur = Math.min(9, Math.max(2.8, travel / 65))
     line.style.setProperty('--slide-dur', `${dur.toFixed(2)}s`)
     el.classList.add('is-marquee')
     line.classList.add('is-marquee')

@@ -432,6 +432,24 @@ export class DraculaSkin implements Skin {
       els.title.title = track.title
       els.artist.textContent = track.artist
       els.artist.title = track.artist
+      // A title wider than the panel drifts out until its tail clears the edge,
+      // then drifts back; both rows ride one duration so the block moves as a
+      // piece. ~60px a second, the same read as the other skins.
+      const titleTravel = this.fitRow(els.title)
+      const artistTravel = this.fitRow(els.artist)
+      const travel = Math.max(titleTravel, artistTravel)
+      if (travel > 0) {
+        const dur = `${Math.min(10, Math.max(2.4, travel / 60)).toFixed(2)}s`
+        const rows: Array<[HTMLElement, number]> = [
+          [els.title, titleTravel],
+          [els.artist, artistTravel],
+        ]
+        for (const [row, dist] of rows) {
+          if (dist <= 0) continue
+          row.style.setProperty('--slide-dur', dur)
+          row.classList.add('is-marquee')
+        }
+      }
       this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }
@@ -534,6 +552,24 @@ export class DraculaSkin implements Skin {
       const label = `• ${durationLabel(track.url)}`
       if (el.textContent !== label) el.textContent = label
     })
+  }
+
+  /** A title row wider than the info panel drifts out just far enough for its
+   *  tail to clear the edge, then drifts back. Returns the distance to travel;
+   *  the animation is `--slide` / `--slide-dur` against `dr-slide`. */
+  private fitRow(el: HTMLElement): number {
+    el.classList.remove('is-marquee')
+    el.style.removeProperty('--slide')
+    el.style.removeProperty('--slide-dur')
+    if (el.clientWidth === 0) return 0
+    // Measured while the row is still clipped to the panel, so its scroll width
+    // is the whole line and its client width is the window it has to fit in.
+    const over = Math.ceil(el.scrollWidth - el.clientWidth)
+    if (over <= 1) return 0
+    // A few px of lead-out, so the last glyph never rests on the edge.
+    const travel = over + 8
+    el.style.setProperty('--slide', `-${travel}px`)
+    return travel
   }
 
   private highlightPlaylistItem(idx: number): void {

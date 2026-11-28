@@ -382,6 +382,25 @@ export class FrankensteinSkin implements Skin {
     `
   }
 
+  /** A chest row whose words are wider than the band drifts just far enough
+   *  for the tail to clear the edge, then drifts back — slowly, so a long title
+   *  is read rather than raced. Returns the distance the row has to travel; the
+   *  animation itself is `--slide` / `--slide-dur` against `fr-slide`. */
+  private fitRow(el: HTMLElement): number {
+    el.classList.remove('is-marquee')
+    el.style.removeProperty('--slide')
+    el.style.removeProperty('--slide-dur')
+    if (el.clientWidth === 0) return 0
+    // Measured while the row is still clipped to the band, so its scroll width
+    // is the whole line and its client width is the window it has to fit in.
+    const over = Math.ceil(el.scrollWidth - el.clientWidth)
+    if (over <= 1) return 0
+    // A few px of lead-out, so the last glyph never rests on the edge.
+    const travel = over + 8
+    el.style.setProperty('--slide', `-${travel}px`)
+    return travel
+  }
+
   // ── Events ───────────────────────────────────────────────────────────────────
 
   private bindEvents(): void {
@@ -446,6 +465,25 @@ export class FrankensteinSkin implements Skin {
       els.nowTitle.title = track.title
       els.nowArtist.textContent = track.artist
       els.nowArtist.title = track.artist
+      const titleTravel = this.fitRow(els.nowTitle)
+      const artistTravel = this.fitRow(els.nowArtist)
+      const travel = Math.max(titleTravel, artistTravel)
+      if (travel > 0) {
+        // Both rows ride one duration, so the block drifts as a single piece.
+        // ~60px a second, not the old 24: a 115px trip used to take the full
+        // 6s floor each way, which read as frozen. The clamps still keep a
+        // long title readable and a small one from flicking past.
+        const dur = `${Math.min(10, Math.max(2.4, travel / 60)).toFixed(2)}s`
+        const rows: [HTMLElement, number][] = [
+          [els.nowTitle, titleTravel],
+          [els.nowArtist, artistTravel],
+        ]
+        for (const [row, dist] of rows) {
+          if (dist <= 0) continue
+          row.style.setProperty('--slide-dur', dur)
+          row.classList.add('is-marquee')
+        }
+      }
       this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }

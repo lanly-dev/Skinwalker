@@ -130,11 +130,19 @@ input[type="range"]::-moz-range-thumb {
 /* ── Reduced motion ──────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition-duration: 0.01ms !important; }
-  /* The one exception: a readout wider than its window cannot be read at all
+  /* The exceptions: a readout wider than its window cannot be read at all
      without the slow drift, so it keeps sliding even when the OS asks for
      reduced motion. Nothing else in the player animates. */
+  .dracula-skin .dr-title.is-marquee,
+  .dracula-skin .dr-artist.is-marquee {
+    animation: dr-slide var(--slide-dur, 8s) ease-in-out infinite alternate !important;
+  }
   .skeleton-skin .sk-line.is-marquee {
     animation: sk-slide var(--slide-dur, 8s) ease-in-out infinite alternate !important;
+  }
+  .frankenstein-skin .fr-now-title.is-marquee,
+  .frankenstein-skin .fr-now-artist.is-marquee {
+    animation: fr-slide var(--slide-dur, 12s) ease-in-out infinite alternate !important;
   }
 }
 
@@ -215,6 +223,12 @@ input[type="range"]::-moz-range-thumb {
   overflow: hidden;
   text-shadow: 0 1px 4px #000;
   z-index: 3;
+  /* At this height the plate has no painted edge — the gold arcs pass below the
+     artist's line and the velvet is flat — so a hard crop would slice drifting
+     words at an arbitrary line. Let them sink into the cape's shadow instead,
+     fading out just inside the opening (27%–73% panel against a ~29.8%–70.2%
+     opening) so nothing runs onto the robe. */
+  mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%);
 }
 .dracula-skin .dr-title {
   max-width: 96%;
@@ -237,6 +251,22 @@ input[type="range"]::-moz-range-thumb {
   overflow: hidden;
   text-overflow: ellipsis;
   color: #e96668;
+}
+/* A title wider than the panel drifts out just far enough for its tail to
+   clear the edge, then drifts back. `--slide` / `--slide-dur` come from
+   DraculaSkin.fitRow(); while a row drifts it releases its own clip and is
+   clipped by the info panel instead, so the words travel whole. */
+.dracula-skin .dr-title.is-marquee,
+.dracula-skin .dr-artist.is-marquee {
+  align-self: flex-start;
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+  animation: dr-slide var(--slide-dur, 8s) ease-in-out infinite alternate;
+}
+@keyframes dr-slide {
+  0%, 9% { transform: translateX(0); }
+  91%, 100% { transform: translateX(var(--slide, 0px)); }
 }
 
 /* Eyes = audio readout riding the painted sockets */
@@ -1222,6 +1252,23 @@ input[type="range"]::-moz-range-thumb {
   font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+/* A row wider than the band drifts out just far enough for its tail to clear
+   the edge, then drifts back — slowly, so a long title is read rather than
+   raced. `--slide` / `--slide-dur` come from FrankensteinSkin.fitRow(); while
+   a row slides it releases the band's clip and is clipped by `.fr-now` instead,
+   so the words travel whole instead of being cut with an ellipsis. */
+.frankenstein-skin .fr-now-title.is-marquee,
+.frankenstein-skin .fr-now-artist.is-marquee {
+  align-self: flex-start;
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+  animation: fr-slide var(--slide-dur, 12s) ease-in-out infinite alternate;
+}
+@keyframes fr-slide {
+  0%, 10% { transform: translateX(0); }
+  90%, 100% { transform: translateX(var(--slide, 0px)); }
 }
 
 /* ── Stitched scar = seek ─────────────────────────────────────────────── */
