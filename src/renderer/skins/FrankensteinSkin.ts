@@ -47,6 +47,12 @@ const STAGE_SIZE = { width: 480, height: 660, minWidth: 380, minHeight: 520 }
 /** Mini keeps the whole figure, as the reference does — just smaller. */
 const MINI_SIZE = { width: 320, height: 440, minWidth: 240, minHeight: 330 }
 
+/** Chest-row drift: px a second of visible glide, and the share of each leg the
+ *  `fr-slide` keyframes spend moving (they hold 10% at each end). Slower than
+ *  the old 60, on Dracula's ~30, so a long title is read rather than raced. */
+const DRIFT_SPEED = 30
+const DRIFT_GLIDE = 0.8
+
 /** Forehead equalizer: the reference build's 9 × 5 block grid. */
 const EQ_COLS = 9
 const EQ_ROWS = 5
@@ -385,10 +391,6 @@ export class FrankensteinSkin implements Skin {
     `
   }
 
-  /** A chest row whose words are wider than the band drifts just far enough
-   *  for the tail to clear the edge, then drifts back — slowly, so a long title
-   *  is read rather than raced. Returns the distance the row has to travel; the
-   *  animation itself is `--slide` / `--slide-dur` against `fr-slide`. */
   /** The band is a percentage of the stage while `--slide` is in px, so travel
    *  measured at one stage size goes stale when the window changes size — the
    *  launch window is resized after the first track mounts, which left the
@@ -408,10 +410,12 @@ export class FrankensteinSkin implements Skin {
     const artistTravel = this.fitRow(els.nowArtist)
     const travel = Math.max(titleTravel, artistTravel)
     if (travel <= 0) return
-    // ~60px a second, not the old 24: a 115px trip used to take the full 6s
-    // floor each way, which read as frozen. The clamps still keep a long title
-    // readable and a small one from flicking past.
-    const dur = `${Math.min(10, Math.max(2.4, travel / 60)).toFixed(2)}s`
+    // ~30px a second of visible glide, the same read as Dracula's title: fast
+    // enough that the words still move, slow enough to read a long one.
+    // `fr-slide` holds 10% at each end, so only the 80% between the holds
+    // moves; the leg is stretched so that stretch covers the travel at speed.
+    const leg = travel / (DRIFT_SPEED * DRIFT_GLIDE)
+    const dur = `${Math.min(14, Math.max(3.6, leg)).toFixed(2)}s`
     const rows: [HTMLElement, number][] = [
       [els.nowTitle, titleTravel],
       [els.nowArtist, artistTravel],
@@ -423,6 +427,10 @@ export class FrankensteinSkin implements Skin {
     }
   }
 
+  /** A chest row whose words are wider than the band drifts just far enough
+   *  for the tail to clear the edge, then drifts back — slowly, so a long title
+   *  is read rather than raced. Returns the distance the row has to travel; the
+   *  animation itself is `--slide` / `--slide-dur` against `fr-slide`. */
   private fitRow(el: HTMLElement): number {
     el.classList.remove('is-marquee')
     el.style.removeProperty('--slide')

@@ -136,8 +136,11 @@ const DRIFT_SPEED = 30
 const DRIFT_GLIDE = 0.82
 /** Share of the panel's width the info panel's mask fades to nothing at each
  *  edge — the 0.5% → 8.5% stops in style.css. A drifting line starts and ends
- *  outside this band, so its first and last glyphs always reach full glow. */
+ *  inside this band, so its first and last glyphs always reach full glow. */
 const EDGE_FADE = 0.085
+/** Extra room past the fade at each end, so a glyph's overhang and its text
+ *  shadow stay in the lit part even when the line measures a hair short. */
+const EDGE_LEAD = 6
 
 /** The 2:3 stage, and the square bat the window shrinks to. */
 const STAGE_SIZE = { width: 480, height: 720, minWidth: 380, minHeight: 560 }
@@ -598,21 +601,28 @@ export class DraculaSkin implements Skin {
     el.style.removeProperty('--slide-from')
     el.style.removeProperty('--slide-to')
     el.style.removeProperty('--slide-dur')
-    if (el.clientWidth === 0) return 0
-    const panelW = el.parentElement?.clientWidth ?? 0
-    if (panelW === 0) return 0
-    // Measured while the row is still clipped to the panel, so its scroll width
-    // is the whole line. The panel masks its outer EDGE_FADE to nothing, so a
-    // line that starts or ends inside that band never reaches full brightness:
-    // drift from past the left band to past the right one.
-    const fade = Math.round(panelW * EDGE_FADE)
-    const from = fade
-    const to = panelW - el.scrollWidth - fade
+    const panel = el.parentElement
+    if (!panel || panel.clientWidth === 0 || el.clientWidth === 0) return 0
+    const panelW = panel.clientWidth
+    // Measured with the clip released, in the same layout the drift runs in:
+    // clipped, the row is capped at max-width and reports a different width, so
+    // the travel could not be trusted to match the line it translates.
+    el.classList.add('is-marquee')
+    const lineW = Math.ceil(el.getBoundingClientRect().width)
+    el.classList.remove('is-marquee')
+    // The panel masks its outer EDGE_FADE to nothing, so a line that starts or
+    // ends on that boundary never reaches full brightness. Drift from a lead
+    // inside the left fade to the same point inside the right one; both ends
+    // then sit in the panel's lit middle, never in the fade or past the crop.
+    const inset = Math.round(panelW * EDGE_FADE) + EDGE_LEAD
+    const travel = lineW + inset * 2 - panelW
     // Under a few px there is nothing worth animating; the row keeps its clip.
-    if (from - to < 6) return 0
+    if (travel < 6) return 0
+    const from = inset
+    const to = from - travel
     el.style.setProperty('--slide-from', `${from}px`)
     el.style.setProperty('--slide-to', `${to}px`)
-    return from - to
+    return travel
   }
 
   private highlightPlaylistItem(idx: number): void {

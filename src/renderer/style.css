@@ -142,7 +142,7 @@ input[type="range"]::-moz-range-thumb {
   }
   .frankenstein-skin .fr-now-title.is-marquee,
   .frankenstein-skin .fr-now-artist.is-marquee {
-    animation: fr-slide var(--slide-dur, 12s) ease-in-out infinite alternate !important;
+    animation: fr-slide var(--slide-dur, 12s) cubic-bezier(0.45, 0, 0.25, 1) infinite alternate !important;
   }
 }
 
@@ -233,10 +233,13 @@ input[type="range"]::-moz-range-thumb {
 }
 .dracula-skin .dr-title {
   max-width: 96%;
-  font-family: 'Cinzel Decorative', var(--font-display);
-  font-size: clamp(10px, 3.1cqw, 30px);
-  line-height: 1.25;
-  letter-spacing: 0.01em;
+  /* Blackletter for the vampire's line: the reference plate's title is gothic,
+     and Pirata One is the copy already bundled for the skeleton skin. */
+  font-family: "Pirata One", 'Palatino Linotype', Palatino, Georgia, serif;
+  font-size: clamp(11px, 3.6cqw, 34px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -244,8 +247,12 @@ input[type="range"]::-moz-range-thumb {
 }
 .dracula-skin .dr-artist {
   max-width: 96%;
-  font-weight: 700;
-  font-size: clamp(7px, 1.5cqw, 14px);
+  /* The same blackletter as the title, so the two rows read as one block; the
+     red caps and tracking keep it a subtitle. Pirata One has a single weight,
+     so 400 — a synthetic bold at this size only muddies the strokes. */
+  font-family: "Pirata One", 'Palatino Linotype', Palatino, Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(8px, 1.7cqw, 15px);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -1268,7 +1275,9 @@ input[type="range"]::-moz-range-thumb {
   max-width: none;
   overflow: visible;
   text-overflow: clip;
-  animation: fr-slide var(--slide-dur, 12s) ease-in-out infinite alternate;
+  /* A long, soft landing at each end and a beat of stillness there — the same
+     glide as Dracula's title, so the drift reads rather than ping-pongs. */
+  animation: fr-slide var(--slide-dur, 12s) cubic-bezier(0.45, 0, 0.25, 1) infinite alternate;
 }
 @keyframes fr-slide {
   0%, 10% { transform: translateX(0); }
