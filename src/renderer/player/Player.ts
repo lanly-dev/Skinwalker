@@ -39,10 +39,6 @@ export class Player {
     return this.tracks[this.currentIndex] ?? null
   }
 
-  get trackCount(): number {
-    return this.tracks.length
-  }
-
   async playIndex(index: number): Promise<void> {
     if (index < 0 || index >= this.tracks.length) return
     this.currentIndex = index
@@ -123,12 +119,6 @@ export class Player {
     const at = this.skins.findIndex((skin) => skin.id === current.id)
     const next = this.skins[(at + 1) % this.skins.length]
     if (next && next.id !== current.id) this.mountSkin(next)
-  }
-
-  /** Append tracks and notify the active skin */
-  addTracks(newTracks: Track[]): void {
-    this.tracks = [...this.tracks, ...newTracks]
-    this.activeSkin?.onPlaylistUpdate?.()
   }
 
   /** Swap in a new playlist (Open folder). Playback continues with the first
