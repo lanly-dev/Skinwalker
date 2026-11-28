@@ -1181,12 +1181,58 @@ input[type="range"]::-moz-range-thumb {
   outline: 1px solid #b1ffa2;
 }
 
+/* ── Chest readout = now playing, above the seek line ─────────────────── */
+/* The dark band between the mask's chin (the mask ends at 57.4%) and the
+   stitched line (dropped to 65%) is the clear strip on the chest, so the
+   track gets two stacked rows there — title over artist — inside the seek's
+   own 44% column. */
+.frankenstein-skin .fr-now {
+  position: absolute;
+  left: 28%;
+  top: 59.4%;
+  width: 44%;
+  height: 5%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6cqw;
+  overflow: hidden;
+  color: #9cff7f;
+  font: 700 clamp(9px, 2.1cqw, 14px)/1 var(--font-mono);
+  white-space: nowrap;
+  text-shadow: 0 1px 3px #000, 0 0 6px #000;
+  pointer-events: none;
+  /* Above the mask (6): its drop shadow spills below the chin and would
+     otherwise grey the top row. */
+  z-index: 7;
+}
+.frankenstein-skin .fr-now-title,
+.frankenstein-skin .fr-now-artist {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+.frankenstein-skin .fr-now-artist {
+  color: #6f9c73;
+  font-size: 0.82em;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 /* ── Stitched scar = seek ─────────────────────────────────────────────── */
 .frankenstein-skin .fr-scar {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 4;
+  /* The whole seek group (stitched line, progress, bead, times) is dropped
+     together so the chest readout above it gets two clear rows. */
+  transform: translateY(4%);
 }
 /* The stitched underline itself: the plate's own thread and stitches, cut out
    as a layer (575×116 art px at 354,1083) so the seek's progress and bead sit

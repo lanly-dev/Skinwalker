@@ -177,6 +177,8 @@ interface FrEls {
   iris: HTMLElement
   play: HTMLButtonElement
   seek: HTMLInputElement
+  nowTitle: HTMLElement
+  nowArtist: HTMLElement
   scarSvg: SVGSVGElement
   scarHit: SVGPathElement
   progress: SVGPathElement
@@ -324,6 +326,13 @@ export class FrankensteinSkin implements Skin {
           </svg>
         </button>
 
+        <!-- Chest = now playing, in the band between the mask's chin and the
+             stitched seek line, as two rows: title over artist. -->
+        <p class="fr-now">
+          <strong class="fr-now-title">—</strong>
+          <span class="fr-now-artist">—</span>
+        </p>
+
         <!-- Stitched scar = seek. The stitched underline is its own layer
              (cropped from the plate, which no longer paints it); the green
              progress and the bead ride on top of it. -->
@@ -386,6 +395,8 @@ export class FrankensteinSkin implements Skin {
       iris: c.querySelector('.fr-iris')!,
       play: c.querySelector('.fr-play')!,
       seek: c.querySelector('.fr-seek')!,
+      nowTitle: c.querySelector('.fr-now-title')!,
+      nowArtist: c.querySelector('.fr-now-artist')!,
       scarSvg: c.querySelector('.fr-scar-svg')!,
       scarHit: c.querySelector('.fr-scar-hit')!,
       progress: c.querySelector('.fr-scar-progress')!,
@@ -430,8 +441,11 @@ export class FrankensteinSkin implements Skin {
     document.addEventListener('pointerdown', this.onPointerAim, { passive: true })
 
     // Track change
-    // The mouth monitor is now the only place the current track is named.
-    p.onTrackChange = (_track, idx) => {
+    p.onTrackChange = (track, idx) => {
+      els.nowTitle.textContent = track.title
+      els.nowTitle.title = track.title
+      els.nowArtist.textContent = track.artist
+      els.nowArtist.title = track.artist
       this.activeIndex = idx
       this.highlightPlaylistItem(idx)
     }
