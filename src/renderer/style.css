@@ -1582,26 +1582,33 @@ input[type="range"]::-moz-range-thumb {
   filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.5));
 }
 .frankenstein-skin .fr-mini button {
+  /* Rim colour as an RGB triplet, so hover and playing share one gradient. */
+  --fr-rim: 255, 184, 86;
   position: absolute;
   padding: 0;
   border: 0;
   background: transparent;
   border-radius: 50%;
   cursor: pointer;
-  transition: box-shadow 0.18s;
 }
-/* The painted glyph is the button: hover / focus warms a soft phosphor halo
-   under it instead of drawing a ring around the brass. */
+/* The painted glyph is the button, and each box is its plate's own circle
+   (fitted to the dark outline baked into the art). Hover / focus catches that
+   circle's edge like light instead of laying a glow over the face: the centre
+   of the gradient stays clear, the band peaks just inside the rim, and the
+   gradient ends at zero on the box edge, which the 50% radius clips — so no
+   light can reach the art behind the plate. */
 .frankenstein-skin .fr-mini button::after {
   content: '';
   position: absolute;
-  inset: -8%;
+  inset: 0;
   border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 50%,
-    rgba(219, 255, 197, 0.55) 0%,
-    rgba(141, 248, 121, 0.34) 46%,
-    rgba(101, 220, 96, 0.14) 72%,
-    rgba(101, 220, 96, 0) 100%);
+  background: radial-gradient(circle closest-side,
+    rgba(var(--fr-rim), 0) 0%,
+    rgba(var(--fr-rim), 0) 80%,
+    rgba(var(--fr-rim), 0.08) 88%,
+    rgba(var(--fr-rim), 0.42) 93%,
+    rgba(var(--fr-rim), 0.6) 97%,
+    rgba(var(--fr-rim), 0) 100%);
   mix-blend-mode: plus-lighter;
   opacity: 0;
   transition: opacity 0.16s;
@@ -1609,15 +1616,20 @@ input[type="range"]::-moz-range-thumb {
 }
 .frankenstein-skin .fr-mini button:hover::after,
 .frankenstein-skin .fr-mini button:focus-visible::after { opacity: 1; }
-/* Art centres: X plate 51.1% / 15.7%, compass 29.8% / 44.9%, play dial
-   60.5% / 57.1%. The play hotspot covers the dial's inner face and ticks. */
-.frankenstein-skin .fr-mini-close { left: 46.6%; top: 12.03%; width: 9%; height: 7.34%; }
-.frankenstein-skin .fr-mini-restore { left: 20.8%; top: 37.56%; width: 18%; height: 14.68%; }
-.frankenstein-skin .fr-mini-play { left: 50%; top: 48.54%; width: 21%; height: 17.13%; }
-/* Playing keeps the dial lit, as the full skin's right eye does. */
-.frankenstein-skin .fr-mini-play.playing {
-  box-shadow: 0 0 10px 4px rgba(141, 248, 121, 0.32);
-}
+/* Playing lights that same rim in the skin's green, on the dial's own painted
+   edge — no outer halo, so nothing spills onto the palm behind it. The green
+   and gold rules have equal specificity, so hover comes after playing and the
+   gold hover rim wins while the pointer is on the dial. */
+.frankenstein-skin .fr-mini-play.playing { --fr-rim: 141, 248, 121; }
+.frankenstein-skin .fr-mini-play.playing::after { opacity: 1; }
+.frankenstein-skin .fr-mini button:hover,
+.frankenstein-skin .fr-mini button:focus-visible { --fr-rim: 255, 184, 86; }
+/* Boxes are each plate's measured circle on the 1305x1600 art (spec:
+   .kiro/specs/frankenstein-mini-hotspots.md): X plate r 58px at 52.52% / 16.58%,
+   compass r 97px at 31.23% / 44.69%, play dial r 169.5px at 61.26% / 57.84%. */
+.frankenstein-skin .fr-mini-close { left: 48.07%; top: 12.96%; width: 8.89%; height: 7.25%; }
+.frankenstein-skin .fr-mini-restore { left: 23.79%; top: 38.62%; width: 14.87%; height: 12.12%; }
+.frankenstein-skin .fr-mini-play { left: 48.28%; top: 47.25%; width: 25.98%; height: 21.19%; }
 
 /* ════════════════════════════════════════════════════════════════════════
    SKELETON — WEB PLATE (2026-11-11)
