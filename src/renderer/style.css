@@ -1626,10 +1626,38 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-mini button:focus-visible { --fr-rim: 255, 184, 86; }
 /* Boxes are each plate's measured circle on the 1305x1600 art (spec:
    .kiro/specs/frankenstein-mini-hotspots.md): X plate r 58px at 52.52% / 16.58%,
-   compass r 97px at 31.23% / 44.69%, play dial r 169.5px at 61.26% / 57.84%. */
+   compass r 97px at 31.23% / 44.69%, play dial r 172px at 61.92% / 57.18% (re-fit by a circle through the face edge). */
 .frankenstein-skin .fr-mini-close { left: 48.07%; top: 12.96%; width: 8.89%; height: 7.25%; }
 .frankenstein-skin .fr-mini-restore { left: 23.79%; top: 38.62%; width: 14.87%; height: 12.12%; }
-.frankenstein-skin .fr-mini-play { left: 48.28%; top: 47.25%; width: 25.98%; height: 21.19%; }
+.frankenstein-skin .fr-mini-play { left: 48.74%; top: 46.43%; width: 26.36%; height: 21.50%; }
+/* Pause state (spec: .kiro/specs/frankenstein-mini-play.md). The triangle is
+   baked into the plate, so while playing a crop of the dial face with the
+   triangle painted out (frankenstein-mini-dial-face.webp, 170px around the
+   glyph) covers it, and two bars are drawn in the glyph's dark ink, centred
+   on the dial (45.9% / 49.4% of this crop). */
+.frankenstein-skin .fr-mini-pause {
+  position: absolute;
+  left: 27.3%;
+  top: 25.61%;
+  width: 49.42%;
+  height: 49.42%;
+  background: var(--fr-mini-dial-url) center / 100% 100% no-repeat;
+  opacity: 0;
+  pointer-events: none;
+}
+.frankenstein-skin .fr-mini-pause::before,
+.frankenstein-skin .fr-mini-pause::after {
+  content: '';
+  position: absolute;
+  top: 27.05%;
+  width: 8.2%;
+  height: 44.7%;
+  border-radius: 2px;
+  background: #1c1710;
+}
+.frankenstein-skin .fr-mini-pause::before { left: 34.8%; }
+.frankenstein-skin .fr-mini-pause::after { left: 48.8%; }
+.frankenstein-skin .fr-mini-play.playing .fr-mini-pause { opacity: 1; }
 
 /* ════════════════════════════════════════════════════════════════════════
    SKELETON — WEB PLATE (2026-11-11)

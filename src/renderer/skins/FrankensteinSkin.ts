@@ -32,6 +32,7 @@
  */
 import framePlate from '../assets/frankenstein-frame.webp'
 import miniPlate from '../assets/frankenstein-mini.webp'
+import miniDialFace from '../assets/frankenstein-mini-dial-face.webp'
 // Kept as files, never inlined: the renderer's CSP allows 'self' only, so a
 // data: URL background would be refused.
 import eyeOrb from '../assets/frankenstein-eye.webp?no-inline'
@@ -251,6 +252,7 @@ export class FrankensteinSkin implements Skin {
     this.container.className = 'skin frankenstein-skin'
     this.container.style.setProperty('--fr-frame-url', `url("${framePlate}")`)
     this.container.style.setProperty('--fr-mini-url', `url("${miniPlate}")`)
+    this.container.style.setProperty('--fr-mini-dial-url', `url("${miniDialFace}")`)
     // Each socket orb itself, cropped from the plate with its baked glyph
     // diffused out, so both eyes are the art rather than a shape near it.
     this.container.style.setProperty('--fr-eye-url', `url("${eyeOrb}")`)
@@ -407,7 +409,7 @@ export class FrankensteinSkin implements Skin {
         <button class="fr-mini-close" type="button" aria-label="Close player"
                 title="Close player"></button>
         <button class="fr-mini-play" type="button" aria-label="Play"
-                aria-pressed="false" title="Play / pause"></button>
+                aria-pressed="false" title="Play / pause"><span class="fr-mini-pause" aria-hidden="true"></span></button>
         <button class="fr-mini-restore" type="button" aria-label="Back to the full player"
                 title="Back to the full player"></button>
       </div>
