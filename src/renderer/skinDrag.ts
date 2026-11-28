@@ -9,7 +9,10 @@ import { clearShapeForDrag, isOnSkin, restoreShape } from './windowShape'
  * outline. A plain rectangle moves as one piece, which is what the window did
  * before it was shaped.
  *
- * The drag starts only on painted pixels and leaves every control alone.
+ * The drag starts only on painted pixels and leaves every control alone. A
+ * skin body that is a `role="group"` for assistive tech can opt back in with
+ * `data-window-drag`, so its grouping does not turn the plate into a dead
+ * zone; controls inside it still keep their own gestures.
  */
 export function installSkinDrag(): void {
   document.addEventListener('pointerdown', (e) => {
@@ -18,9 +21,18 @@ export function installSkinDrag(): void {
     if (!target?.closest('.skin')) return
     // A modal panel (a skin's track board) owns the pointer while it is open.
     if (document.querySelector('[role="dialog"]:not([hidden])')) return
-    if (target.closest('button, input, textarea, select, ol, ul, [role="button"], [role="slider"], [role="group"], [role="dialog"]')) {
+    // A control that already claimed the gesture (Frankenstein's stitched seek
+    // scar, for one) keeps it; the window must not move under that drag.
+    if (e.defaultPrevented) return
+    if (target.closest('button, input, textarea, select, ol, ul, [role="button"], [role="slider"], [role="dialog"]')) {
       return
     }
+    // A `role="group"` is a landmark around a control area (a seek region or a
+    // cape zone), so pointers inside it stay with the group. A plate that opts
+    // in with `data-window-drag` is different: there the group is only the
+    // accessibility wrapper around the monster's own body, which is the drag
+    // handle. Controls inside it are still turned away above.
+    if (!target.closest('[data-window-drag]') && target.closest('[role="group"]')) return
     if (!isOnSkin(e.clientX, e.clientY)) return
     const api = window.skinwalker
     if (!api?.dragWindow) return

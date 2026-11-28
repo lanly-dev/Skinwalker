@@ -1501,6 +1501,59 @@ input[type="range"]::-moz-range-thumb {
 .frankenstein-skin .fr-pin-mini   { left: 77%; top: 70.91%; }
 .frankenstein-skin .fr-pin-skin   { left: 74%; top: 82.91%; }
 
+/* ── Mini hand player — the window becomes the stitched green fist ───────
+   The plate is frankenstein-mini.webp (1305×1600, the same 300×368 window):
+   the black X on the aorta closes, the compass needle on the left ventricle
+   restores the full player, and the big play dial plays / pauses. Every
+   hotspot is a percentage of that art, so it lands on its painted plate at
+   any window size. */
+.frankenstein-skin .fr-mini { display: none; }
+.frankenstein-skin.mini-mode .fr-body { display: none; }
+.frankenstein-skin.mini-mode .fr-mini {
+  position: fixed;
+  inset: 0;
+  display: block;
+  background: var(--fr-mini-url) center / 100% 100% no-repeat;
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.5));
+}
+.frankenstein-skin .fr-mini button {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: box-shadow 0.18s;
+}
+/* The painted glyph is the button: hover / focus warms a soft phosphor halo
+   under it instead of drawing a ring around the brass. */
+.frankenstein-skin .fr-mini button::after {
+  content: '';
+  position: absolute;
+  inset: -8%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(219, 255, 197, 0.55) 0%,
+    rgba(141, 248, 121, 0.34) 46%,
+    rgba(101, 220, 96, 0.14) 72%,
+    rgba(101, 220, 96, 0) 100%);
+  mix-blend-mode: plus-lighter;
+  opacity: 0;
+  transition: opacity 0.16s;
+  pointer-events: none;
+}
+.frankenstein-skin .fr-mini button:hover::after,
+.frankenstein-skin .fr-mini button:focus-visible::after { opacity: 1; }
+/* Art centres: X plate 51.1% / 15.7%, compass 29.8% / 44.9%, play dial
+   60.5% / 57.1%. The play hotspot covers the dial's inner face and ticks. */
+.frankenstein-skin .fr-mini-close { left: 46.6%; top: 12.03%; width: 9%; height: 7.34%; }
+.frankenstein-skin .fr-mini-restore { left: 20.8%; top: 37.56%; width: 18%; height: 14.68%; }
+.frankenstein-skin .fr-mini-play { left: 50%; top: 48.54%; width: 21%; height: 17.13%; }
+/* Playing keeps the dial lit, as the full skin's right eye does. */
+.frankenstein-skin .fr-mini-play.playing {
+  box-shadow: 0 0 10px 4px rgba(141, 248, 121, 0.32);
+}
+
 /* ════════════════════════════════════════════════════════════════════════
    SKELETON — WEB PLATE (2026-11-11)
    The plate is the web build's neon skeleton: raised arms hold a bone

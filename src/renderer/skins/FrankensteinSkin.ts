@@ -26,8 +26,12 @@
  *   Stitched scar ──── seek: the bead rides the scar, progress fills it
  *   Gold watch ─────── volume: drag left/right, wheel, arrows; tap = mute
  *   Jacket pins ────── open folder, close, minimize, mini, change skin
+ *   Mini hand ──────── the window becomes the stitched green fist: the X bolt
+ *                      closes, the compass needle restores and the play dial
+ *                      plays / pauses
  */
 import framePlate from '../assets/frankenstein-frame.webp'
+import miniPlate from '../assets/frankenstein-mini.webp'
 // Kept as files, never inlined: the renderer's CSP allows 'self' only, so a
 // data: URL background would be refused.
 import eyeOrb from '../assets/frankenstein-eye.webp?no-inline'
@@ -44,8 +48,9 @@ import type { Player } from '../player/Player'
 
 /** 1280×1760 at 0.375 — the plate's own proportions, cropped at the chest. */
 const STAGE_SIZE = { width: 480, height: 660, minWidth: 380, minHeight: 520 }
-/** Mini keeps the whole figure, as the reference does — just smaller. */
-const MINI_SIZE = { width: 320, height: 440, minWidth: 240, minHeight: 330 }
+/** Mini becomes the stitched green fist (frankenstein-mini.webp), so its
+ *  window takes that art's 1305×1600 shape instead of the stage's. */
+const MINI_SIZE = { width: 300, height: 368, minWidth: 240, minHeight: 294 }
 
 /** Chest-row drift: px a second of visible glide, and the share of each leg the
  *  `fr-slide` keyframes spend moving (they hold 10% at each end). Slower than
@@ -198,6 +203,7 @@ interface FrEls {
   mouthCount: HTMLElement
   minimizePin: HTMLButtonElement
   miniPin: HTMLButtonElement
+  miniPlay: HTMLButtonElement
 }
 
 export class FrankensteinSkin implements Skin {
@@ -244,6 +250,7 @@ export class FrankensteinSkin implements Skin {
     this.container = document.createElement('div')
     this.container.className = 'skin frankenstein-skin'
     this.container.style.setProperty('--fr-frame-url', `url("${framePlate}")`)
+    this.container.style.setProperty('--fr-mini-url', `url("${miniPlate}")`)
     // Each socket orb itself, cropped from the plate with its baked glyph
     // diffused out, so both eyes are the art rather than a shape near it.
     this.container.style.setProperty('--fr-eye-url', `url("${eyeOrb}")`)
@@ -288,7 +295,11 @@ export class FrankensteinSkin implements Skin {
 
   private template(): string {
     return /* html */ `
-      <div class="fr-body" role="group" aria-label="Frankenstein media player">
+      <!-- The plate is the window's drag handle. The data-window-drag
+           attribute lets skinDrag start a move from it even though the body
+           is a role=group for assistive tech; buttons, sliders and the seek
+           scar keep their own gestures. -->
+      <div class="fr-body" role="group" aria-label="Frankenstein media player" data-window-drag>
         <span class="fr-plate" aria-hidden="true"></span>
 
         <!-- Forehead = visualizer -->
@@ -388,6 +399,18 @@ export class FrankensteinSkin implements Skin {
                 aria-label="Change skin">${pinSvg('skin', PIN_MOTIFS.skin, 'Change skin')}</button>
 
       </div>
+
+      <!-- Mini hand: the window shrinks to this plate. Its painted X bolt,
+           compass needle and play dial are the close, restore and play
+           buttons, so the mini keeps the full skin's anatomy-as-UI rule. -->
+      <div class="fr-mini">
+        <button class="fr-mini-close" type="button" aria-label="Close player"
+                title="Close player"></button>
+        <button class="fr-mini-play" type="button" aria-label="Play"
+                aria-pressed="false" title="Play / pause"></button>
+        <button class="fr-mini-restore" type="button" aria-label="Back to the full player"
+                title="Back to the full player"></button>
+      </div>
     `
   }
 
@@ -474,6 +497,7 @@ export class FrankensteinSkin implements Skin {
       mouthCount: c.querySelector('.fr-mouth-count')!,
       minimizePin: c.querySelector('.fr-pin-minimize')!,
       miniPin: c.querySelector('.fr-pin-mini')!,
+      miniPlay: c.querySelector('.fr-mini-play')!,
     }
     this.els = els
 
@@ -499,6 +523,14 @@ export class FrankensteinSkin implements Skin {
       else this.enterMini()
     })
     c.querySelector('.fr-pin-skin')!.addEventListener('click', () => p.nextSkin())
+
+    // Mini hand: the painted X, compass needle and play dial are its controls
+    els.miniPlay.addEventListener('click', () => {
+      p.togglePlayPause()
+      this.updatePlayState()
+    })
+    c.querySelector('.fr-mini-restore')!.addEventListener('click', () => this.exitMini())
+    c.querySelector('.fr-mini-close')!.addEventListener('click', () => window.skinwalker?.close?.())
 
     // The eye follows the pointer anywhere over the window
     document.addEventListener('pointermove', this.onPointerAim, { passive: true })
@@ -724,17 +756,17 @@ export class FrankensteinSkin implements Skin {
   private enterMini(): void {
     if (!this.container || this.mini) return
     this.mini = true
-    this.container.classList.add('mini')
+    this.container.classList.add('mini-mode')
     window.skinwalker?.setWindowSize?.(MINI_SIZE)
     this.renderMiniPin()
     // Shape after the resize lands, as Dracula's bat does.
-    window.setTimeout(() => void applySkinShape(framePlate), 60)
+    window.setTimeout(() => void applySkinShape(miniPlate), 60)
   }
 
   private exitMini(): void {
     if (!this.container || !this.mini) return
     this.mini = false
-    this.container.classList.remove('mini')
+    this.container.classList.remove('mini-mode')
     window.skinwalker?.setWindowSize?.(STAGE_SIZE)
     this.renderMiniPin()
     window.setTimeout(() => void applySkinShape(framePlate), 60)
@@ -882,6 +914,10 @@ export class FrankensteinSkin implements Skin {
     els.play.setAttribute('aria-pressed', String(playing))
     els.play.setAttribute('aria-label', playing ? 'Pause track' : 'Play track')
     els.play.title = playing ? 'Pause track' : 'Play track'
+    els.miniPlay.classList.toggle('playing', playing)
+    els.miniPlay.setAttribute('aria-pressed', String(playing))
+    els.miniPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play')
+    els.miniPlay.title = playing ? 'Pause' : 'Play'
   }
 
   /** The reference build's forehead equalizer: nine columns of five blocks,
