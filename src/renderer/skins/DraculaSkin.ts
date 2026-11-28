@@ -158,6 +158,8 @@ interface DraculaEls {
   remaining: HTMLElement
   medallion: HTMLButtonElement
   miniPlay: HTMLButtonElement
+  miniEyeLeft: HTMLElement
+  miniEyeRight: HTMLElement
   volDown: HTMLButtonElement
   volUp: HTMLButtonElement
   playlist: HTMLOListElement
@@ -314,8 +316,11 @@ export class DraculaSkin implements Skin {
 
         </div>
 
-        <!-- Mini bat: the window shrinks to this plate -->
+        <!-- Mini bat: the window shrinks to this plate. The two socket glows
+             are the play state: hot and swelling on play, cold embers paused. -->
         <div class="dr-mini">
+          <span class="dr-mini-eye dr-mini-eye-left" aria-hidden="true"></span>
+          <span class="dr-mini-eye dr-mini-eye-right" aria-hidden="true"></span>
           <button class="dr-mini-close" aria-label="Close player" title="Close player"></button>
           <button class="dr-mini-play" aria-label="Play" aria-pressed="false" title="Play / Pause">
             <span class="dr-pause-glyph" aria-hidden="true"></span>
@@ -345,6 +350,8 @@ export class DraculaSkin implements Skin {
       remaining: c.querySelector('.dr-remaining')!,
       medallion: c.querySelector('.dr-medallion')!,
       miniPlay: c.querySelector('.dr-mini-play')!,
+      miniEyeLeft: c.querySelector('.dr-mini-eye-left')!,
+      miniEyeRight: c.querySelector('.dr-mini-eye-right')!,
       volDown: c.querySelector('.dr-vol-down')!,
       volUp: c.querySelector('.dr-vol-up')!,
       playlist: c.querySelector('.dr-playlist')!,
@@ -854,6 +861,11 @@ export class DraculaSkin implements Skin {
     this.eyeLevel = quantized
     for (const eye of [els.eyeLeft, els.eyeRight]) {
       eye.style.opacity = String(quantized)
+      eye.style.setProperty('--eye', String(quantized))
+    }
+    // The mini bat's sockets ride the same level; their opacity and swell live
+    // in CSS, because the plate is dark and the ember floor needs its own curve.
+    for (const eye of [els.miniEyeLeft, els.miniEyeRight]) {
       eye.style.setProperty('--eye', String(quantized))
     }
   }

@@ -144,6 +144,9 @@ input[type="range"]::-moz-range-thumb {
   .frankenstein-skin .fr-now-artist.is-marquee {
     animation: fr-slide var(--slide-dur, 12s) cubic-bezier(0.45, 0, 0.25, 1) infinite alternate !important;
   }
+  /* The mini bat's play rim is still state, not decoration: hold it lit so
+     playing stays legible without the breath. */
+  .dracula-skin .dr-mini-play.playing::before { opacity: 0.55; }
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -825,9 +828,49 @@ input[type="range"]::-moz-range-thumb {
   inset: 0;
   background: var(--dr-bat-url) center / 100% 100% no-repeat;
   filter: drop-shadow(0 0 6px rgba(125, 34, 44, 0.55));
+  transition: filter 0.4s ease;
 }
 .dracula-skin.mini-mode .dr-stage { display: none; }
 .dracula-skin.mini-mode .dr-mini { display: block; }
+/* Paused: the plate itself goes cold, so the baked irises dull along with the
+   ember overlay and the bat reads as asleep at a glance. */
+.dracula-skin.mini-mode:not(.is-playing) .dr-mini {
+  filter: drop-shadow(0 0 6px rgba(125, 34, 44, 0.4)) saturate(0.74) brightness(0.82);
+}
+/* The painted eyes are the state. Each socket takes a warm bloom that swells
+   with the waveform RMS (--eye, set by DraculaSkin.updateEyes), centred on the
+   art's own irises: 45.6% / 54.7% across, 39.0% down, measured from
+   dracula-bat.webp. Paused they drop to a cold ember and stop swelling. */
+.dracula-skin .dr-mini-eye {
+  --eye: 0.15;
+  position: absolute;
+  top: 36.95%;
+  width: 5.6%; height: 4.2%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%,
+    #ffd7a6 0%,
+    #ff6a45 18%,
+    #ff2f2f 38%,
+    rgba(224, 28, 34, 0.55) 58%,
+    rgba(150, 10, 30, 0.18) 76%,
+    transparent 86%);
+  box-shadow:
+    0 0 0.5cqw rgba(255, 40, 34, 0.4),
+    0 0 1.1cqw rgba(255, 26, 24, 0.22);
+  filter: blur(0.18cqw) saturate(1.25);
+  transform: scale(calc(0.62 + var(--eye, 0.15) * 0.72));
+  transform-origin: 50% 50%;
+  opacity: calc(0.08 + var(--eye, 0.15) * 0.9);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: opacity 0.14s linear, transform 0.14s linear, filter 0.4s ease;
+}
+.dracula-skin .dr-mini-eye-left  { left: 42.85%; }
+.dracula-skin .dr-mini-eye-right { left: 51.9%; }
+.dracula-skin.mini-mode:not(.is-playing) .dr-mini-eye {
+  filter: blur(0.18cqw) saturate(0.35) brightness(0.6);
+  box-shadow: 0 0 0.5cqw rgba(120, 40, 90, 0.26);
+}
 .dracula-skin .dr-mini button {
   position: absolute;
   border: 0;
@@ -873,8 +916,30 @@ input[type="range"]::-moz-range-thumb {
 .dracula-skin .dr-mini-close   { left: 44%; top: 17%;   width: 12%; height: 12%; }
 .dracula-skin .dr-mini-play    { left: 44%; top: 48.5%; width: 12%; height: 12%; }
 .dracula-skin .dr-mini-restore { left: 43%; top: 66%;   width: 14%; height: 13%; }
-.dracula-skin .dr-mini-play.playing {
-  box-shadow: 0 0 0.9cqw 0.4cqw rgba(223, 106, 64, 0.55);
+/* Play medallion: its beaded rim takes a gold breath while a track plays. The
+   ring is sized to the art's outer filigree (13.9% of the plate, i.e. inset
+   -8% of the 12% hotspot); paused it is dark, and reduced motion holds it lit
+   steadily instead of breathing. */
+.dracula-skin .dr-mini-play::before {
+  content: '';
+  position: absolute;
+  inset: -8%;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 0.1cqw rgba(255, 213, 138, 0.5),
+    0 0 0.55cqw 0.1cqw rgba(255, 170, 60, 0.5),
+    0 0 1.5cqw rgba(255, 110, 40, 0.3);
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+.dracula-skin .dr-mini-play.playing::before {
+  animation: dr-mini-rim 3.4s ease-in-out infinite;
+}
+@keyframes dr-mini-rim {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.85; }
 }
 .dracula-skin .dr-mini-play .dr-pause-glyph { left: 0; top: 0; width: 100%; height: 100%; }
 
